@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ffmpeg/ffmpeg": "*",
-    "@ffmpeg/util": "*",
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
     "@reduxjs/toolkit": "^2.7.0",
     "@remotion/media-parser": "^4.0.290",
     "@remotion/player": "^4.0.290",
