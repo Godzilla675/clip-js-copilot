@@ -6,6 +6,8 @@ import { config } from './config.js';
 import { ProjectManager } from './project/state.js';
 import { WebSocketHandler } from './websocket/handler.js';
 import { createProjectRouter } from './routes/project.js';
+import { createToolsRouter } from './routes/tools.js';
+import { initMCP } from './mcp/index.js';
 
 export class Server {
   private app: express.Application;
@@ -39,13 +41,23 @@ export class Server {
 
   private setupRoutes() {
     this.app.use('/api/project', createProjectRouter(this.projectManager));
+    this.app.use('/api/tools', createToolsRouter());
 
     this.app.get('/api/health', (req, res) => {
         res.json({ status: 'ok' });
     });
   }
 
-  public start() {
+  public async start() {
+    try {
+        // Initialize MCP connection
+        await initMCP();
+    } catch (error) {
+        console.error('Failed to initialize MCP:', error);
+        // Continue starting server even if MCP fails?
+        // Probably yes, but functionality will be limited.
+    }
+
     this.server.listen(this.port, () => {
       console.log(`Backend server running on port ${this.port}`);
       console.log(`WebSocket server ready`);
