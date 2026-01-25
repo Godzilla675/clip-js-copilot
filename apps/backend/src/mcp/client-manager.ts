@@ -15,7 +15,9 @@ export class MCPClientManager {
       const transport = new StdioClientTransport({
         command,
         args,
-        env: env ? { ...process.env, ...env } : undefined
+        env: env ? Object.fromEntries(
+          Object.entries({ ...process.env, ...env }).filter(([_, v]) => v !== undefined)
+        ) as Record<string, string> : undefined
       });
 
       const client = new Client(

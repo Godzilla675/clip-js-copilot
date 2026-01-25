@@ -38,3 +38,4 @@ next-env.d.ts
 
 # logs
 web_output.log
+.env
