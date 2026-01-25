@@ -1,0 +1,3 @@
+
+> @ai-video-editor/ffmpeg-server@0.0.1 build /app/mcp-servers/ffmpeg-server
+> tsc
