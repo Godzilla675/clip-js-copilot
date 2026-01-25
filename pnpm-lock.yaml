@@ -121,11 +121,25 @@ importers:
         specifier: ^4.17.16
         version: 4.17.23
 
-  packages/shared-types:
+  mcp-servers/code-runner-server:
+    dependencies:
+      '@ai-video-editor/mcp-utils':
+        specifier: workspace:*
+        version: link:../../packages/mcp-utils
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.0.0
+        version: 1.25.3(hono@4.11.5)(zod@3.25.76)
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.4.9
       typescript:
-        specifier: ^5.0.0
-        version: 5.1.6
+        specifier: ^5.3.3
+        version: 5.9.3
+
   packages/mcp-utils:
     dependencies:
       '@modelcontextprotocol/sdk':
@@ -141,6 +155,12 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
+
+  packages/shared-types:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.1.6
 
 packages:
 
