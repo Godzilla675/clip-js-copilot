@@ -1,50 +1,57 @@
-## Overview
+# AI Video Editor
 
-This is an online video editor built with nextjs, remotion for real-time preview and ffmpeg (web assembly port) for high-quality render.
+An AI-powered video editor with a copilot interface, built as a monorepo.
 
 ## Features
 
-- 🎞️ Real-time Preview: See immediate previews of edits.
-- 🧰 Render with ffmpeg (web assembly port) with various options supports up to 1080p export.
-- 🕹️ Interactive Timeline Editor: Precisely arrange, trim, and control media through a custom-built timeline.
-- ✂️ Element Utilities: Easily split, duplicate, and manage individual media layers.
-- 🖼️ Flexible Media Support: Import and mix videos, audio tracks, images, and text elements seamlessly.
-- 🛠️ Advanced Element Controls: Adjust properties like position, opacity, z-index and volume per element.
-- ⌨️ Keyboard Shortcuts: Quickly play, mute, move in time with arrows, split, duplicate, etc .
+- **AI Copilot**: Chat with an AI assistant to edit videos, find assets, and analyze content.
+- **Multimodal Understanding**: The AI can "see" your video frames and understand context.
+- **Asset Integration**: Search and download stock footage/images from Pexels and Unsplash.
+- **Local Processing**: Uses FFmpeg and Whisper locally for privacy and performance.
+- **Web-based Editor**: Built on Next.js and Remotion (forked from Clip-js).
 
-![Alt Text](/images/image.png)
+## Architecture
 
-## Installation
+- **Frontend**: Next.js (apps/web)
+- **Backend**: Node.js + Express + WebSocket (apps/backend)
+- **MCP Servers**: Modular tools for FFmpeg, Whisper, Vision, Assets, etc. (mcp-servers/*)
 
-Clone the repo, install dependencies:
+## Prerequisites
 
-```bash
-npm install
-```
-Then run the development server:
-```bash
-npm run dev
-```
-Or build and start in production mode:
+- Node.js 20+
+- pnpm 9+
+- FFmpeg installed on your system (for local backend operations, though some servers use static binaries)
 
-```bash
-npm run build
-npm start
-```
+## Getting Started
 
-Alternatively, use Docker:
+1. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
 
-```bash
-# Build the Docker image
-docker build -t clipjs .
+2. **Environment Setup**:
+   Copy `.env.example` to `apps/backend/.env` and `apps/web/.env.local` and fill in your keys.
+   ```bash
+   cp .env.example apps/backend/.env
+   # Edit apps/backend/.env to add API keys (Anthropic/OpenAI, Pexels, etc.)
+   ```
 
-# Run the container
-docker run -p 3000:3000 clipjs
-```
-Then navigate to [http://localhost:3000](http://localhost:3000)
+3. **Start Development**:
+   ```bash
+   pnpm dev
+   ```
+   This starts:
+   - Frontend at http://localhost:3000
+   - Backend at http://localhost:3001
+   - All MCP servers (managed by backend)
 
-## TODOs
+## Development Scripts
 
-Prioritized tasks are listed in [TODO.md](./TODO.md). 
+- `pnpm dev`: Start everything
+- `pnpm dev:web`: Start only frontend
+- `pnpm dev:backend`: Start only backend
+- `pnpm build`: Build all packages
 
-contributions are welcomed!
+## Contributing
+
+See `MASTERPLAN.MD` for architectural details.

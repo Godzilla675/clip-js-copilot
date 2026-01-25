@@ -1,0 +1,3 @@
+
+> @ai-video-editor/vision-server@1.0.0 build /app/mcp-servers/vision-server
+> tsc

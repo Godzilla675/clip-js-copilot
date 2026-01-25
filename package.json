@@ -3,6 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
+    "dev:backend": "turbo dev --filter=@ai-video-editor/backend",
+    "dev:web": "turbo dev --filter=@ai-video-editor/web",
+    "dev:mcp": "turbo dev --filter='./mcp-servers/*'",
     "build": "turbo build",
     "lint": "turbo lint"
   },
