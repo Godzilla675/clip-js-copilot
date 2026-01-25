@@ -1,0 +1,43 @@
+import { MCPTool, ToolCall } from './types';
+import type { Tool } from '@anthropic-ai/sdk/resources/messages';
+import type { ChatCompletionTool } from 'openai/resources/chat/completions';
+
+export function mcpToolToAnthropicTool(mcpTool: MCPTool): Tool {
+  return {
+    name: mcpTool.name,
+    description: mcpTool.description || '',
+    input_schema: mcpTool.inputSchema as any, // Anthropic SDK expects explicit JSONSchema types, we can cast
+  };
+}
+
+export function mcpToolToOpenAIFunction(mcpTool: MCPTool): ChatCompletionTool {
+  return {
+    type: 'function',
+    function: {
+      name: mcpTool.name,
+      description: mcpTool.description,
+      parameters: mcpTool.inputSchema,
+    },
+  };
+}
+
+export function parseToolCallResult(result: any, provider: 'anthropic' | 'openai' | 'custom'): ToolCall {
+  if (provider === 'anthropic') {
+    // Anthropic tool use block
+    return {
+      toolName: result.name,
+      args: result.input,
+      toolCallId: result.id
+    };
+  } else if (provider === 'openai' || provider === 'custom') {
+    // OpenAI tool call object
+    return {
+      toolName: result.function.name,
+      args: typeof result.function.arguments === 'string'
+            ? JSON.parse(result.function.arguments)
+            : result.function.arguments,
+      toolCallId: result.id
+    };
+  }
+  throw new Error(`Unknown provider: ${provider}`);
+}
