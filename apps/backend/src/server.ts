@@ -1,24 +1,3 @@
-// Placeholder server entry point created by Agent 05
-// Agent 04 will implement the full server.
-console.log('Backend server placeholder. Agent 04 has not yet implemented the core server.');
-console.log('LLM Orchestrator is available at src/llm/');
-
-import express from 'express';
-const app = express();
-const port = process.env.PORT || 3001;
-
-app.get('/', (req, res) => {
-  res.send('AI Video Editor Backend (Placeholder)');
-});
-
-// Start if run directly
-if (require.main === module) {
-  app.listen(port, () => {
-    console.log(`Placeholder server running on port ${port}`);
-  });
-}
-
-export default app;
 import express from 'express';
 import http from 'http';
 import { WebSocketServer } from 'ws';
@@ -27,6 +6,8 @@ import { config } from './config.js';
 import { ProjectManager } from './project/state.js';
 import { WebSocketHandler } from './websocket/handler.js';
 import { createProjectRouter } from './routes/project.js';
+import { createToolsRouter } from './routes/tools.js';
+import { initMCP } from './mcp/index.js';
 
 export class Server {
   private app: express.Application;
@@ -60,13 +41,23 @@ export class Server {
 
   private setupRoutes() {
     this.app.use('/api/project', createProjectRouter(this.projectManager));
+    this.app.use('/api/tools', createToolsRouter());
 
     this.app.get('/api/health', (req, res) => {
         res.json({ status: 'ok' });
     });
   }
 
-  public start() {
+  public async start() {
+    try {
+        // Initialize MCP connection
+        await initMCP();
+    } catch (error) {
+        console.error('Failed to initialize MCP:', error);
+        // Continue starting server even if MCP fails?
+        // Probably yes, but functionality will be limited.
+    }
+
     this.server.listen(this.port, () => {
       console.log(`Backend server running on port ${this.port}`);
       console.log(`WebSocket server ready`);
