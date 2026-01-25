@@ -1,0 +1,124 @@
+import path from 'path';
+import { LLMConfig, Message } from '@ai-video-editor/shared-types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
+
+export class CopilotProvider implements LLMProviderInterface {
+  private client: any;
+  private model: string;
+  private initPromise: Promise<void>;
+
+  constructor(config: LLMConfig, client?: any) {
+    this.model = config.model || 'gpt-4';
+
+    if (client) {
+        this.client = client;
+        this.initPromise = Promise.resolve();
+    } else {
+        this.initPromise = this.init();
+    }
+  }
+
+  private async init() {
+      try {
+        // @ts-ignore
+        const { CopilotClient } = await import('@github/copilot-sdk');
+        const cliPath = process.env.COPILOT_CLI_PATH
+            ? path.resolve(process.env.COPILOT_CLI_PATH)
+            : path.resolve(process.cwd(), 'node_modules', '.bin', 'copilot');
+
+        this.client = new CopilotClient({
+            cliPath,
+        });
+      } catch (e) {
+          console.error('Failed to initialize CopilotClient:', e);
+          throw e;
+      }
+  }
+
+  private async getClient(): Promise<any> {
+      await this.initPromise;
+      if (!this.client) {
+          throw new Error('CopilotClient not initialized');
+      }
+      return this.client;
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+    const client = await this.getClient();
+    const session = await this.createSession(client, messages, tools, executeTool);
+    const prompt = this.formatHistory(messages);
+
+    if (!prompt) return { content: '' };
+
+    try {
+        const result = await session.sendAndWait({
+            prompt,
+        });
+
+        await session.destroy();
+
+        if (result && result.type === 'assistant.message') {
+            return { content: result.data.content };
+        }
+        return { content: '' };
+    } catch (error) {
+        await session.destroy().catch(() => {});
+        throw error;
+    }
+  }
+
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+    const client = await this.getClient();
+    const session = await this.createSession(client, messages, tools, executeTool);
+    const prompt = this.formatHistory(messages);
+
+    if (!prompt) {
+        yield { done: true };
+        return;
+    }
+
+    try {
+        const result = await session.sendAndWait({ prompt });
+
+        await session.destroy();
+
+        if (result && result.type === 'assistant.message') {
+            yield { done: false, content: result.data.content };
+        }
+        yield { done: true };
+    } catch (error) {
+        await session.destroy().catch(() => {});
+        console.error('Copilot stream error:', error);
+        throw error;
+    }
+  }
+
+  private async createSession(client: any, messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor) {
+     const systemMessage = messages.find(m => m.role === 'system')?.content;
+
+     const copilotTools = tools?.map(tool => ({
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.inputSchema,
+        handler: async (args: any) => {
+            if (executeTool) {
+                return await executeTool(tool.name, args);
+            }
+            return { error: 'Tool execution not available' };
+        }
+     }));
+
+     return await client.createSession({
+        model: this.model,
+        systemMessage: systemMessage ? { mode: 'replace', content: systemMessage } : undefined,
+        tools: copilotTools
+     });
+  }
+
+  private formatHistory(messages: Message[]): string {
+     return messages
+        .filter(m => m.role !== 'system')
+        .map(m => `${m.role === 'assistant' ? 'Assistant' : 'User'}: ${m.content}`)
+        .join('\n\n');
+  }
+}

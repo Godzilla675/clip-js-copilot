@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
 import { mcpToolToAnthropicTool, parseToolCallResult } from '../tool-mapper';
 
 export class AnthropicProvider implements LLMProviderInterface {
@@ -15,7 +15,7 @@ export class AnthropicProvider implements LLMProviderInterface {
     this.model = config.model;
   }
 
-  async chat(messages: Message[], tools?: MCPTool[]): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const anthropicTools = tools?.map(mcpToolToAnthropicTool);
 
     const systemMessage = messages.find(m => m.role === 'system')?.content;
@@ -49,7 +49,7 @@ export class AnthropicProvider implements LLMProviderInterface {
     };
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[]): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
     const anthropicTools = tools?.map(mcpToolToAnthropicTool);
 
     const systemMessage = messages.find(m => m.role === 'system')?.content;

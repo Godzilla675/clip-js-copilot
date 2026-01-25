@@ -79,6 +79,24 @@ export class WebSocketHandler {
     }
   }
 
+  private async executeTool(toolName: string, args: any): Promise<any> {
+    if (toolName === 'add_clip') {
+        try {
+            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+            return { success: true, message: 'Clip added successfully', clip };
+        } catch (error: any) {
+             return { error: error.message };
+        }
+    } else {
+        const serverName = toolRegistry.getServerForTool(toolName);
+        if (!serverName) {
+            return { error: 'Tool server not found' };
+        }
+        return await mcpClientManager.callTool(serverName, toolName, args);
+    }
+  }
+
   private async handleCopilotMessage(ws: WebSocket, payload: any) {
     const { content, projectId } = payload;
 
@@ -120,7 +138,7 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
-        const stream = this.orchestrator.streamChat(fullMessages, allTools as any);
+        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, this.executeTool.bind(this));
         let assistantContent = '';
 
         for await (const chunk of stream) {
@@ -142,24 +160,7 @@ export class WebSocketHandler {
                 }));
 
                 try {
-                    let result: any;
-
-                    if (toolName === 'add_clip') {
-                        try {
-                            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-                            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
-                            result = { success: true, message: 'Clip added successfully', clip };
-                        } catch (error: any) {
-                             result = { error: error.message };
-                        }
-                    } else {
-                        const serverName = toolRegistry.getServerForTool(toolName);
-                        result = { error: 'Tool server not found' };
-
-                        if (serverName) {
-                            result = await mcpClientManager.callTool(serverName, toolName, args);
-                        }
-                    }
+                    const result = await this.executeTool(toolName, args);
 
                     ws.send(JSON.stringify({
                         type: 'copilot.tool_result',
@@ -187,7 +188,7 @@ export class WebSocketHandler {
                         ...wsWithHistory.chatHistory
                     ];
 
-                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any);
+                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, this.executeTool.bind(this));
                         for await (const nextChunk of nextStream) {
                             if (nextChunk.content) {
                                 assistantContent += nextChunk.content;

@@ -1,9 +1,10 @@
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall } from './types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from './types';
 import { AnthropicProvider } from './providers/anthropic';
 import { OpenAIProvider } from './providers/openai';
 import { CustomProvider } from './providers/custom';
 import { GeminiProvider } from './providers/gemini';
+import { CopilotProvider } from './providers/copilot';
 
 export class LLMOrchestrator {
   private provider: LLMProviderInterface;
@@ -24,6 +25,8 @@ export class LLMOrchestrator {
         return new GeminiProvider(config);
       case 'custom':
         return new CustomProvider(config);
+      case 'copilot':
+        return new CopilotProvider(config);
       default:
         throw new Error(`Unsupported LLM provider: ${config.provider}`);
     }
@@ -34,14 +37,14 @@ export class LLMOrchestrator {
     this.provider = this.createProvider(config);
   }
 
-  async chat(messages: Message[], tools?: MCPTool[]): Promise<{
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{
     content: string
     toolCalls?: ToolCall[]
   }> {
-    return this.provider.chat(messages, tools);
+    return this.provider.chat(messages, tools, executeTool);
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[]): AsyncIterable<StreamChunk> {
-    yield* this.provider.streamChat(messages, tools);
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+    yield* this.provider.streamChat(messages, tools, executeTool);
   }
 }
