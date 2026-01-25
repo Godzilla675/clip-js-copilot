@@ -78,14 +78,78 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
 
         const handleToolCall = (payload: any) => {
             const { tool, args } = payload;
-            // TODO: Display tool calls in the UI
-            // For now, append to the last message or create a new system/tool message
-            console.log('Tool call:', tool, args);
+            const toolCallId = uuidv4();
+
+            setMessages(prev => {
+                const lastMsg = prev[prev.length - 1];
+                const newToolCall: ToolCall = {
+                    id: toolCallId,
+                    name: tool,
+                    args: args,
+                    status: 'pending'
+                };
+
+                if (lastMsg && lastMsg.role === 'assistant') {
+                    // Append to existing assistant message
+                    return [
+                        ...prev.slice(0, -1),
+                        {
+                            ...lastMsg,
+                            toolCalls: [...(lastMsg.toolCalls || []), newToolCall]
+                        }
+                    ];
+                } else {
+                    // Create new assistant message
+                    return [
+                        ...prev,
+                        {
+                            id: uuidv4(),
+                            role: 'assistant',
+                            content: '',
+                            toolCalls: [newToolCall]
+                        }
+                    ];
+                }
+            });
         };
 
         const handleToolResult = (payload: any) => {
-             const { tool, result } = payload;
-             console.log('Tool result:', tool, result);
+            const { tool, result } = payload;
+
+            setMessages(prev => {
+                // Find the last message that has a pending tool call with this name
+                let msgIndex = -1;
+                for (let i = prev.length - 1; i >= 0; i--) {
+                    const msg = prev[i];
+                    if (msg.role === 'assistant' && msg.toolCalls?.some(tc => tc.name === tool && tc.status === 'pending')) {
+                        msgIndex = i;
+                        break;
+                    }
+                }
+
+                if (msgIndex === -1) return prev;
+
+                const msg = prev[msgIndex];
+                if (!msg.toolCalls) return prev;
+
+                const toolCallIndex = msg.toolCalls.findIndex(tc => tc.name === tool && tc.status === 'pending');
+                if (toolCallIndex === -1) return prev;
+
+                const updatedToolCalls = [...msg.toolCalls];
+                updatedToolCalls[toolCallIndex] = {
+                    ...updatedToolCalls[toolCallIndex],
+                    result: result,
+                    status: (result?.error || result?.isError) ? 'error' : 'success'
+                };
+
+                const newMessages = [...prev];
+                newMessages[msgIndex] = {
+                    ...msg,
+                    toolCalls: updatedToolCalls
+                };
+
+                return newMessages;
+            });
         };
 
         client.on('copilot.response', handleResponse);
