@@ -1,0 +1,25 @@
+{
+  "name": "@ai-video-editor/ffmpeg-server",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@ai-video-editor/mcp-utils": "workspace:*",
+    "@ai-video-editor/shared-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.3.3"
+  }
+}
