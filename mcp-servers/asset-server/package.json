@@ -1,0 +1,28 @@
+{
+  "name": "@ai-video-editor/asset-server",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.1",
+    "pexels": "^1.4.0",
+    "unsplash-js": "^7.0.19",
+    "duck-duck-scrape": "^2.2.5",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5",
+    "zod": "^3.22.4",
+    "@ai-video-editor/mcp-utils": "workspace:*",
+    "@ai-video-editor/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.0",
+    "@types/node-fetch": "^2.6.9"
+  }
+}
