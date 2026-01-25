@@ -64,6 +64,16 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
 - `pnpm dev:backend`: Start only backend
 - `pnpm build`: Build all packages
 
+## Documentation
+
+For detailed documentation, please visit the [docs/](./docs/) directory:
+
+- [Architecture](./docs/architecture.md)
+- [API Documentation](./docs/api.md)
+- [MCP Tools](./docs/mcp-tools.md)
+- [Development Guide](./docs/development.md)
+- [Security](./docs/security.md)
+
 ## Contributing
 
 See `MASTERPLAN.MD` for architectural details.
