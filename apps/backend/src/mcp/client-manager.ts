@@ -9,12 +9,13 @@ export class MCPClientManager {
     this.clients = new Map();
   }
 
-  async connectServer(name: string, command: string, args: string[]): Promise<void> {
+  async connectServer(name: string, command: string, args: string[], env?: Record<string, string>): Promise<void> {
     try {
       console.log(`Connecting to MCP server ${name} with command: ${command} ${args.join(' ')}`);
       const transport = new StdioClientTransport({
         command,
         args,
+        env: env ? { ...process.env, ...env } : undefined
       });
 
       const client = new Client(

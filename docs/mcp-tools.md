@@ -64,3 +64,31 @@ A "sandboxed" environment for executing custom logic.
 - **`run_ffmpeg_command`**: Executes a raw FFmpeg command string.
   - Inputs: `command` (arguments after `ffmpeg`), `timeout`
   - **Note**: Restricted to safe paths.
+
+## Adding Custom MCP Servers
+
+You can add your own custom MCP servers to extend the capabilities of the Copilot. To do this, create a `mcp.config.json` file in the root directory of the project.
+
+### Configuration Format (`mcp.config.json`)
+
+```json
+{
+  "mcpServers": {
+    "my-custom-server": {
+      "command": "node",
+      "args": ["/path/to/my-server.js"],
+      "env": {
+        "MY_API_KEY": "secret"
+      },
+      "disabled": false
+    }
+  }
+}
+```
+
+- **`command`**: The executable to run (e.g., `node`, `python`, or a binary).
+- **`args`**: Array of arguments passed to the command.
+- **`env`**: (Optional) Environment variables for the server process.
+- **`disabled`**: (Optional) Set to `true` to disable the server.
+
+The backend will automatically load this configuration on startup, connect to the defined servers, and register their tools.
