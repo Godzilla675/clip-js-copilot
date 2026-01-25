@@ -16,10 +16,11 @@ export const config = {
   projectDir,
   allowedDirs,
   llm: {
-    provider: (process.env.LLM_PROVIDER || 'anthropic') as 'anthropic' | 'openai' | 'custom',
+    provider: (process.env.LLM_PROVIDER || 'anthropic') as 'anthropic' | 'openai' | 'gemini' | 'custom',
     model: process.env.LLM_MODEL || 'claude-3-5-sonnet-20241022',
     anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
     openaiApiKey: process.env.OPENAI_API_KEY || '',
+    geminiApiKey: process.env.GEMINI_API_KEY || '',
     baseUrl: process.env.LLM_BASE_URL
   }
 };

@@ -17,6 +17,7 @@
     "uuid": "^9.0.1",
     "@anthropic-ai/sdk": "^0.18.0",
     "openai": "^4.28.0",
+    "@google/genai": "^1.38.0",
     "@ai-video-editor/shared-types": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.0.1"
   },

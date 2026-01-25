@@ -28,9 +28,18 @@ export class Server {
 
     this.projectManager = new ProjectManager(projectDir);
 
+    let apiKey = '';
+    if (config.llm.provider === 'anthropic') {
+      apiKey = config.llm.anthropicApiKey;
+    } else if (config.llm.provider === 'openai') {
+      apiKey = config.llm.openaiApiKey;
+    } else if (config.llm.provider === 'gemini') {
+      apiKey = config.llm.geminiApiKey;
+    }
+
     const llmConfig = {
       provider: config.llm.provider,
-      apiKey: config.llm.provider === 'anthropic' ? config.llm.anthropicApiKey : config.llm.openaiApiKey,
+      apiKey,
       model: config.llm.model,
       baseUrl: config.llm.baseUrl
     };

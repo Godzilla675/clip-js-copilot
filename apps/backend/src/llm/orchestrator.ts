@@ -3,6 +3,7 @@ import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall } from './types';
 import { AnthropicProvider } from './providers/anthropic';
 import { OpenAIProvider } from './providers/openai';
 import { CustomProvider } from './providers/custom';
+import { GeminiProvider } from './providers/gemini';
 
 export class LLMOrchestrator {
   private provider: LLMProviderInterface;
@@ -19,6 +20,8 @@ export class LLMOrchestrator {
         return new AnthropicProvider(config);
       case 'openai':
         return new OpenAIProvider(config);
+      case 'gemini':
+        return new GeminiProvider(config);
       case 'custom':
         return new CustomProvider(config);
       default:
