@@ -176,6 +176,7 @@ importers:
         specifier: ^4.17.16
         version: 4.17.23
 
+  mcp-servers/code-runner-server:
   mcp-servers/asset-server:
   mcp-servers/vision-server:
   mcp-servers/whisper-server:
@@ -186,6 +187,7 @@ importers:
         version: link:../../packages/mcp-utils
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
+        version: 1.25.3(hono@4.11.5)(zod@3.25.76)
       '@ai-video-editor/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
@@ -212,6 +214,9 @@ importers:
         version: 3.25.76
     devDependencies:
       '@types/node':
+        specifier: ^20.0.0
+        version: 20.4.9
+      typescript:
         specifier: ^20.10.0
         version: 20.19.30
       '@types/node-fetch':
