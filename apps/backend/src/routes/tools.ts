@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { mcpClientManager, toolRegistry } from '../mcp/index.js';
 
-export function createToolsRouter() {
+export function createToolsRouter(): Router {
   const router = Router();
 
   // List all available tools

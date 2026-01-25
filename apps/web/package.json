@@ -40,10 +40,10 @@
     "remark-gfm": "^4.0.1",
     "remotion": "^4.0.290",
     "tailwindcss": "3.3.3",
-    "typescript": "5.1.6",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.16"
+    "@types/lodash": "^4.17.16",
+    "typescript": "5.1.6"
   }
 }

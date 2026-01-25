@@ -54,7 +54,7 @@ export class MCPClientManager {
     return result.tools;
   }
 
-  async callTool(serverName: string, toolName: string, args: object): Promise<any> {
+  async callTool(serverName: string, toolName: string, args: any): Promise<any> {
       const client = this.clients.get(serverName);
       if (!client) {
           throw new Error(`Server ${serverName} not connected`);
@@ -62,7 +62,7 @@ export class MCPClientManager {
 
       const result = await client.callTool({
           name: toolName,
-          arguments: args
+          arguments: args,
       });
 
       return result;

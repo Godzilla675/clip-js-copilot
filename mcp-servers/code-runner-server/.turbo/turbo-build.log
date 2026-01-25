@@ -1,0 +1,3 @@
+
+> @ai-video-editor/code-runner-server@1.0.0 build /app/mcp-servers/code-runner-server
+> tsc

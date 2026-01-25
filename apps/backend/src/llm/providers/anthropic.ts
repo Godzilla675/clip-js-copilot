@@ -30,16 +30,16 @@ export class AnthropicProvider implements LLMProviderInterface {
       system: systemMessage,
       tools: anthropicTools,
       max_tokens: 4096,
-    });
+    } as any) as any;
 
     const content = response.content
-      .filter(c => c.type === 'text')
-      .map(c => c.type === 'text' ? c.text : '')
+      .filter((c: any) => c.type === 'text')
+      .map((c: any) => c.type === 'text' ? c.text : '')
       .join('');
 
-    const toolUseBlocks = response.content.filter(c => c.type === 'tool_use');
+    const toolUseBlocks = response.content.filter((c: any) => c.type === 'tool_use');
 
-    const toolCalls = toolUseBlocks.map(block =>
+    const toolCalls = toolUseBlocks.map((block: any) =>
       parseToolCallResult(block, 'anthropic')
     );
 
@@ -65,7 +65,7 @@ export class AnthropicProvider implements LLMProviderInterface {
       tools: anthropicTools,
       max_tokens: 4096,
       stream: true,
-    });
+    } as any) as any;
 
     for await (const chunk of stream) {
       if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {

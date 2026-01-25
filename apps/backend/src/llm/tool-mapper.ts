@@ -1,8 +1,7 @@
 import { MCPTool, ToolCall } from './types';
-import type { Tool } from '@anthropic-ai/sdk/resources/messages';
 import type { ChatCompletionTool } from 'openai/resources/chat/completions';
 
-export function mcpToolToAnthropicTool(mcpTool: MCPTool): Tool {
+export function mcpToolToAnthropicTool(mcpTool: MCPTool): any {
   return {
     name: mcpTool.name,
     description: mcpTool.description || '',

@@ -7,13 +7,16 @@ import { ProjectManager } from './project/state.js';
 import { WebSocketHandler } from './websocket/handler.js';
 import { createProjectRouter } from './routes/project.js';
 import { createToolsRouter } from './routes/tools.js';
+import { createCopilotRouter } from './routes/copilot.js';
 import { initMCP } from './mcp/index.js';
+import { LLMOrchestrator } from './llm/orchestrator.js';
 
 export class Server {
   private app: express.Application;
   private server: http.Server;
   private wss: WebSocketServer;
   private projectManager: ProjectManager;
+  private orchestrator: LLMOrchestrator;
   private wsHandler: WebSocketHandler;
   private port: number;
 
@@ -24,7 +27,16 @@ export class Server {
     this.wss = new WebSocketServer({ server: this.server });
 
     this.projectManager = new ProjectManager(projectDir);
-    this.wsHandler = new WebSocketHandler(this.wss, this.projectManager);
+
+    const llmConfig = {
+      provider: config.llm.provider,
+      apiKey: config.llm.provider === 'anthropic' ? config.llm.anthropicApiKey : config.llm.openaiApiKey,
+      model: config.llm.model,
+      baseUrl: config.llm.baseUrl
+    };
+    this.orchestrator = new LLMOrchestrator(llmConfig);
+
+    this.wsHandler = new WebSocketHandler(this.wss, this.projectManager, this.orchestrator);
 
     this.setupMiddleware();
     this.setupRoutes();
@@ -42,6 +54,7 @@ export class Server {
   private setupRoutes() {
     this.app.use('/api/project', createProjectRouter(this.projectManager));
     this.app.use('/api/tools', createToolsRouter());
+    this.app.use('/api/copilot', createCopilotRouter(this.orchestrator, this.projectManager));
 
     this.app.get('/api/health', (req, res) => {
         res.json({ status: 'ok' });
