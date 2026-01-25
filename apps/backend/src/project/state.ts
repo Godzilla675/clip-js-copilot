@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { Project, ProjectSettings } from '@ai-video-editor/shared-types';
+import { Project, ProjectSettings, Clip } from '@ai-video-editor/shared-types';
 import { config } from '../config.js';
 import { HistoryManager } from './history.js';
 
@@ -108,6 +108,74 @@ export class ProjectManager {
     this.saveProject(updatedProject);
 
     return updatedProject;
+  }
+
+  addClip(
+    projectId: string,
+    assetId: string,
+    trackId: string,
+    startTime: number,
+    clipDuration?: number,
+    sourceStart: number = 0
+  ): Clip {
+    const project = this.projects.get(projectId);
+    if (!project) {
+      throw new Error(`Project ${projectId} not found`);
+    }
+
+    const asset = project.assets.find(a => a.id === assetId);
+    if (!asset) {
+      throw new Error(`Asset ${assetId} not found in project`);
+    }
+
+    const track = project.timeline.tracks.find(t => t.id === trackId);
+    if (!track) {
+      throw new Error(`Track ${trackId} not found in project`);
+    }
+
+    // Default duration to asset duration if not provided, or 5s if image/unknown
+    const duration = clipDuration || asset.duration || 5;
+
+    const clip: Clip = {
+      id: uuidv4(),
+      assetId,
+      trackId,
+      startTime,
+      duration,
+      sourceStart,
+      sourceEnd: sourceStart + duration,
+      effects: [],
+      transform: { x: 0, y: 0, scale: 1, rotation: 0 }
+    };
+
+    // Create a deep copy of the track to modify
+    const updatedTrack = { ...track, clips: [...track.clips, clip] };
+
+    // Sort clips by start time? Optional but good practice.
+    updatedTrack.clips.sort((a, b) => a.startTime - b.startTime);
+
+    // Update project
+    const updatedTracks = project.timeline.tracks.map(t =>
+      t.id === trackId ? updatedTrack : t
+    );
+
+    // Calculate new duration
+    const newDuration = Math.max(
+      project.timeline.duration,
+      startTime + duration
+    );
+
+    const updates: Partial<Project> = {
+      timeline: {
+        ...project.timeline,
+        duration: newDuration,
+        tracks: updatedTracks
+      }
+    };
+
+    this.updateProject(projectId, updates);
+
+    return clip;
   }
 
   undo(id: string): Project | undefined {
