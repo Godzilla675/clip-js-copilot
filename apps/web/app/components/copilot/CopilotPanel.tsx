@@ -4,7 +4,7 @@ import ChatMessage from './ChatMessage';
 import { Send, X, Eraser } from 'lucide-react';
 
 export default function CopilotPanel() {
-    const { messages, isLoading, sendMessage, clearChat, togglePanel } = useCopilot();
+    const { messages, isLoading, isConnected, sendMessage, clearChat, togglePanel } = useCopilot();
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -36,9 +36,14 @@ export default function CopilotPanel() {
         <div className="flex flex-col h-full w-full bg-gray-900 border-l border-gray-800 text-gray-100">
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">AI Copilot</span>
-                </h2>
+                <div className="flex flex-col">
+                    <h2 className="text-lg font-semibold flex items-center gap-2">
+                        <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">AI Copilot</span>
+                    </h2>
+                    <span className={`text-xs ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+                        {isConnected ? 'Connected' : 'Disconnected'}
+                    </span>
+                </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={clearChat}
