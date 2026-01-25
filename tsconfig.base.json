@@ -10,6 +10,9 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "@ai-video-editor/shared-types": ["./packages/shared-types/src/index.ts"]
+    }
   }
 }
