@@ -67,14 +67,39 @@ export class AnthropicProvider implements LLMProviderInterface {
       stream: true,
     } as any) as any;
 
+    let currentToolId: string | null = null;
+    let currentToolName: string | null = null;
+    let currentToolInput = '';
+
     for await (const chunk of stream) {
-      if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
+      if (chunk.type === 'content_block_start' && chunk.content_block?.type === 'tool_use') {
+        currentToolId = chunk.content_block.id;
+        currentToolName = chunk.content_block.name;
+        currentToolInput = '';
+      } else if (chunk.type === 'content_block_delta' && chunk.delta.type === 'input_json_delta') {
+        currentToolInput += chunk.delta.partial_json;
+      } else if (chunk.type === 'content_block_stop') {
+        if (currentToolId && currentToolName) {
+          try {
+            const args = JSON.parse(currentToolInput);
+            yield {
+              done: false,
+              toolCall: {
+                toolName: currentToolName,
+                toolCallId: currentToolId,
+                args
+              }
+            };
+          } catch (e) {
+            console.error('Failed to parse tool arguments:', e);
+          }
+          currentToolId = null;
+          currentToolName = null;
+          currentToolInput = '';
+        }
+      } else if (chunk.type === 'content_block_delta' && chunk.delta.type === 'text_delta') {
         yield { done: false, content: chunk.delta.text };
       }
-      // Note: We are not currently accumulating partial tool calls in the stream.
-      // If tool use occurs, it will be handled by the orchestrator re-calling 'chat'
-      // or we need to implement full accumulation here.
-      // For now, we assume streaming is primarily for text responses.
     }
 
     yield { done: true };
