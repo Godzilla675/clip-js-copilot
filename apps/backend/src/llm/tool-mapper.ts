@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { MCPTool, ToolCall } from './types';
 import type { ChatCompletionTool } from 'openai/resources/chat/completions';
 
@@ -20,7 +21,15 @@ export function mcpToolToOpenAIFunction(mcpTool: MCPTool): ChatCompletionTool {
   };
 }
 
-export function parseToolCallResult(result: any, provider: 'anthropic' | 'openai' | 'custom'): ToolCall {
+export function mcpToolToGeminiTool(mcpTool: MCPTool): any {
+  return {
+    name: mcpTool.name,
+    description: mcpTool.description || '',
+    parameters: mcpTool.inputSchema,
+  };
+}
+
+export function parseToolCallResult(result: any, provider: 'anthropic' | 'openai' | 'gemini' | 'custom'): ToolCall {
   if (provider === 'anthropic') {
     // Anthropic tool use block
     return {
@@ -36,6 +45,12 @@ export function parseToolCallResult(result: any, provider: 'anthropic' | 'openai
             ? JSON.parse(result.function.arguments)
             : result.function.arguments,
       toolCallId: result.id
+    };
+  } else if (provider === 'gemini') {
+    return {
+      toolName: result.name,
+      args: result.args,
+      toolCallId: uuidv4()
     };
   }
   throw new Error(`Unknown provider: ${provider}`);

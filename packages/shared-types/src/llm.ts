@@ -1,4 +1,4 @@
-export type LLMProvider = 'anthropic' | 'openai' | 'custom';
+export type LLMProvider = 'anthropic' | 'openai' | 'gemini' | 'custom';
 
 export interface LLMConfig {
   provider: LLMProvider;
