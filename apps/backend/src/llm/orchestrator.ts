@@ -1,0 +1,44 @@
+import { LLMConfig, Message } from '@ai-video-editor/shared-types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall } from './types';
+import { AnthropicProvider } from './providers/anthropic';
+import { OpenAIProvider } from './providers/openai';
+import { CustomProvider } from './providers/custom';
+
+export class LLMOrchestrator {
+  private provider: LLMProviderInterface;
+  private config: LLMConfig;
+
+  constructor(config: LLMConfig) {
+    this.config = config;
+    this.provider = this.createProvider(config);
+  }
+
+  private createProvider(config: LLMConfig): LLMProviderInterface {
+    switch (config.provider) {
+      case 'anthropic':
+        return new AnthropicProvider(config);
+      case 'openai':
+        return new OpenAIProvider(config);
+      case 'custom':
+        return new CustomProvider(config);
+      default:
+        throw new Error(`Unsupported LLM provider: ${config.provider}`);
+    }
+  }
+
+  setProvider(config: LLMConfig): void {
+    this.config = config;
+    this.provider = this.createProvider(config);
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[]): Promise<{
+    content: string
+    toolCalls?: ToolCall[]
+  }> {
+    return this.provider.chat(messages, tools);
+  }
+
+  async *streamChat(messages: Message[], tools?: MCPTool[]): AsyncIterable<StreamChunk> {
+    yield* this.provider.streamChat(messages, tools);
+  }
+}

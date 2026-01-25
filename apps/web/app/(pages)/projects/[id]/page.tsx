@@ -22,12 +22,17 @@ import { MediaFile } from "@/app/types";
 import ExportList from "../../../components/editor/AssetsPanel/tools-section/ExportList";
 import Image from "next/image";
 import ProjectName from "../../../components/editor/player/ProjectName";
+import CopilotButton from "@/app/components/editor/AssetsPanel/SidebarButtons/CopilotButton";
+import CopilotPanel from "@/app/components/copilot/CopilotPanel";
+import { useCopilot } from "@/app/hooks/useCopilot";
+
 export default function Project({ params }: { params: { id: string } }) {
     const { id } = params;
     const dispatch = useAppDispatch();
     const projectState = useAppSelector((state) => state.projectState);
     const { currentProjectId } = useAppSelector((state) => state.projects);
     const [isLoading, setIsLoading] = useState(true);
+    const { isPanelOpen } = useCopilot();
 
     const router = useRouter();
     const { activeSection, activeElement } = projectState;
@@ -105,6 +110,7 @@ export default function Project({ params }: { params: { id: string } }) {
                         <TextButton onClick={() => handleFocus("text")} />
                         <LibraryButton onClick={() => handleFocus("media")} />
                         <ExportButton onClick={() => handleFocus("export")} />
+                        <CopilotButton />
                         {/* TODO: add shortcuts guide but in a better way */}
                         {/* <ShortcutsButton onClick={() => handleFocus("export")} /> */}
                     </div>
@@ -139,19 +145,25 @@ export default function Project({ params }: { params: { id: string } }) {
                     <PreviewPlayer />
                 </div>
 
-                {/* Right Sidebar - Element Properties */}
-                <div className="flex-[0.4] min-w-[200px] border-l border-gray-800 overflow-y-auto p-4">
-                    {activeElement === "media" && (
-                        <div>
-                            <h2 className="text-lg font-semibold mb-4">Media Properties</h2>
-                            <MediaProperties />
-                        </div>
-                    )}
-                    {activeElement === "text" && (
-                        <div>
-                            <h2 className="text-lg font-semibold mb-4">Text Properties</h2>
-                            <TextProperties />
-                        </div>
+                {/* Right Sidebar - Element Properties or Copilot */}
+                <div className={`flex-[0.4] min-w-[200px] border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
+                    {isPanelOpen ? (
+                        <CopilotPanel />
+                    ) : (
+                        <>
+                            {activeElement === "media" && (
+                                <div>
+                                    <h2 className="text-lg font-semibold mb-4">Media Properties</h2>
+                                    <MediaProperties />
+                                </div>
+                            )}
+                            {activeElement === "text" && (
+                                <div>
+                                    <h2 className="text-lg font-semibold mb-4">Text Properties</h2>
+                                    <TextProperties />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
