@@ -86,7 +86,27 @@ export class WebSocketHandler {
         const project = projectId ? this.projectManager.getProject(projectId) : undefined;
 
         const tools = await toolRegistry.getTools();
-        const systemPrompt = buildSystemPrompt({ project, tools: tools as any });
+
+        // Add local tools
+        const localTools = [{
+            name: 'add_clip',
+            description: 'Add a clip to the project timeline. Requires assetId, trackId, and startTime.',
+            inputSchema: {
+                type: 'object',
+                properties: {
+                    projectId: { type: 'string', description: 'The ID of the project' },
+                    assetId: { type: 'string', description: 'The ID of the asset to add' },
+                    trackId: { type: 'string', description: 'The ID of the track to add to' },
+                    startTime: { type: 'number', description: 'Start time in seconds on the timeline' },
+                    clipDuration: { type: 'number', description: 'Duration of the clip in seconds (optional, defaults to asset duration)' },
+                    sourceStart: { type: 'number', description: 'Start time in source media (optional, defaults to 0)' }
+                },
+                required: ['projectId', 'assetId', 'trackId', 'startTime']
+            }
+        }];
+
+        const allTools = [...tools, ...localTools];
+        const systemPrompt = buildSystemPrompt({ project, tools: allTools as any });
 
         const wsWithHistory = ws as any;
         if (!wsWithHistory.chatHistory) {
@@ -100,7 +120,7 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
-        const stream = this.orchestrator.streamChat(fullMessages, tools as any);
+        const stream = this.orchestrator.streamChat(fullMessages, allTools as any);
         let assistantContent = '';
 
         for await (const chunk of stream) {
@@ -122,11 +142,23 @@ export class WebSocketHandler {
                 }));
 
                 try {
-                    const serverName = toolRegistry.getServerForTool(toolName);
-                    let result: any = { error: 'Tool server not found' };
+                    let result: any;
 
-                    if (serverName) {
-                        result = await mcpClientManager.callTool(serverName, toolName, args);
+                    if (toolName === 'add_clip') {
+                        try {
+                            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+                            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+                            result = { success: true, message: 'Clip added successfully', clip };
+                        } catch (error: any) {
+                             result = { error: error.message };
+                        }
+                    } else {
+                        const serverName = toolRegistry.getServerForTool(toolName);
+                        result = { error: 'Tool server not found' };
+
+                        if (serverName) {
+                            result = await mcpClientManager.callTool(serverName, toolName, args);
+                        }
                     }
 
                     ws.send(JSON.stringify({
@@ -155,7 +187,7 @@ export class WebSocketHandler {
                         ...wsWithHistory.chatHistory
                     ];
 
-                    const nextStream = this.orchestrator.streamChat(nextMessages, tools as any);
+                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any);
                         for await (const nextChunk of nextStream) {
                             if (nextChunk.content) {
                                 assistantContent += nextChunk.content;
