@@ -25,6 +25,8 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
 ## Getting Started
 
 1. **Install dependencies**:
+   > **Note**: `pnpm-lock.yaml` is not committed. After cloning, run `pnpm install` to generate it.
+
    ```bash
    pnpm install
    ```
