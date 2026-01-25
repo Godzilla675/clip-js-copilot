@@ -121,6 +121,11 @@ importers:
         specifier: ^4.17.16
         version: 4.17.23
 
+  packages/shared-types:
+    devDependencies:
+      typescript:
+        specifier: ^5.0.0
+        version: 5.1.6
   packages/mcp-utils:
     dependencies:
       '@modelcontextprotocol/sdk':
