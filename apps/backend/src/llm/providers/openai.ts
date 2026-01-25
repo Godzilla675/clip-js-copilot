@@ -57,11 +57,67 @@ export class OpenAIProvider implements LLMProviderInterface {
       stream: true,
     });
 
+    const toolCallsMap = new Map<number, { id?: string; name?: string; args: string }>();
+
     for await (const chunk of stream) {
       const delta = chunk.choices[0]?.delta;
       if (delta?.content) {
         yield { done: false, content: delta.content };
       }
+
+      if (delta?.tool_calls) {
+        for (const toolCall of delta.tool_calls) {
+          const index = toolCall.index;
+          if (!toolCallsMap.has(index)) {
+             toolCallsMap.set(index, { args: '' });
+          }
+          const current = toolCallsMap.get(index)!;
+
+          if (toolCall.id) current.id = toolCall.id;
+          if (toolCall.function?.name) current.name = toolCall.function.name;
+          if (toolCall.function?.arguments) current.args += toolCall.function.arguments;
+        }
+      }
+
+      if (chunk.choices[0]?.finish_reason === 'tool_calls' || chunk.choices[0]?.finish_reason === 'stop') {
+        for (const [_, toolCall] of toolCallsMap) {
+            if (toolCall.id && toolCall.name) {
+                try {
+                     const args = JSON.parse(toolCall.args);
+                     yield {
+                        done: false,
+                        toolCall: {
+                            toolName: toolCall.name,
+                            toolCallId: toolCall.id,
+                            args
+                        }
+                     };
+                } catch (e) {
+                    console.error('Failed to parse OpenAI tool args:', e);
+                }
+            }
+        }
+        toolCallsMap.clear();
+      }
+    }
+
+    // Yield any remaining tool calls if finish_reason wasn't caught
+    for (const [_, toolCall] of toolCallsMap) {
+        if (toolCall.id && toolCall.name) {
+            try {
+                 const args = JSON.parse(toolCall.args);
+                 yield {
+                    done: false,
+                    toolCall: {
+                        toolName: toolCall.name,
+                        toolCallId: toolCall.id,
+                        args
+                    }
+                 };
+            } catch (e) {
+                 // Ignore incomplete JSON
+            }
+        }
     }
 
     yield { done: true };
