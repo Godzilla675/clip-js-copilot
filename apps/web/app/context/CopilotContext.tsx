@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useWebSocket } from './WebSocketProvider';
 
 export interface ToolCall {
     id: string;
@@ -22,6 +23,7 @@ interface CopilotContextType {
     messages: Message[];
     isLoading: boolean;
     isPanelOpen: boolean;
+    isConnected: boolean;
     sendMessage: (content: string) => Promise<void>;
     togglePanel: () => void;
     clearChat: () => void;
@@ -30,6 +32,7 @@ interface CopilotContextType {
 const CopilotContext = createContext<CopilotContextType | undefined>(undefined);
 
 export const CopilotProvider = ({ children }: { children: ReactNode }) => {
+    const { client, isConnected } = useWebSocket();
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 'welcome',
@@ -40,8 +43,39 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
 
+    useEffect(() => {
+        if (!client) return;
+
+        const handleResponse = (payload: any) => {
+            // payload: { content: string, done: boolean }
+            const content = payload.content;
+
+            setMessages(prev => {
+                // If the last message is an assistant message that is "loading" (conceptually), we might want to update it.
+                // But for now, we'll just append a new message.
+                // To support streaming properly, we'd need to identify if we are currently receiving a stream.
+
+                // For the placeholder backend implementation which sends one message:
+                return [...prev, {
+                    id: uuidv4(),
+                    role: 'assistant',
+                    content
+                }];
+            });
+
+            if (payload.done) {
+                setIsLoading(false);
+            }
+        };
+
+        client.on('copilot.response', handleResponse);
+
+        return () => {
+            client.off('copilot.response', handleResponse);
+        };
+    }, [client]);
+
     const sendMessage = async (content: string) => {
-        // Add user message
         const userMessage: Message = {
             id: uuidv4(),
             role: 'user',
@@ -50,26 +84,15 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
         setMessages(prev => [...prev, userMessage]);
         setIsLoading(true);
 
-        // TODO: Integrate with backend
-        try {
-            // Simulate delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const aiMessage: Message = {
+        if (client && isConnected) {
+            client.send('copilot.message', { content });
+        } else {
+             const errorMessage: Message = {
                 id: uuidv4(),
                 role: 'assistant',
-                content: `I received your message: "${content}". Backend integration is pending.`
-            };
-            setMessages(prev => [...prev, aiMessage]);
-        } catch (error) {
-            console.error('Error sending message:', error);
-            const errorMessage: Message = {
-                id: uuidv4(),
-                role: 'assistant',
-                content: 'Sorry, I encountered an error processing your request.'
+                content: 'Error: Not connected to backend server. Please make sure the backend is running.'
             };
             setMessages(prev => [...prev, errorMessage]);
-        } finally {
             setIsLoading(false);
         }
     };
@@ -93,6 +116,7 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
             messages,
             isLoading,
             isPanelOpen,
+            isConnected,
             sendMessage,
             togglePanel,
             clearChat

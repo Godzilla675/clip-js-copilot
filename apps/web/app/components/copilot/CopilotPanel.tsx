@@ -1,10 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useCopilot } from '../../hooks/useCopilot';
 import ChatMessage from './ChatMessage';
-import { Send, X, Eraser } from 'lucide-react';
+import { Send, X, Eraser, Wifi, WifiOff } from 'lucide-react';
 
 export default function CopilotPanel() {
-    const { messages, isLoading, sendMessage, clearChat, togglePanel } = useCopilot();
+    const { messages, isLoading, sendMessage, clearChat, togglePanel, isConnected } = useCopilot();
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -38,6 +38,15 @@ export default function CopilotPanel() {
             <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                     <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">AI Copilot</span>
+                    {isConnected ? (
+                        <div title="Connected">
+                            <Wifi size={16} className="text-green-500" />
+                        </div>
+                    ) : (
+                        <div title="Disconnected">
+                            <WifiOff size={16} className="text-red-500" />
+                        </div>
+                    )}
                 </h2>
                 <div className="flex items-center gap-2">
                     <button
