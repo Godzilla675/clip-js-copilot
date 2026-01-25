@@ -30,11 +30,23 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
    ```
 
 2. **Environment Setup**:
-   Copy `.env.example` to `apps/backend/.env` and `apps/web/.env.local` and fill in your keys.
+
+   Copy `.env.example` to `apps/backend/.env` and `apps/web/.env.local`:
    ```bash
    cp .env.example apps/backend/.env
-   # Edit apps/backend/.env to add API keys (Anthropic/OpenAI, Pexels, etc.)
+   cp .env.example apps/web/.env.local
    ```
+
+   **Required Environment Variables:**
+
+   *Backend (`apps/backend/.env`)*:
+   - `LLM_PROVIDER`: `anthropic` or `openai`
+   - `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`: API key for the chosen provider.
+   - `PEXELS_API_KEY`: For video/image search.
+   - `UNSPLASH_ACCESS_KEY`: For image search.
+
+   *Frontend (`apps/web/.env.local`)*:
+   - `NEXT_PUBLIC_BACKEND_URL`: URL of the backend (e.g., `http://localhost:3001`).
 
 3. **Start Development**:
    ```bash

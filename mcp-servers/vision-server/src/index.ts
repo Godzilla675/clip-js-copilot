@@ -11,10 +11,10 @@ class VisionServer extends BaseMCPServer {
   }
 
   registerTools(): void {
-    registerExtractFramesTool(this.server);
-    registerAnalyzeFrameTool(this.server);
-    registerSceneDetectionTool(this.server);
-    registerDescribeSegmentTool(this.server);
+    registerExtractFramesTool(this.server as any);
+    registerAnalyzeFrameTool(this.server as any);
+    registerSceneDetectionTool(this.server as any);
+    registerDescribeSegmentTool(this.server as any);
   }
 }
 
