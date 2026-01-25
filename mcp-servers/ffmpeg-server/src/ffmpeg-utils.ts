@@ -3,7 +3,7 @@ import ffmpegPath from 'ffmpeg-static';
 import ffprobeStatic from 'ffprobe-static';
 
 if (ffmpegPath) {
-  ffmpeg.setFfmpegPath(ffmpegPath);
+  ffmpeg.setFfmpegPath(ffmpegPath as unknown as string);
 } else {
   console.warn('ffmpeg-static path not found, relying on system ffmpeg');
 }

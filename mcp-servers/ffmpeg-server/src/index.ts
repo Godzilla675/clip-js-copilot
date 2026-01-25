@@ -14,14 +14,14 @@ class FFmpegServer extends BaseMCPServer {
   }
 
   registerTools(): void {
-    registerGetVideoInfo(this.server);
-    registerTrimVideo(this.server);
-    registerConcatVideos(this.server);
-    registerAudioTools(this.server);
-    registerTextOverlayTool(this.server);
-    registerFilterTool(this.server);
-    registerSpeedTool(this.server);
-    registerExportTool(this.server);
+    registerGetVideoInfo(this.server as any);
+    registerTrimVideo(this.server as any);
+    registerConcatVideos(this.server as any);
+    registerAudioTools(this.server as any);
+    registerTextOverlayTool(this.server as any);
+    registerFilterTool(this.server as any);
+    registerSpeedTool(this.server as any);
+    registerExportTool(this.server as any);
   }
 }
 
