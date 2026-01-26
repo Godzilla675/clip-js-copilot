@@ -54,5 +54,32 @@ export const featuresGridList = {
                 alt: "Combine",
             },
         },
+        {
+            id: "7",
+            title: "AI Script Generation",
+            description: "Generate scripts from prompts.",
+            icon: {
+                url: "https://www.svgrepo.com/show/343214/no-sign.svg",
+                alt: "AI Script Generation",
+            },
+        },
+        {
+            id: "8",
+            title: "Smart Asset Search",
+            description: "Find stock footage/images with AI.",
+            icon: {
+                url: "https://www.svgrepo.com/show/343214/no-sign.svg",
+                alt: "Smart Asset Search",
+            },
+        },
+        {
+            id: "9",
+            title: "Video Understanding",
+            description: "Analyze video content for context.",
+            icon: {
+                url: "https://www.svgrepo.com/show/343214/no-sign.svg",
+                alt: "Video Understanding",
+            },
+        },
     ],
 };

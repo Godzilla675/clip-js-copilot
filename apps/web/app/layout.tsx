@@ -18,8 +18,8 @@ const geistMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ClipJS',
-  description: 'A free online video editor that enables you to edit videos directly from your web browser.',
+  title: 'Copilot AI Video Editor',
+  description: 'COPILOT AI POWERED VIDEO EDITING POWERED BY GITHUB COPILOT. A free online video editor that enables you to edit videos directly from your web browser.',
 }
 
 export default function RootLayout({

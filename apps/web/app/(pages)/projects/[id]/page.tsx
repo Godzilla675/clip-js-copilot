@@ -25,6 +25,8 @@ import ProjectName from "../../../components/editor/player/ProjectName";
 import CopilotButton from "@/app/components/editor/AssetsPanel/SidebarButtons/CopilotButton";
 import CopilotPanel from "@/app/components/copilot/CopilotPanel";
 import { useCopilot } from "@/app/hooks/useCopilot";
+import { Panel, Group as PanelGroup } from "react-resizable-panels";
+import ResizeHandle from "@/app/components/ui/ResizeHandle";
 
 export default function Project({ params }: { params: { id: string } }) {
     const { id } = params;
@@ -90,7 +92,7 @@ export default function Project({ params }: { params: { id: string } }) {
     };
 
     return (
-        <div className="flex flex-col h-screen select-none">
+        <div className="flex flex-col h-screen select-none overflow-hidden">
             {/* Loading screen */}
             {
                 isLoading ? (
@@ -102,125 +104,162 @@ export default function Project({ params }: { params: { id: string } }) {
                     </div>
                 ) : null
             }
-            <div className="flex flex-1 overflow-hidden">
-                {/* Left Sidebar - Buttons */}
-                <div className="flex-[0.1] min-w-[60px] max-w-[100px] border-r border-gray-700 overflow-y-auto p-4">
-                    <div className="flex flex-col space-y-2">
-                        <HomeButton />
-                        <TextButton onClick={() => handleFocus("text")} />
-                        <LibraryButton onClick={() => handleFocus("media")} />
-                        <ExportButton onClick={() => handleFocus("export")} />
-                        <CopilotButton />
-                        {/* TODO: add shortcuts guide but in a better way */}
-                        {/* <ShortcutsButton onClick={() => handleFocus("export")} /> */}
-                    </div>
-                </div>
 
-                {/* Add media and text */}
-                <div className="flex-[0.3] min-w-[200px] border-r border-gray-800 overflow-y-auto p-4">
-                    {activeSection === "media" && (
-                        <div>
-                            <h2 className="text-lg flex flex-row gap-2 items-center justify-center font-semibold mb-2">
-                                <AddMedia />
-                            </h2>
-                            <MediaList />
-                        </div>
-                    )}
-                    {activeSection === "text" && (
-                        <div>
-                            <AddText />
-                        </div>
-                    )}
-                    {activeSection === "export" && (
-                        <div>
-                            <h2 className="text-lg font-semibold mb-4">Export</h2>
-                            <ExportList />
-                        </div>
-                    )}
-                </div>
+            {/* Main Content with Resizable Panels */}
+            <PanelGroup orientation="vertical" className="h-full w-full">
 
-                {/* Center - Video Preview */}
-                <div className="flex items-center justify-center flex-col flex-[1] overflow-hidden">
-                    <ProjectName />
-                    <PreviewPlayer />
-                </div>
+                {/* Top Section: Workspace */}
+                <Panel defaultSize={75} minSize={30}>
+                    <div className="flex h-full w-full overflow-hidden">
+                        {/* Left Sidebar - Buttons (Fixed Width) */}
+                        <div className="w-[70px] flex-none border-r border-gray-700 overflow-y-auto p-4 flex flex-col items-center">
+                            <div className="flex flex-col space-y-4 w-full items-center">
+                                <HomeButton />
+                                <TextButton onClick={() => handleFocus("text")} />
+                                <LibraryButton onClick={() => handleFocus("media")} />
+                                <ExportButton onClick={() => handleFocus("export")} />
+                                <CopilotButton />
+                                {/* <ShortcutsButton onClick={() => handleFocus("export")} /> */}
+                            </div>
+                        </div>
 
-                {/* Right Sidebar - Element Properties or Copilot */}
-                <div className={`flex-[0.4] min-w-[200px] border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
-                    {isPanelOpen ? (
-                        <CopilotPanel />
-                    ) : (
-                        <>
-                            {activeElement === "media" && (
-                                <div>
-                                    <h2 className="text-lg font-semibold mb-4">Media Properties</h2>
-                                    <MediaProperties />
+                        {/* Resizable Horizontal Panels */}
+                        <PanelGroup orientation="horizontal">
+
+                            {/* Assets Panel (Add Media/Text) */}
+                            <Panel defaultSize={20} minSize={15}>
+                                <div className="h-full w-full border-r border-gray-800 overflow-y-auto p-4">
+                                    {activeSection === "media" && (
+                                        <div>
+                                            <h2 className="text-lg flex flex-row gap-2 items-center justify-center font-semibold mb-2">
+                                                <AddMedia />
+                                            </h2>
+                                            <MediaList />
+                                        </div>
+                                    )}
+                                    {activeSection === "text" && (
+                                        <div>
+                                            <AddText />
+                                        </div>
+                                    )}
+                                    {activeSection === "export" && (
+                                        <div>
+                                            <h2 className="text-lg font-semibold mb-4">Export</h2>
+                                            <ExportList />
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            {activeElement === "text" && (
-                                <div>
-                                    <h2 className="text-lg font-semibold mb-4">Text Properties</h2>
-                                    <TextProperties />
+                            </Panel>
+
+                            <ResizeHandle direction="horizontal" />
+
+                            {/* Center Panel (Video Preview) */}
+                            <Panel minSize={20}>
+                                <div className="h-full w-full flex items-center justify-center flex-col overflow-hidden bg-black/20">
+                                    <ProjectName />
+                                    <PreviewPlayer />
                                 </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </div>
-            {/* Timeline at bottom */}
-            <div className="flex flex-row border-t border-gray-500">
-                <div className=" bg-darkSurfacePrimary flex flex-col items-center justify-center mt-20">
+                            </Panel>
 
-                    <div className="relative h-16">
-                        <div className="flex items-center gap-2 p-4">
-                            <Image
-                                alt="Video"
-                                className="invert h-auto w-auto max-w-[30px] max-h-[30px]"
-                                height={30}
-                                width={30}
-                                src="https://www.svgrepo.com/show/532727/video.svg"
-                            />
+                            <ResizeHandle direction="horizontal" />
+
+                            {/* Right Panel (Properties or Copilot) */}
+                            <Panel defaultSize={25} minSize={15}>
+                                <div className={`h-full w-full border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
+                                    {isPanelOpen ? (
+                                        <CopilotPanel />
+                                    ) : (
+                                        <>
+                                            {activeElement === "media" && (
+                                                <div>
+                                                    <h2 className="text-lg font-semibold mb-4">Media Properties</h2>
+                                                    <MediaProperties />
+                                                </div>
+                                            )}
+                                            {activeElement === "text" && (
+                                                <div>
+                                                    <h2 className="text-lg font-semibold mb-4">Text Properties</h2>
+                                                    <TextProperties />
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </Panel>
+                        </PanelGroup>
+                    </div>
+                </Panel>
+
+                <ResizeHandle direction="vertical" />
+
+                {/* Bottom Section: Timeline */}
+                <Panel defaultSize={25} minSize={10}>
+                    <div className="flex flex-row h-full w-full border-t border-gray-500 overflow-hidden">
+                        {/* Timeline Sidebar Icons (Fixed Width matching top sidebar) */}
+                        <div className="w-[70px] flex-none bg-darkSurfacePrimary flex flex-col items-center justify-start pt-20 border-r border-gray-700/50">
+                             {/* Adjusted mt-20 to pt-20 and justify-start to better align with timeline tracks if needed,
+                                 but original had mt-20. Keeping original structure but fixing width.
+                             */}
+
+                            <div className="relative h-16 w-full flex justify-center">
+                                <div className="flex items-center gap-2 p-2">
+                                    <Image
+                                        alt="Video"
+                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
+                                        height={30}
+                                        width={30}
+                                        src="https://www.svgrepo.com/show/532727/video.svg"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative h-16 w-full flex justify-center">
+                                <div className="flex items-center gap-2 p-2">
+                                    <Image
+                                        alt="Music"
+                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
+                                        height={30}
+                                        width={30}
+                                        src="https://www.svgrepo.com/show/532708/music.svg"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative h-16 w-full flex justify-center">
+                                <div className="flex items-center gap-2 p-2">
+                                    <Image
+                                        alt="Image"
+                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
+                                        height={30}
+                                        width={30}
+                                        src="https://www.svgrepo.com/show/535454/image.svg"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="relative h-16 w-full flex justify-center">
+                                <div className="flex items-center gap-2 p-2">
+                                    <Image
+                                        alt="Text"
+                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
+                                        height={30}
+                                        width={30}
+                                        src="https://www.svgrepo.com/show/535686/text.svg"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Timeline Content */}
+                        <div className="flex-1 h-full overflow-hidden relative">
+                             {/* The Timeline component likely handles its own scrolling or fits parent.
+                                 Giving it a wrapper to ensure it takes available space.
+                             */}
+                             <Timeline />
                         </div>
                     </div>
-
-                    <div className="relative h-16">
-                        <div className="flex items-center gap-2 p-4">
-                            <Image
-                                alt="Video"
-                                className="invert h-auto w-auto max-w-[30px] max-h-[30px]"
-                                height={30}
-                                width={30}
-                                src="https://www.svgrepo.com/show/532708/music.svg"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="relative h-16">
-                        <div className="flex items-center gap-2 p-4">
-                            <Image
-                                alt="Video"
-                                className="invert h-auto w-auto max-w-[30px] max-h-[30px]"
-                                height={30}
-                                width={30}
-                                src="https://www.svgrepo.com/show/535454/image.svg"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="relative h-16">
-                        <div className="flex items-center gap-2 p-4">
-                            <Image
-                                alt="Video"
-                                className="invert h-auto w-auto max-w-[30px] max-h-[30px]"
-                                height={30}
-                                width={30}
-                                src="https://www.svgrepo.com/show/535686/text.svg"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <Timeline />
-            </div>
+                </Panel>
+            </PanelGroup>
         </div >
     );
 }

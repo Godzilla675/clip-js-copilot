@@ -60,6 +60,11 @@ export class MCPClientManager {
     }
   }
 
+  async disconnectAll(): Promise<void> {
+    const names = Array.from(this.clients.keys());
+    await Promise.all(names.map(name => this.disconnectServer(name)));
+  }
+
   async listTools(serverName: string): Promise<Tool[]> {
     const client = this.clients.get(serverName);
     if (!client) {
