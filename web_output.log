@@ -2,11 +2,19 @@
 > ai-video-editor@ dev:web /app
 > turbo dev --filter=@ai-video-editor/web
 
+
+Attention:
+Turborepo now collects completely anonymous telemetry regarding usage.
+This information is used to shape the Turborepo roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://turborepo.dev/docs/telemetry
+
 • turbo 2.7.6
 • Packages in scope: @ai-video-editor/web
 • Running dev in 1 packages
 • Remote caching disabled
 @ai-video-editor/web:dev: cache bypass, force executing e88698b1477dc06d
+@ai-video-editor/web:dev: cache bypass, force executing cf148647a8910b18
 @ai-video-editor/web:dev:
 @ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
 @ai-video-editor/web:dev: > next dev
@@ -23,3 +31,27 @@
 @ai-video-editor/web:dev:  GET /projects 200 in 51ms
 @ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
 @ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 5.7s (1419 modules)
+@ai-video-editor/web:dev:  ✓ Ready in 1770ms
+@ai-video-editor/web:dev:  ○ Compiling /projects ...
+@ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2ZL7W0Q5n-wU.woff2 failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1pL7W0Q5n-wU.woff2 failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2pL7W0Q5n-wU.woff2 failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7W0Q5n-wU.woff2 failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2 failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev:  ✓ Compiled /projects in 6.5s (705 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 585ms (337 modules)
+@ai-video-editor/web:dev:  GET /projects 200 in 7122ms
+@ai-video-editor/web:dev:  GET /projects 200 in 119ms
+@ai-video-editor/web:dev:  GET /projects 200 in 55ms
+@ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
+@ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 8.3s (1419 modules)

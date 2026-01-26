@@ -2,6 +2,7 @@ import { TextElement } from "@/app/types";
 import { useAppDispatch, useAppSelector } from "@/app/store";
 import { setTextElements } from "@/app/store/slices/projectSlice";
 import { Sequence } from "remotion";
+import { useDraggable } from "@/app/hooks/useDraggable";
 
 const REMOTION_SAFE_FRAME = 0;
 
@@ -41,38 +42,11 @@ export const TextSequenceItem: React.FC<{ item: TextElement; options: SequenceIt
         )));
     };
 
-    // TODO: Extract this logic to be reusable for other draggable items
-    const handleMouseDown = (e: React.MouseEvent) => {
-        e.preventDefault();
-        const startX = e.clientX;
-        const startY = e.clientY;
-
-        // TODO: This needs a more reliable way to get the scaled container
-        const container = document.querySelector('.__remotion-player') as HTMLElement; 
-        const rect = container.getBoundingClientRect();
-        const scaleX = rect.width / container.offsetWidth;
-        const scaleY = rect.height / container.offsetHeight;
-
-        const handleMouseMove = (e: MouseEvent) => {
-            const diffX = e.clientX - startX;
-            const diffY = e.clientY - startY;
-            onUpdateText(item.id, { x: item.x + diffX / scaleX, y: item.y + diffY / scaleY});
-            
-            // handleTextChange fonksiyonu varsa pozisyon güncellemesini bildir
-            if (handleTextChange) {
-                // Burada pozisyon değişikliğini parent component'e bildirebiliriz
-                // handleTextChange(item.id, `position:${newX},${newY}`);
-            }
-        };
-
-        const handleMouseUp = () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    };
+    const { handleMouseDown } = useDraggable({
+        x: item.x,
+        y: item.y,
+        onUpdate: (x, y) => onUpdateText(item.id, { x, y }),
+    });
 
     // TODO: add more options for text
     return (
@@ -94,6 +68,19 @@ export const TextSequenceItem: React.FC<{ item: TextElement; options: SequenceIt
                 // backgroundColor: item.backgroundColor || "transparent",
                 opacity: item.opacity! / 100,
                 fontFamily: item.font || "Arial",
+                fontWeight: item.fontWeight || "normal",
+                fontStyle: item.fontStyle || "normal",
+                textDecoration: item.textDecoration || "none",
+                textAlign: (item.align || "center") as any,
+                textTransform: (item.textTransform || "none") as any,
+                letterSpacing: item.letterSpacing ? `${item.letterSpacing}px` : undefined,
+                lineHeight: item.lineHeight || 1.2,
+                textShadow: item.shadowColor
+                    ? `${item.shadowOffsetX || 0}px ${item.shadowOffsetY || 0}px ${item.shadowBlur || 0}px ${item.shadowColor}`
+                    : undefined,
+                WebkitTextStroke: item.outlineWidth && item.outlineColor
+                    ? `${item.outlineWidth}px ${item.outlineColor}`
+                    : undefined,
             }}
         >
             <div

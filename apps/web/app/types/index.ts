@@ -52,10 +52,25 @@ export interface TextElement {
     // Styling
     font?: string;                   // Font family (e.g., 'Arial', 'Roboto')
     fontSize?: number;               // Font size in pixels
+    fontWeight?: string;             // Font weight (e.g., 'normal', 'bold', '400')
+    fontStyle?: string;              // Font style (e.g., 'normal', 'italic')
+    textDecoration?: string;         // Text decoration (e.g., 'none', 'underline')
+    textTransform?: string;          // Text transform (e.g., 'uppercase')
+    letterSpacing?: number;          // Letter spacing in pixels
+    lineHeight?: number;             // Line height (multiplier or px)
+
     color?: string;                  // Text color (hex or rgba)
     backgroundColor?: string;       // Background behind text
     align?: 'left' | 'center' | 'right'; // Horizontal alignment
     zIndex?: number;                 // Layering
+
+    // Advanced Effects
+    shadowColor?: string;
+    shadowBlur?: number;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    outlineColor?: string;
+    outlineWidth?: number;
 
     // Effects
     opacity?: number;                // Transparency (0 to 1)
@@ -75,7 +90,7 @@ export interface ExportConfig {
     resolution: string;
     quality: string;
     speed: string;
-    fps: number; // TODO: add this as an option
+    fps: number;
     format: ExportFormat; // TODO: add this as an option
     includeSubtitles: boolean;
 }
@@ -118,5 +133,15 @@ export const mimeToExt = {
     'image/png': 'png',
     'image/webp': 'webp',
     'video/webm': 'webm',
+    'image/gif': 'gif',
+    'image/bmp': 'bmp',
+    'image/tiff': 'tiff',
+    'video/quicktime': 'mov',
+    'video/x-msvideo': 'avi',
+    'video/x-matroska': 'mkv',
+    'video/ogg': 'ogv',
+    'audio/aac': 'aac',
+    'audio/ogg': 'ogg',
+    'audio/webm': 'weba',
     // TODO: Add more as needed
 };

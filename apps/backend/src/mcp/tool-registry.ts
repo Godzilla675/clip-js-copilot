@@ -13,7 +13,9 @@ export class ToolRegistry {
   async initialize(): Promise<void> {
     console.log('Initializing ToolRegistry...');
     const clients = this.clientManager.getAllClients();
-    for (const [serverName, client] of clients.entries()) {
+
+    await Promise.all(
+      Array.from(clients.entries()).map(async ([serverName, client]) => {
         try {
             const result = await client.listTools();
             for (const tool of result.tools) {
@@ -23,26 +25,30 @@ export class ToolRegistry {
         } catch (error) {
             console.error(`Failed to fetch tools from ${serverName}:`, error);
         }
-    }
+      })
+    );
   }
 
   async getTools(): Promise<Tool[]> {
-      const allTools: Tool[] = [];
       const clients = this.clientManager.getAllClients();
 
-      for (const [serverName, client] of clients.entries()) {
-          try {
-              const result = await client.listTools();
-              allTools.push(...result.tools);
-              // Update map
-              for (const tool of result.tools) {
-                  this.toolToServer.set(tool.name, serverName);
-              }
-          } catch (e) {
-              console.error(`Error listing tools for ${serverName}`, e);
-          }
-      }
-      return allTools;
+      const results = await Promise.all(
+        Array.from(clients.entries()).map(async ([serverName, client]) => {
+            try {
+                const result = await client.listTools();
+                // Update map
+                for (const tool of result.tools) {
+                    this.toolToServer.set(tool.name, serverName);
+                }
+                return result.tools;
+            } catch (e) {
+                console.error(`Error listing tools for ${serverName}`, e);
+                return [];
+            }
+        })
+      );
+
+      return results.flat();
   }
 
   getServerForTool(toolName: string): string | undefined {
