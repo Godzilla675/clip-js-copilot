@@ -158,12 +158,11 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 if (textElements.length > 0) {
                     // load fonts
                     let fonts = ['Arial', 'Inter', 'Lato'];
-                    for (let i = 0; i < fonts.length; i++) {
-                        const font = fonts[i];
+                    await Promise.all(fonts.map(async (font) => {
                         const res = await fetch(`/fonts/${font}.ttf`);
                         const fontBuf = await res.arrayBuffer();
                         await ffmpeg.writeFile(`font${font}.ttf`, new Uint8Array(fontBuf));
-                    }
+                    }));
                     // Apply text
                     for (let i = 0; i < textElements.length; i++) {
                         const text = textElements[i];
