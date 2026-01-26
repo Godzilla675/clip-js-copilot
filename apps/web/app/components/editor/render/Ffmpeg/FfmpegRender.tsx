@@ -63,17 +63,24 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 // Sort videos by zIndex ascending (lowest drawn first)
                 const sortedMediaFiles = [...mediaFiles].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
 
+                // Load all files in parallel
+                const loadedFiles = await Promise.all(sortedMediaFiles.map(async (file, i) => {
+                    const fileData = await getFile(file.fileId);
+                    const buffer = await fileData.arrayBuffer();
+                    const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
+                    const fileName = `input${i}.${ext}`;
+                    await ffmpeg.writeFile(fileName, new Uint8Array(buffer));
+                    return { ext, fileName };
+                }));
+
                 for (let i = 0; i < sortedMediaFiles.length; i++) {
 
                     // timing
                     const { startTime, positionStart, positionEnd } = sortedMediaFiles[i];
                     const duration = positionEnd - positionStart;
 
-                    // get the file data and write to ffmpeg
-                    const fileData = await getFile(sortedMediaFiles[i].fileId);
-                    const buffer = await fileData.arrayBuffer();
-                    const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
-                    await ffmpeg.writeFile(`input${i}.${ext}`, new Uint8Array(buffer));
+                    // Use pre-loaded file info
+                    const { ext } = loadedFiles[i];
 
                     // TODO: currently we have to write same file if it's used more than once in different clips the below approach is a good start to change this 
                     // let wroteFiles = new Map<string, string>();
