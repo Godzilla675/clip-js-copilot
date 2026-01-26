@@ -3,12 +3,29 @@ import { ProjectManager } from '../project/state.js';
 import { LLMOrchestrator } from '../llm/orchestrator.js';
 import { toolRegistry, mcpClientManager } from '../mcp/index.js';
 import { buildSystemPrompt } from '../llm/system-prompt.js';
-import { Message } from '@ai-video-editor/shared-types';
+import { Message, ToolCall, MessageToolResult } from '@ai-video-editor/shared-types';
 
 interface WSMessage {
   type: string;
   payload: any;
 }
+
+const LOCAL_TOOLS = [{
+    name: 'add_clip',
+    description: 'Add a clip to the project timeline. Requires assetId, trackId, and startTime.',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            projectId: { type: 'string', description: 'The ID of the project' },
+            assetId: { type: 'string', description: 'The ID of the asset to add' },
+            trackId: { type: 'string', description: 'The ID of the track to add to' },
+            startTime: { type: 'number', description: 'Start time in seconds on the timeline' },
+            clipDuration: { type: 'number', description: 'Duration of the clip in seconds (optional, defaults to asset duration)' },
+            sourceStart: { type: 'number', description: 'Start time in source media (optional, defaults to 0)' }
+        },
+        required: ['projectId', 'assetId', 'trackId', 'startTime']
+    }
+}];
 
 export class WebSocketHandler {
   private wss: WebSocketServer;
@@ -84,28 +101,8 @@ export class WebSocketHandler {
 
     try {
         const project = projectId ? this.projectManager.getProject(projectId) : undefined;
-
         const tools = await toolRegistry.getTools();
-
-        // Add local tools
-        const localTools = [{
-            name: 'add_clip',
-            description: 'Add a clip to the project timeline. Requires assetId, trackId, and startTime.',
-            inputSchema: {
-                type: 'object',
-                properties: {
-                    projectId: { type: 'string', description: 'The ID of the project' },
-                    assetId: { type: 'string', description: 'The ID of the asset to add' },
-                    trackId: { type: 'string', description: 'The ID of the track to add to' },
-                    startTime: { type: 'number', description: 'Start time in seconds on the timeline' },
-                    clipDuration: { type: 'number', description: 'Duration of the clip in seconds (optional, defaults to asset duration)' },
-                    sourceStart: { type: 'number', description: 'Start time in source media (optional, defaults to 0)' }
-                },
-                required: ['projectId', 'assetId', 'trackId', 'startTime']
-            }
-        }];
-
-        const allTools = [...tools, ...localTools];
+        const allTools = [...tools, ...LOCAL_TOOLS];
         const systemPrompt = buildSystemPrompt({ project, tools: allTools as any });
 
         const wsWithHistory = ws as any;
@@ -113,6 +110,7 @@ export class WebSocketHandler {
             wsWithHistory.chatHistory = [];
         }
 
+        // Add user message
         wsWithHistory.chatHistory.push({ role: 'user', content });
 
         const fullMessages: Message[] = [
@@ -120,101 +118,8 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
-        const stream = this.orchestrator.streamChat(fullMessages, allTools as any);
-        let assistantContent = '';
-
-        for await (const chunk of stream) {
-            if (chunk.content) {
-                assistantContent += chunk.content;
-                ws.send(JSON.stringify({
-                    type: 'copilot.response',
-                    payload: { content: chunk.content, done: false }
-                }));
-            }
-
-            if (chunk.toolCall && chunk.toolCall.toolName && chunk.toolCall.args) {
-                const toolName = chunk.toolCall.toolName;
-                const args = chunk.toolCall.args;
-
-                ws.send(JSON.stringify({
-                    type: 'copilot.tool_call',
-                    payload: { tool: toolName, args }
-                }));
-
-                try {
-                    let result: any;
-
-                    if (toolName === 'add_clip') {
-                        try {
-                            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-                            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
-                            result = { success: true, message: 'Clip added successfully', clip };
-                        } catch (error: any) {
-                             result = { error: error.message };
-                        }
-                    } else {
-                        const serverName = toolRegistry.getServerForTool(toolName);
-                        result = { error: 'Tool server not found' };
-
-                        if (serverName) {
-                            result = await mcpClientManager.callTool(serverName, toolName, args);
-                        }
-                    }
-
-                    ws.send(JSON.stringify({
-                        type: 'copilot.tool_result',
-                        payload: { tool: toolName, result }
-                    }));
-
-                    if (assistantContent) {
-                        wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
-                        assistantContent = '';
-                    }
-
-                    wsWithHistory.chatHistory.push({
-                        role: 'assistant',
-                        content: `Requesting tool: ${toolName}`
-                    });
-
-                    wsWithHistory.chatHistory.push({
-                            role: 'user',
-                            content: `Tool '${toolName}' result: ${JSON.stringify(result)}`
-                    });
-
-                    // Trigger next turn
-                    const nextMessages: Message[] = [
-                        { role: 'system', content: systemPrompt },
-                        ...wsWithHistory.chatHistory
-                    ];
-
-                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any);
-                        for await (const nextChunk of nextStream) {
-                            if (nextChunk.content) {
-                                assistantContent += nextChunk.content;
-                                ws.send(JSON.stringify({
-                                    type: 'copilot.response',
-                                    payload: { content: nextChunk.content, done: false }
-                                }));
-                            }
-                        }
-
-                } catch (err: any) {
-                    ws.send(JSON.stringify({
-                        type: 'copilot.response',
-                        payload: { content: `\nError executing tool: ${err.message}`, done: false }
-                    }));
-                }
-            }
-        }
-
-        if (assistantContent) {
-            wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
-        }
-
-        ws.send(JSON.stringify({
-            type: 'copilot.response',
-            payload: { content: '', done: true }
-        }));
+        // Start recursive loop
+        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt);
 
     } catch (error: any) {
         console.error('Copilot handling error:', error);
@@ -223,6 +128,129 @@ export class WebSocketHandler {
             payload: { content: `Error: ${error.message}`, done: true }
         }));
     }
+  }
+
+  private async runAgentLoop(
+      ws: WebSocket,
+      messages: Message[],
+      tools: any[],
+      wsWithHistory: any,
+      systemPrompt: string,
+      depth: number = 0
+  ) {
+      if (depth > 10) {
+          ws.send(JSON.stringify({
+              type: 'copilot.response',
+              payload: { content: "\n[System] Tool recursion limit reached.", done: true }
+          }));
+          return;
+      }
+
+      const stream = this.orchestrator.streamChat(messages, tools);
+
+      let assistantContent = '';
+      const collectedToolCalls: ToolCall[] = [];
+
+      for await (const chunk of stream) {
+          if (chunk.content) {
+              assistantContent += chunk.content;
+              ws.send(JSON.stringify({
+                  type: 'copilot.response',
+                  payload: { content: chunk.content, done: false }
+              }));
+          }
+
+          if (chunk.toolCall) {
+              collectedToolCalls.push(chunk.toolCall);
+
+              // Notify frontend of tool call
+              ws.send(JSON.stringify({
+                  type: 'copilot.tool_call',
+                  payload: { tool: chunk.toolCall.toolName, args: chunk.toolCall.args }
+              }));
+          }
+      }
+
+      // Add the assistant's turn to history
+      const assistantMessage: Message = {
+          role: 'assistant',
+          content: assistantContent,
+          toolCalls: collectedToolCalls.length > 0 ? collectedToolCalls : undefined
+      };
+
+      wsWithHistory.chatHistory.push(assistantMessage);
+
+      // If no tools, we are done
+      if (collectedToolCalls.length === 0) {
+          ws.send(JSON.stringify({
+              type: 'copilot.response',
+              payload: { content: '', done: true }
+          }));
+          return;
+      }
+
+      // Execute tools
+      const toolResults: MessageToolResult[] = [];
+
+      for (const toolCall of collectedToolCalls) {
+          const { toolName, args, toolCallId } = toolCall;
+          let result: any;
+          let isError = false;
+
+          try {
+              if (toolName === 'add_clip') {
+                  try {
+                      const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+                      const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+                      result = { success: true, message: 'Clip added successfully', clip };
+                  } catch (error: any) {
+                       result = { error: error.message };
+                       isError = true;
+                  }
+              } else {
+                  const serverName = toolRegistry.getServerForTool(toolName);
+                  if (!serverName) {
+                      result = { error: 'Tool server not found' };
+                      isError = true;
+                  } else {
+                      result = await mcpClientManager.callTool(serverName, toolName, args);
+                  }
+              }
+          } catch (err: any) {
+              result = { error: err.message };
+              isError = true;
+          }
+
+          // Send result to frontend
+          ws.send(JSON.stringify({
+              type: 'copilot.tool_result',
+              payload: { tool: toolName, result }
+          }));
+
+          toolResults.push({
+              toolCallId,
+              toolName,
+              result,
+              isError
+          });
+      }
+
+      // Add all results to history as a single user message (required for Anthropic parallel tool use)
+      if (toolResults.length > 0) {
+          wsWithHistory.chatHistory.push({
+              role: 'user',
+              content: '',
+              toolResults
+          });
+      }
+
+      // Recursively call for next turn
+      const nextMessages: Message[] = [
+          { role: 'system', content: systemPrompt },
+          ...wsWithHistory.chatHistory
+      ];
+
+      await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1);
   }
 
   private broadcast(message: any) {
