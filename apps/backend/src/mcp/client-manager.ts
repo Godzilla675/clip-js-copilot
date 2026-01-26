@@ -30,6 +30,7 @@ export class MCPClientManager {
         command,
         args,
         env: mergedEnv
+        env: mergedEnv ?? process.env as Record<string, string>
       });
 
       const client = new Client(
