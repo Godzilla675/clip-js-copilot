@@ -203,6 +203,7 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                     '-c:a', 'aac',
                     '-preset', params.preset,
                     '-crf', params.crf.toString(),
+                    '-r', `${exportSettings.fps}`,
                     '-t', totalDuration.toFixed(3),
                     'output.mp4'
                 );

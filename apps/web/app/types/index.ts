@@ -75,7 +75,7 @@ export interface ExportConfig {
     resolution: string;
     quality: string;
     speed: string;
-    fps: number; // TODO: add this as an option
+    fps: number;
     format: ExportFormat; // TODO: add this as an option
     includeSubtitles: boolean; // TODO: add this as an option
 }
