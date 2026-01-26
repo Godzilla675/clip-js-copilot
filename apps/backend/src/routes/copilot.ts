@@ -32,7 +32,16 @@ export function createCopilotRouter(
         { role: 'user', content }
       ];
 
-      let currentResult = await orchestrator.chat(messages, tools as any);
+      const executeTool = async (name: string, args: any) => {
+        const serverName = toolRegistry.getServerForTool(name);
+        if (serverName) {
+          return await mcpClientManager.callTool(serverName, name, args);
+        } else {
+          throw new Error(`Tool '${name}' not found.`);
+        }
+      };
+
+      let currentResult = await orchestrator.chat(messages, tools as any, executeTool);
       let iterations = 0;
       const MAX_ITERATIONS = 5;
 

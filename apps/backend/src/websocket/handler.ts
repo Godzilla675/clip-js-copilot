@@ -4,6 +4,7 @@ import { LLMOrchestrator } from '../llm/orchestrator.js';
 import { toolRegistry, mcpClientManager } from '../mcp/index.js';
 import { buildSystemPrompt } from '../llm/system-prompt.js';
 import { Message, ToolCall, MessageToolResult } from '@ai-video-editor/shared-types';
+import { ToolExecutor } from '../llm/types.js';
 
 interface WSMessage {
   type: string;
@@ -136,7 +137,30 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
-        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, this.executeTool.bind(this));
+        // Define a wrapper for tool execution that sends notifications
+        const executeToolWithNotifications: ToolExecutor = async (toolName: string, args: any) => {
+            ws.send(JSON.stringify({
+                type: 'copilot.tool_call',
+                payload: { tool: toolName, args }
+            }));
+            try {
+                const result = await this.executeTool(toolName, args);
+                ws.send(JSON.stringify({
+                    type: 'copilot.tool_result',
+                    payload: { tool: toolName, result }
+                }));
+                return result;
+            } catch (error: any) {
+                 const result = { error: error.message };
+                 ws.send(JSON.stringify({
+                    type: 'copilot.tool_result',
+                    payload: { tool: toolName, result }
+                 }));
+                 return result;
+            }
+        };
+
+        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, executeToolWithNotifications);
         let assistantContent = '';
 
         for await (const chunk of stream) {
@@ -151,6 +175,10 @@ export class WebSocketHandler {
             if (chunk.toolCall && chunk.toolCall.toolName && chunk.toolCall.args) {
                 const toolName = chunk.toolCall.toolName;
                 const args = chunk.toolCall.args;
+
+                // For providers returning toolCalls (Orchestrated), we still notify manually here
+                // Note: If using Agentic provider (Copilot), this block is skipped, but executeToolWithNotifications handles it.
+                // If using Orchestrated provider (Anthropic), this block runs.
 
                 ws.send(JSON.stringify({
                     type: 'copilot.tool_call',
@@ -186,7 +214,9 @@ export class WebSocketHandler {
                         ...wsWithHistory.chatHistory
                     ];
 
-                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, this.executeTool.bind(this));
+                    // Recursive call for next chunk in this turn (for Orchestrated providers)
+                    // We also pass executeToolWithNotifications just in case
+                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, executeToolWithNotifications);
                         for await (const nextChunk of nextStream) {
                             if (nextChunk.content) {
                                 assistantContent += nextChunk.content;
@@ -214,8 +244,9 @@ export class WebSocketHandler {
             type: 'copilot.response',
             payload: { content: '', done: true }
         }));
-        // Start recursive loop
-        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt);
+
+        // Start recursive loop for subsequent turns
+        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt, 0, executeToolWithNotifications);
 
     } catch (error: any) {
         console.error('Copilot handling error:', error);
@@ -232,7 +263,8 @@ export class WebSocketHandler {
       tools: any[],
       wsWithHistory: any,
       systemPrompt: string,
-      depth: number = 0
+      depth: number = 0,
+      executeTool?: ToolExecutor
   ) {
       if (depth > 10) {
           ws.send(JSON.stringify({
@@ -242,7 +274,8 @@ export class WebSocketHandler {
           return;
       }
 
-      const stream = this.orchestrator.streamChat(messages, tools);
+      // Pass executeTool (Agentic providers will use it)
+      const stream = this.orchestrator.streamChat(messages, tools, executeTool);
 
       let assistantContent = '';
       const collectedToolCalls: ToolCall[] = [];
@@ -259,7 +292,7 @@ export class WebSocketHandler {
           if (chunk.toolCall) {
               collectedToolCalls.push(chunk.toolCall);
 
-              // Notify frontend of tool call
+              // Notify frontend of tool call (Orchestrated providers)
               ws.send(JSON.stringify({
                   type: 'copilot.tool_call',
                   payload: { tool: chunk.toolCall.toolName, args: chunk.toolCall.args }
@@ -285,7 +318,7 @@ export class WebSocketHandler {
           return;
       }
 
-      // Execute tools
+      // Execute tools (Orchestrated providers)
       const toolResults: MessageToolResult[] = [];
 
       for (const toolCall of collectedToolCalls) {
@@ -346,7 +379,7 @@ export class WebSocketHandler {
           ...wsWithHistory.chatHistory
       ];
 
-      await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1);
+      await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1, executeTool);
   }
 
   private broadcast(message: any) {
