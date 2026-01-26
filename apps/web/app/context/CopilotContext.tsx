@@ -25,6 +25,9 @@ interface CopilotContextType {
     isLoading: boolean;
     isPanelOpen: boolean;
     isConnected: boolean;
+    models: string[];
+    selectedModel: string;
+    setSelectedModel: (model: string) => void;
     sendMessage: (content: string) => Promise<void>;
     togglePanel: () => void;
     clearChat: () => void;
@@ -42,8 +45,21 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
     ]);
     const [isLoading, setIsLoading] = useState(false);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [models, setModels] = useState<string[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string>('');
 
     const { client, isConnected, send } = useWebSocket();
+
+    useEffect(() => {
+        api.copilot.getModels()
+            .then(fetchedModels => {
+                setModels(fetchedModels);
+                if (fetchedModels && fetchedModels.length > 0) {
+                    setSelectedModel(fetchedModels[0]);
+                }
+            })
+            .catch(err => console.error('Failed to fetch models:', err));
+    }, []);
 
     useEffect(() => {
         // Listen for AI responses
@@ -178,12 +194,12 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             if (isConnected) {
-                send('copilot.message', { content });
+                send('copilot.message', { content, model: selectedModel });
             } else {
                 // Fallback to REST API if not connected
                 // Note: The backend might not support streaming via REST same way as WS in this architecture
                 // But for now let's try calling it.
-                await api.copilot.sendMessage(content);
+                await api.copilot.sendMessage(content, selectedModel);
                 // The REST API might return the full response or just trigger the process.
                 // If it triggers the process, we still need WS for updates.
                 // If WS is down, we might be stuck.
@@ -221,6 +237,9 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
             isLoading,
             isPanelOpen,
             isConnected,
+            models,
+            selectedModel,
+            setSelectedModel,
             sendMessage,
             togglePanel,
             clearChat

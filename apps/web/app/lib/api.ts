@@ -37,7 +37,8 @@ export const api = {
         export: (id: string) => get(`/api/project/${id}/export`),
     },
     copilot: {
-        sendMessage: (content: string) => post('/api/copilot/chat', { content }),
+        sendMessage: (content: string, model?: string) => post('/api/copilot/chat', { content, model }),
+        getModels: () => get('/api/copilot/models'),
     },
     tools: {
         list: () => get('/api/tools'),

@@ -1,11 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useCopilot } from '../../hooks/useCopilot';
 import ChatMessage from './ChatMessage';
-import { Send, X, Eraser } from 'lucide-react';
+import CopilotSettings from './CopilotSettings';
+import { Send, X, Eraser, Settings } from 'lucide-react';
 
 export default function CopilotPanel() {
     const { messages, isLoading, isConnected, sendMessage, clearChat, togglePanel } = useCopilot();
     const [inputValue, setInputValue] = useState('');
+    const [showSettings, setShowSettings] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -46,6 +48,13 @@ export default function CopilotPanel() {
                 </div>
                 <div className="flex items-center gap-2">
                     <button
+                        onClick={() => setShowSettings(!showSettings)}
+                        className={`p-1.5 hover:bg-gray-800 rounded-md transition-colors ${showSettings ? 'text-blue-400' : 'text-gray-400 hover:text-white'}`}
+                        title="Settings"
+                    >
+                        <Settings size={18} />
+                    </button>
+                    <button
                         onClick={clearChat}
                         className="p-1.5 hover:bg-gray-800 rounded-md text-gray-400 hover:text-white transition-colors"
                         title="Clear chat"
@@ -61,6 +70,8 @@ export default function CopilotPanel() {
                     </button>
                 </div>
             </div>
+
+            {showSettings && <CopilotSettings />}
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">

@@ -116,7 +116,7 @@ export class WebSocketHandler {
   }
 
   private async handleCopilotMessage(ws: WebSocket, payload: any) {
-    const { content, projectId } = payload;
+    const { content, projectId, model } = payload;
 
     try {
         const project = projectId ? this.projectManager.getProject(projectId) : undefined;
@@ -160,7 +160,7 @@ export class WebSocketHandler {
             }
         };
 
-        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, executeToolWithNotifications);
+        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, executeToolWithNotifications, { model });
         let assistantContent = '';
 
         for await (const chunk of stream) {
@@ -216,7 +216,7 @@ export class WebSocketHandler {
 
                     // Recursive call for next chunk in this turn (for Orchestrated providers)
                     // We also pass executeToolWithNotifications just in case
-                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, executeToolWithNotifications);
+                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, executeToolWithNotifications, { model });
                         for await (const nextChunk of nextStream) {
                             if (nextChunk.content) {
                                 assistantContent += nextChunk.content;
@@ -246,7 +246,7 @@ export class WebSocketHandler {
         }));
 
         // Start recursive loop for subsequent turns
-        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt, 0, executeToolWithNotifications);
+        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt, 0, executeToolWithNotifications, model);
 
     } catch (error: any) {
         console.error('Copilot handling error:', error);
@@ -264,7 +264,8 @@ export class WebSocketHandler {
       wsWithHistory: any,
       systemPrompt: string,
       depth: number = 0,
-      executeTool?: ToolExecutor
+      executeTool?: ToolExecutor,
+      model?: string
   ) {
       if (depth > 10) {
           ws.send(JSON.stringify({
@@ -275,7 +276,7 @@ export class WebSocketHandler {
       }
 
       // Pass executeTool (Agentic providers will use it)
-      const stream = this.orchestrator.streamChat(messages, tools, executeTool);
+      const stream = this.orchestrator.streamChat(messages, tools, executeTool, { model });
 
       let assistantContent = '';
       const collectedToolCalls: ToolCall[] = [];
@@ -379,7 +380,7 @@ export class WebSocketHandler {
           ...wsWithHistory.chatHistory
       ];
 
-      await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1, executeTool);
+      await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1, executeTool, model);
   }
 
   private broadcast(message: any) {

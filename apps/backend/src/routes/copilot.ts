@@ -11,9 +11,19 @@ export function createCopilotRouter(
 ): Router {
   const router = Router();
 
+  router.get('/models', async (req, res) => {
+    try {
+      const models = await orchestrator.getModels();
+      res.json(models);
+    } catch (error: any) {
+      console.error('Failed to fetch models:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   router.post('/chat', async (req, res) => {
     try {
-      const { content, projectId } = req.body;
+      const { content, projectId, model } = req.body;
 
       const project = projectId ? projectManager.getProject(projectId) : undefined;
 
@@ -41,7 +51,7 @@ export function createCopilotRouter(
         }
       };
 
-      let currentResult = await orchestrator.chat(messages, tools as any, executeTool);
+      let currentResult = await orchestrator.chat(messages, tools as any, executeTool, { model });
       let iterations = 0;
       const MAX_ITERATIONS = 5;
 
@@ -75,7 +85,7 @@ export function createCopilotRouter(
         }
 
         // Call LLM again
-        currentResult = await orchestrator.chat(messages, tools as any);
+        currentResult = await orchestrator.chat(messages, tools as any, undefined, { model });
       }
 
       res.json({ content: currentResult.content });

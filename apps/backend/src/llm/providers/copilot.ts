@@ -1,6 +1,6 @@
 import path from 'path';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from '../types';
 
 export class CopilotProvider implements LLMProviderInterface {
   private client: any;
@@ -43,17 +43,21 @@ export class CopilotProvider implements LLMProviderInterface {
       return this.client;
   }
 
-  async getModels(): Promise<any[]> {
+  async getModels(): Promise<string[]> {
       const client = await this.getClient();
       if (client.listModels) {
-          return await client.listModels();
+          const models = await client.listModels();
+          return models.map((m: any) => {
+              if (typeof m === 'string') return m;
+              return m.id || m.name || m.slug || m.model || JSON.stringify(m);
+          });
       }
       return [];
   }
 
-  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const client = await this.getClient();
-    const session = await this.createSession(client, messages, tools, executeTool, false);
+    const session = await this.createSession(client, messages, tools, executeTool, false, options?.model);
     const prompt = this.formatHistory(messages);
 
     if (!prompt) return { content: '' };
@@ -75,9 +79,9 @@ export class CopilotProvider implements LLMProviderInterface {
     }
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
     const client = await this.getClient();
-    const session = await this.createSession(client, messages, tools, executeTool, true);
+    const session = await this.createSession(client, messages, tools, executeTool, true, options?.model);
     const prompt = this.formatHistory(messages);
 
     if (!prompt) {
@@ -152,7 +156,7 @@ export class CopilotProvider implements LLMProviderInterface {
     }
   }
 
-  private async createSession(client: any, messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, streaming: boolean = false) {
+  private async createSession(client: any, messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, streaming: boolean = false, modelOverride?: string) {
      const systemMessage = messages.find(m => m.role === 'system')?.content;
 
      const copilotTools = tools?.map(tool => ({
@@ -168,7 +172,7 @@ export class CopilotProvider implements LLMProviderInterface {
      }));
 
      return await client.createSession({
-        model: this.model,
+        model: modelOverride || this.model,
         systemMessage: systemMessage ? { mode: 'replace', content: systemMessage } : undefined,
         tools: copilotTools,
         streaming

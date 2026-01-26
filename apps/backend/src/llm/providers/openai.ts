@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from '../types';
 import { mcpToolToOpenAIFunction, parseToolCallResult } from '../tool-mapper';
 
 export class OpenAIProvider implements LLMProviderInterface {
@@ -15,7 +15,17 @@ export class OpenAIProvider implements LLMProviderInterface {
     this.model = config.model;
   }
 
-  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async getModels(): Promise<string[]> {
+      try {
+          const list = await this.client.models.list();
+          return list.data.map(m => m.id);
+      } catch (error) {
+          console.error('Failed to fetch OpenAI models:', error);
+          return [];
+      }
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
     const chatMessages = messages.map(m => ({
@@ -24,7 +34,7 @@ export class OpenAIProvider implements LLMProviderInterface {
     }));
 
     const response = await this.client.chat.completions.create({
-      model: this.model,
+      model: options?.model || this.model,
       messages: chatMessages,
       tools: openaiTools,
     });
@@ -42,7 +52,7 @@ export class OpenAIProvider implements LLMProviderInterface {
     };
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
     const chatMessages = messages.map(m => ({
@@ -51,7 +61,7 @@ export class OpenAIProvider implements LLMProviderInterface {
     }));
 
     const stream = await this.client.chat.completions.create({
-      model: this.model,
+      model: options?.model || this.model,
       messages: chatMessages,
       tools: openaiTools,
       stream: true,

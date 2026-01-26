@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from '../types';
 import { mcpToolToAnthropicTool, parseToolCallResult } from '../tool-mapper';
 
 export class AnthropicProvider implements LLMProviderInterface {
@@ -13,6 +13,16 @@ export class AnthropicProvider implements LLMProviderInterface {
       baseURL: config.baseUrl,
     });
     this.model = config.model;
+  }
+
+  async getModels(): Promise<string[]> {
+    try {
+      const list = await this.client.models.list();
+      return list.data.map(m => m.id);
+    } catch (error) {
+      console.error('Failed to fetch Anthropic models:', error);
+      return [];
+    }
   }
 
   private formatMessages(messages: Message[]): any[] {
@@ -74,13 +84,13 @@ export class AnthropicProvider implements LLMProviderInterface {
       });
   }
 
-  async chat(messages: Message[], tools?: MCPTool[]): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const anthropicTools = tools?.map(mcpToolToAnthropicTool);
     const systemMessage = messages.find(m => m.role === 'system')?.content;
     const chatMessages = this.formatMessages(messages);
 
     const response = await this.client.messages.create({
-      model: this.model,
+      model: options?.model || this.model,
       messages: chatMessages,
       system: systemMessage,
       tools: anthropicTools,
@@ -104,13 +114,13 @@ export class AnthropicProvider implements LLMProviderInterface {
     };
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
     const anthropicTools = tools?.map(mcpToolToAnthropicTool);
     const systemMessage = messages.find(m => m.role === 'system')?.content;
     const chatMessages = this.formatMessages(messages);
 
     const stream = await this.client.messages.create({
-      model: this.model,
+      model: options?.model || this.model,
       messages: chatMessages,
       system: systemMessage,
       tools: anthropicTools,
