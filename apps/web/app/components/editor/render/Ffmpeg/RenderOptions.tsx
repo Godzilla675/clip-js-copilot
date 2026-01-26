@@ -1,6 +1,8 @@
 import { useAppSelector } from '@/app/store';
 import { useAppDispatch } from '@/app/store';
-import { setResolution, setQuality, setSpeed } from '@/app/store/slices/projectSlice';
+import { setResolution, setQuality, setSpeed, setFormat } from '@/app/store/slices/projectSlice';
+import { ExportFormat } from '@/app/types';
+
 export default function RenderOptions() {
     const { exportSettings } = useAppSelector(state => state.projectState);
     const dispatch = useAppDispatch();
@@ -58,11 +60,25 @@ export default function RenderOptions() {
                                     <option value="slowest">Slowest</option>
                                 </select>
                             </div>
+
+                            {/* Format Setting */}
+                            <div>
+                                <label className="text-l font-bold mb-2 text-white">File Format</label>
+                                <select
+                                    value={exportSettings.format}
+                                    onChange={(e) => dispatch(setFormat(e.target.value as ExportFormat))}
+                                    className="w-full p-2 bg-darkSurfacePrimary border border-white border-opacity-10 shadow-md text-white rounded focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500"
+                                >
+                                    <option value="mp4">MP4</option>
+                                    <option value="webm">WEBM</option>
+                                    <option value="gif">GIF</option>
+                                </select>
+                            </div>
                         </div>
 
                     </div>
                     <div className="mt-4 text-sm text-gray-600">
-                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.speed} processing)</p>
+                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.speed} processing)</p>
                     </div>
                 </div>
             </div>
