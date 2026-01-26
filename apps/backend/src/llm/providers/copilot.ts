@@ -43,9 +43,17 @@ export class CopilotProvider implements LLMProviderInterface {
       return this.client;
   }
 
+  async getModels(): Promise<any[]> {
+      const client = await this.getClient();
+      if (client.listModels) {
+          return await client.listModels();
+      }
+      return [];
+  }
+
   async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const client = await this.getClient();
-    const session = await this.createSession(client, messages, tools, executeTool);
+    const session = await this.createSession(client, messages, tools, executeTool, false);
     const prompt = this.formatHistory(messages);
 
     if (!prompt) return { content: '' };
@@ -69,7 +77,7 @@ export class CopilotProvider implements LLMProviderInterface {
 
   async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
     const client = await this.getClient();
-    const session = await this.createSession(client, messages, tools, executeTool);
+    const session = await this.createSession(client, messages, tools, executeTool, true);
     const prompt = this.formatHistory(messages);
 
     if (!prompt) {
@@ -77,23 +85,74 @@ export class CopilotProvider implements LLMProviderInterface {
         return;
     }
 
+    const chunkQueue: StreamChunk[] = [];
+    let resolveQueue: (() => void) | null = null;
+    let finished = false;
+    let error: any = null;
+
+    const onEvent = (event: any) => {
+        if (event.type === 'assistant.message_delta') {
+            if (event.data?.deltaContent) {
+                chunkQueue.push({ done: false, content: event.data.deltaContent });
+                if (resolveQueue) {
+                    const resolve = resolveQueue;
+                    resolveQueue = null;
+                    resolve();
+                }
+            }
+        }
+    };
+
+    if (session.on) {
+        session.on(onEvent);
+    }
+
+    const requestPromise = session.sendAndWait({ prompt })
+        .then(() => {
+            finished = true;
+            if (resolveQueue) {
+                 const resolve = resolveQueue;
+                 resolveQueue = null;
+                 resolve();
+            }
+        })
+        .catch((err: any) => {
+            error = err;
+            finished = true;
+            if (resolveQueue) {
+                 const resolve = resolveQueue;
+                 resolveQueue = null;
+                 resolve();
+            }
+        });
+
     try {
-        const result = await session.sendAndWait({ prompt });
-
-        await session.destroy();
-
-        if (result && result.type === 'assistant.message') {
-            yield { done: false, content: result.data.content };
+        while (true) {
+            if (chunkQueue.length > 0) {
+                yield chunkQueue.shift()!;
+            } else if (finished) {
+                if (error) throw error;
+                break;
+            } else {
+                await new Promise<void>(resolve => {
+                    resolveQueue = resolve;
+                    // Verify if queue got populated or finished while creating promise
+                    if (chunkQueue.length > 0 || finished) {
+                         resolve();
+                    }
+                });
+            }
         }
         yield { done: true };
-    } catch (error) {
+    } catch (err) {
+        console.error('Copilot stream error:', err);
+        throw err;
+    } finally {
         await session.destroy().catch(() => {});
-        console.error('Copilot stream error:', error);
-        throw error;
     }
   }
 
-  private async createSession(client: any, messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor) {
+  private async createSession(client: any, messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, streaming: boolean = false) {
      const systemMessage = messages.find(m => m.role === 'system')?.content;
 
      const copilotTools = tools?.map(tool => ({
@@ -111,7 +170,8 @@ export class CopilotProvider implements LLMProviderInterface {
      return await client.createSession({
         model: this.model,
         systemMessage: systemMessage ? { mode: 'replace', content: systemMessage } : undefined,
-        tools: copilotTools
+        tools: copilotTools,
+        streaming
      });
   }
 
