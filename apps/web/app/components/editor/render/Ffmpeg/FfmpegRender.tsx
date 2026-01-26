@@ -50,6 +50,7 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
 
         const renderFunction = async () => {
             const params = extractConfigs(exportSettings);
+            const wroteFiles = new Map<string, string>();
 
             try {
                 const filters = [];

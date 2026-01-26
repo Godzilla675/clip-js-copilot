@@ -12,9 +12,8 @@ export default function RenderOptions() {
                 <div className="p-2 rounded-lg w-11/12">
                     <div className="space-y-2">
                         <div className="grid grid-cols-1 gap-4">
+                            {/* Resolution Setting */}
                             <div>
-
-                                {/* Resolution Setting */}
                                 <label className="text-lg font-bold mb-2 text-white">Resolution</label>
                                 <select
                                     value={exportSettings.resolution}
@@ -87,6 +86,7 @@ export default function RenderOptions() {
                                     <option value="gif">GIF</option>
                                 </select>
                             </div>
+
                             {/* FPS Setting */}
                             <div>
                                 <label className="text-l font-bold mb-2 text-white">Frame Rate</label>
@@ -108,8 +108,6 @@ export default function RenderOptions() {
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 }
