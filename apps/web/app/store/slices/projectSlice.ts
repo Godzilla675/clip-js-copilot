@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TextElement, MediaFile, ActiveElement, ExportConfig } from '../../types';
+import { TextElement, MediaFile, ActiveElement, ExportConfig, ExportFormat } from '../../types';
 import { ProjectState } from '../../types';
 
 export const initialState: ProjectState = {
@@ -105,6 +105,9 @@ const projectStateSlice = createSlice({
         setFps: (state, action: PayloadAction<number>) => {
             state.exportSettings.fps = action.payload;
         },
+        setFormat: (state, action: PayloadAction<ExportFormat>) => {
+            state.exportSettings.format = action.payload;
+        },
         setTimelineZoom: (state, action: PayloadAction<number>) => {
             state.timelineZoom = action.payload;
         },
@@ -133,6 +136,7 @@ export const {
     setQuality,
     setSpeed,
     setFps,
+    setFormat,
     setMarkerTrack,
     setIsMuted,
     setActiveSection,
