@@ -76,33 +76,32 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 for (let i = 0; i < sortedMediaFiles.length; i++) {
 
                     // timing
-                    const { startTime, positionStart, positionEnd } = sortedMediaFiles[i];
+                    const { startTime, positionStart, positionEnd, fileId } = sortedMediaFiles[i];
                     const duration = positionEnd - positionStart;
 
-                    // Use pre-loaded file info
-                    const { ext } = loadedFiles[i];
+                    // get the file data and write to ffmpeg
+                    let inputFilename: string;
 
-                    // TODO: currently we have to write same file if it's used more than once in different clips the below approach is a good start to change this 
-                    // let wroteFiles = new Map<string, string>();
-                    // const { fileId, type } = sortedMediaFiles[i];
-                    // let inputFilename: string;
-
-                    // if (wroteFiles.has(fileId)) {
-                    //     inputFilename = wroteFiles.get(fileId)!;
-                    // } else {
-                    //     const fileData = await getFile(fileId);
-                    //     const buffer = await fileData.arrayBuffer();
-                    //     const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
-                    //     inputFilename = `input_${fileId}.${ext}`;
-                    //     await ffmpeg.writeFile(inputFilename, new Uint8Array(buffer));
-                    //     wroteFiles.set(fileId, inputFilename);
-                    // }
+                    if (wroteFiles.has(fileId)) {
+                        inputFilename = wroteFiles.get(fileId)!;
+                    } else {
+                        const fileData = await getFile(fileId);
+                        if (!fileData) {
+                            console.error(`File not found: ${fileId}`);
+                            continue;
+                        }
+                        const buffer = await fileData.arrayBuffer();
+                        const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
+                        inputFilename = `input_${fileId}.${ext}`;
+                        await ffmpeg.writeFile(inputFilename, new Uint8Array(buffer));
+                        wroteFiles.set(fileId, inputFilename);
+                    }
 
                     if (sortedMediaFiles[i].type === 'image') {
-                        inputs.push('-loop', '1', '-t', duration.toFixed(3), '-i', `input${i}.${ext}`);
+                        inputs.push('-loop', '1', '-t', duration.toFixed(3), '-i', inputFilename);
                     }
                     else {
-                        inputs.push('-i', `input${i}.${ext}`);
+                        inputs.push('-i', inputFilename);
                     }
 
                     const visualLabel = `visual${i}`;
@@ -167,12 +166,11 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 if (textElements.length > 0) {
                     // load fonts
                     let fonts = ['Arial', 'Inter', 'Lato'];
-                    for (let i = 0; i < fonts.length; i++) {
-                        const font = fonts[i];
+                    await Promise.all(fonts.map(async (font) => {
                         const res = await fetch(`/fonts/${font}.ttf`);
                         const fontBuf = await res.arrayBuffer();
                         await ffmpeg.writeFile(`font${font}.ttf`, new Uint8Array(fontBuf));
-                    }
+                    }));
                     // Apply text
                     for (let i = 0; i < textElements.length; i++) {
                         const text = textElements[i];

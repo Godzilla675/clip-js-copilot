@@ -118,5 +118,15 @@ export const mimeToExt = {
     'image/png': 'png',
     'image/webp': 'webp',
     'video/webm': 'webm',
+    'image/gif': 'gif',
+    'image/bmp': 'bmp',
+    'image/tiff': 'tiff',
+    'video/quicktime': 'mov',
+    'video/x-msvideo': 'avi',
+    'video/x-matroska': 'mkv',
+    'video/ogg': 'ogv',
+    'audio/aac': 'aac',
+    'audio/ogg': 'ogg',
+    'audio/webm': 'weba',
     // TODO: Add more as needed
 };
