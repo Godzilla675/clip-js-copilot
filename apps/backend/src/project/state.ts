@@ -43,7 +43,7 @@ export class ProjectManager {
     return project;
   }
 
-  loadProject(projectIdOrPath: string): Project {
+  async loadProject(projectIdOrPath: string): Promise<Project> {
     // Check if it's an ID we already have loaded
     if (this.projects.has(projectIdOrPath)) {
         return this.projects.get(projectIdOrPath)!;
@@ -57,19 +57,22 @@ export class ProjectManager {
         projectPath = path.join(this.projectDir, projectIdOrPath);
     }
 
-    if (!fs.existsSync(projectPath)) {
+    try {
+      const data = await fs.promises.readFile(projectPath, 'utf-8');
+      const project = JSON.parse(data) as Project;
+
+      this.projects.set(project.id, project);
+      if (!this.histories.has(project.id)) {
+          this.histories.set(project.id, new HistoryManager());
+      }
+
+      return project;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
         throw new Error(`Project file not found: ${projectPath}`);
+      }
+      throw error;
     }
-
-    const data = fs.readFileSync(projectPath, 'utf-8');
-    const project = JSON.parse(data) as Project;
-
-    this.projects.set(project.id, project);
-    if (!this.histories.has(project.id)) {
-        this.histories.set(project.id, new HistoryManager());
-    }
-
-    return project;
   }
 
   saveProject(project: Project): void {
