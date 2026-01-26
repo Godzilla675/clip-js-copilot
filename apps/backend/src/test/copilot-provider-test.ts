@@ -3,10 +3,31 @@ import { LLMConfig, Message } from '@ai-video-editor/shared-types';
 
 // Mock CopilotClient and Session
 class MockCopilotSession {
+    private eventHandler: any;
+
     constructor(public options: any) {}
+
+    on(handler: any) {
+        this.eventHandler = handler;
+        return () => {};
+    }
 
     async sendAndWait(options: any) {
         console.log('[MockSession] sendAndWait called with prompt:', options.prompt);
+
+        // Simulate streaming events if streaming is enabled
+        if (this.options.streaming && this.eventHandler) {
+             console.log('[MockSession] Simulating streaming events...');
+             const chunks = ['Mock ', 'response ', 'content'];
+             for (const chunk of chunks) {
+                 this.eventHandler({
+                     type: 'assistant.message_delta',
+                     data: { deltaContent: chunk }
+                 });
+                 // Add small delay to simulate async nature
+                 await new Promise(resolve => setTimeout(resolve, 10));
+             }
+        }
 
         // Check if we have tools and simulate a tool call
         if (this.options.tools && this.options.tools.length > 0) {
@@ -27,11 +48,6 @@ class MockCopilotSession {
     async destroy() {
         console.log('[MockSession] destroy called');
     }
-
-    on(handler: any) {
-        // No-op for now unless we test streaming
-        return () => {};
-    }
 }
 
 class MockCopilotClient {
@@ -41,6 +57,14 @@ class MockCopilotClient {
             console.log('[MockClient] System message:', options.systemMessage.content);
         }
         return new MockCopilotSession(options);
+    }
+
+    async listModels() {
+        console.log('[MockClient] listModels called');
+        return [
+            { id: 'gpt-4', name: 'GPT-4' },
+            { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo' }
+        ];
     }
 }
 
@@ -72,6 +96,11 @@ async function runTest() {
         return { success: true };
     };
 
+    console.log('--- Testing getModels() ---');
+    const models = await provider.getModels();
+    console.log('Models:', models);
+    if (models.length !== 2) throw new Error('Expected 2 models');
+
     console.log('--- Testing chat() ---');
     const response = await provider.chat(messages, tools, executeTool);
     console.log('Chat response:', response);
@@ -82,8 +111,15 @@ async function runTest() {
 
     console.log('--- Testing streamChat() ---');
     const stream = provider.streamChat(messages, tools, executeTool);
+    let fullContent = '';
     for await (const chunk of stream) {
         console.log('Stream chunk:', chunk);
+        if (chunk.content) fullContent += chunk.content;
+    }
+
+    console.log('Full stream content:', fullContent);
+    if (fullContent !== 'Mock response content') {
+        throw new Error(`Unexpected full stream content: "${fullContent}"`);
     }
 
     console.log('Test completed successfully.');
