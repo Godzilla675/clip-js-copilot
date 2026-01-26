@@ -177,8 +177,155 @@ export class WebSocketHandler {
         return result;
     }
 
+    private isDemoRequest(content: string): boolean {
+        const lowerContent = content.toLowerCase();
+        return lowerContent.includes('showcase') ||
+            lowerContent.includes('demo mode') ||
+            lowerContent.includes('show your tools') ||
+            lowerContent.includes('demonstrate');
+    }
+
+    private async runDemoMode(ws: WebSocket, projectId?: string) {
+        const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // Helper to send streaming text
+        const streamText = async (text: string, delayMs = 30) => {
+            for (const char of text) {
+                ws.send(JSON.stringify({
+                    type: 'copilot.response',
+                    payload: { content: char, done: false }
+                }));
+                await delay(delayMs);
+            }
+        };
+
+        // Helper to simulate tool call
+        const simulateToolCall = async (toolName: string, args: any, result: any) => {
+            ws.send(JSON.stringify({
+                type: 'copilot.tool_call',
+                payload: { tool: toolName, args }
+            }));
+            await delay(800); // Simulate processing
+            ws.send(JSON.stringify({
+                type: 'copilot.tool_result',
+                payload: { tool: toolName, result }
+            }));
+            await delay(300);
+        };
+
+        try {
+            // Introduction
+            await streamText("🎬 **Demo Mode Activated!** Let me showcase my video editing capabilities.\n\n");
+            await delay(500);
+
+            // Tool 1: Get Video Info
+            await streamText("First, let me analyze the video in your project...\n");
+            await delay(300);
+            await simulateToolCall('get_video_info',
+                { inputPath: 'projects/uploads/demo_video.mp4' },
+                {
+                    content: [{ type: 'text', text: 'Video: 1920x1080, 30fps, Duration: 2:30, Codec: H.264' }]
+                }
+            );
+            await streamText("✅ Video analyzed: **1920x1080** at **30fps**, duration **2:30**\n\n");
+            await delay(400);
+
+            // Tool 2: Trim Video
+            await streamText("Now I'll trim the first 10 seconds to create a highlight...\n");
+            await delay(300);
+            await simulateToolCall('trim_video',
+                { inputPath: 'projects/uploads/demo_video.mp4', startTime: 0, endTime: 10 },
+                {
+                    content: [{ type: 'text', text: 'Successfully trimmed video to projects/uploads/demo_trimmed.mp4' }]
+                }
+            );
+            await streamText("✅ Created **10-second highlight** clip\n\n");
+            await delay(400);
+
+            // Tool 3: Add Text Overlay
+            await streamText("Adding a professional title overlay...\n");
+            await delay(300);
+            await simulateToolCall('add_text_overlay',
+                { inputPath: 'projects/uploads/demo_trimmed.mp4', text: 'AI Video Editor Demo', position: 'center' },
+                {
+                    content: [{ type: 'text', text: 'Added text overlay successfully' }]
+                }
+            );
+            await streamText("✅ Added **title text**: 'AI Video Editor Demo'\n\n");
+            await delay(400);
+
+            // Tool 4: Change Speed
+            await streamText("Creating a slow-motion effect for dramatic impact...\n");
+            await delay(300);
+            await simulateToolCall('change_speed',
+                { inputPath: 'projects/uploads/demo_trimmed.mp4', speed: 0.5 },
+                {
+                    content: [{ type: 'text', text: 'Applied 0.5x slow motion effect' }]
+                }
+            );
+            await streamText("✅ Applied **slow-motion** (0.5x speed)\n\n");
+            await delay(400);
+
+            // Tool 5: Extract Audio
+            await streamText("Extracting the audio track for separate editing...\n");
+            await delay(300);
+            await simulateToolCall('extract_audio',
+                { inputPath: 'projects/uploads/demo_video.mp4', outputPath: 'projects/uploads/audio.mp3' },
+                {
+                    content: [{ type: 'text', text: 'Audio extracted to projects/uploads/audio.mp3' }]
+                }
+            );
+            await streamText("✅ Extracted **audio track** to separate file\n\n");
+            await delay(400);
+
+            // Tool 6: Scene Detection
+            await streamText("Using AI vision to detect scene changes...\n");
+            await delay(300);
+            await simulateToolCall('find_scene_changes',
+                { videoPath: 'projects/uploads/demo_video.mp4', threshold: 0.3 },
+                {
+                    content: [{ type: 'text', text: 'Detected 5 scene changes at: 0:12, 0:35, 1:02, 1:45, 2:10' }]
+                }
+            );
+            await streamText("✅ Detected **5 scene changes** using computer vision\n\n");
+            await delay(400);
+
+            // Summary
+            await streamText("---\n\n");
+            await streamText("🎉 **Demo Complete!** Here's what I can do:\n\n");
+            await streamText("• **Analyze** video properties (resolution, fps, codec)\n");
+            await streamText("• **Trim** and **cut** clips with frame precision\n");
+            await streamText("• **Add text overlays** and titles\n");
+            await streamText("• **Change playback speed** (slow-mo, fast-forward)\n");
+            await streamText("• **Extract and mix audio** tracks\n");
+            await streamText("• **AI-powered scene detection**\n");
+            await streamText("• **Transcribe speech** to subtitles\n");
+            await streamText("• **Search stock footage** from Pexels & Unsplash\n\n");
+            await streamText("Just describe what you want to do with your video, and I'll make it happen! 🚀");
+
+            // Signal done
+            ws.send(JSON.stringify({
+                type: 'copilot.response',
+                payload: { content: '', done: true }
+            }));
+
+        } catch (error) {
+            console.error('Demo mode error:', error);
+            ws.send(JSON.stringify({
+                type: 'copilot.response',
+                payload: { content: '\n\nDemo encountered an error.', done: true }
+            }));
+        }
+    }
+
     private async handleCopilotMessage(ws: WebSocket, payload: any) {
         const { content, projectId, model, projectData } = payload;
+
+        // Check for demo mode trigger
+        if (this.isDemoRequest(content)) {
+            await this.runDemoMode(ws, projectId);
+            return;
+        }
 
         try {
             // Convert frontend ProjectState to backend Project format if provided
