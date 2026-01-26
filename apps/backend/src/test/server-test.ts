@@ -14,10 +14,10 @@ async function runTest() {
     }
 
     const server = new Server(3002, projectDir);
-    server.start();
+    await server.start();
 
     // Give server time to start
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     try {
         // 1. Create project via HTTP
