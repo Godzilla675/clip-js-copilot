@@ -13,6 +13,7 @@ https://turborepo.dev/docs/telemetry
 • Packages in scope: @ai-video-editor/web
 • Running dev in 1 packages
 • Remote caching disabled
+@ai-video-editor/web:dev: cache bypass, force executing e88698b1477dc06d
 @ai-video-editor/web:dev: cache bypass, force executing cf148647a8910b18
 @ai-video-editor/web:dev:
 @ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
@@ -22,6 +23,14 @@ https://turborepo.dev/docs/telemetry
 @ai-video-editor/web:dev:   - Local:        http://localhost:3000
 @ai-video-editor/web:dev:
 @ai-video-editor/web:dev:  ✓ Starting...
+@ai-video-editor/web:dev:  ✓ Ready in 2.1s
+@ai-video-editor/web:dev:  ○ Compiling /projects ...
+@ai-video-editor/web:dev:  ✓ Compiled /projects in 3.1s (687 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 600ms (337 modules)
+@ai-video-editor/web:dev:  GET /projects 200 in 3760ms
+@ai-video-editor/web:dev:  GET /projects 200 in 51ms
+@ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
+@ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 5.7s (1419 modules)
 @ai-video-editor/web:dev:  ✓ Ready in 1770ms
 @ai-video-editor/web:dev:  ○ Compiling /projects ...
 @ai-video-editor/web:dev: request to https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2ZL7W0Q5n-wU.woff2 failed, reason:

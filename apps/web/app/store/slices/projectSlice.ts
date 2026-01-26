@@ -30,7 +30,7 @@ export const initialState: ProjectState = {
         speed: 'fastest',
         fps: 30,
         format: 'mp4',
-        includeSubtitles: false,
+        includeSubtitles: true,
     },
 };
 
@@ -105,6 +105,8 @@ const projectStateSlice = createSlice({
         setFps: (state, action: PayloadAction<number>) => {
             state.exportSettings.fps = action.payload;
         },
+        setIncludeSubtitles: (state, action: PayloadAction<boolean>) => {
+            state.exportSettings.includeSubtitles = action.payload;
         setFormat: (state, action: PayloadAction<ExportFormat>) => {
             state.exportSettings.format = action.payload;
         },
@@ -136,6 +138,7 @@ export const {
     setQuality,
     setSpeed,
     setFps,
+    setIncludeSubtitles,
     setFormat,
     setMarkerTrack,
     setIsMuted,

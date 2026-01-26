@@ -92,7 +92,7 @@ export interface ExportConfig {
     speed: string;
     fps: number;
     format: ExportFormat; // TODO: add this as an option
-    includeSubtitles: boolean; // TODO: add this as an option
+    includeSubtitles: boolean;
 }
 
 export type ActiveElement = 'media' | 'text' | 'export';

@@ -163,7 +163,7 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 }
 
                 // Apply text 
-                if (textElements.length > 0) {
+                if (textElements.length > 0 && exportSettings.includeSubtitles) {
                     // load fonts
                     let fonts = ['Arial', 'Inter', 'Lato'];
                     await Promise.all(fonts.map(async (font) => {
