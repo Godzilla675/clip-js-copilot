@@ -1,7 +1,6 @@
 import { useAppSelector } from '@/app/store';
 import { useAppDispatch } from '@/app/store';
-import { setResolution, setQuality, setSpeed, setIncludeSubtitles } from '@/app/store/slices/projectSlice';
-import { setResolution, setQuality, setSpeed, setFormat } from '@/app/store/slices/projectSlice';
+import { setResolution, setQuality, setSpeed, setIncludeSubtitles, setFormat, setFps } from '@/app/store/slices/projectSlice';
 import { ExportFormat } from '@/app/types';
 
 export default function RenderOptions() {
@@ -14,9 +13,8 @@ export default function RenderOptions() {
                 <div className="p-2 rounded-lg w-11/12">
                     <div className="space-y-2">
                         <div className="grid grid-cols-1 gap-4">
+                            {/* Resolution Setting */}
                             <div>
-
-                                {/* Resolution Setting */}
                                 <label className="text-lg font-bold mb-2 text-white">Resolution</label>
                                 <select
                                     value={exportSettings.resolution}
@@ -74,6 +72,8 @@ export default function RenderOptions() {
                                 <label htmlFor="includeSubtitles" className="text-lg font-bold text-white cursor-pointer">
                                     Include Subtitles
                                 </label>
+                            </div>
+
                             {/* Format Setting */}
                             <div>
                                 <label className="text-l font-bold mb-2 text-white">File Format</label>
@@ -85,6 +85,9 @@ export default function RenderOptions() {
                                     <option value="mp4">MP4</option>
                                     <option value="webm">WEBM</option>
                                     <option value="gif">GIF</option>
+                                </select>
+                            </div>
+
                             {/* FPS Setting */}
                             <div>
                                 <label className="text-l font-bold mb-2 text-white">Frame Rate</label>
@@ -100,15 +103,12 @@ export default function RenderOptions() {
                             </div>
                         </div>
 
-                    </div>
-                    <div className="mt-4 text-sm text-gray-600">
-                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.speed} processing)</p>
-                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.speed} processing) - {exportSettings.fps} FPS</p>
+                        <div className="mt-4 text-sm text-gray-600">
+                             <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.speed} processing) - {exportSettings.fps} FPS</p>
+                        </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
     );
 }
