@@ -71,7 +71,7 @@ export class WebSocketHandler {
     }
   }
 
-  private handleProjectUpdate(ws: WebSocket, payload: any) {
+  private async handleProjectUpdate(ws: WebSocket, payload: any) {
     const projectId = payload.projectId || payload.changes?.id;
     const changes = payload.changes;
 
@@ -81,7 +81,7 @@ export class WebSocketHandler {
     }
 
     try {
-        const updatedProject = this.projectManager.updateProject(projectId, changes);
+        const updatedProject = await this.projectManager.updateProject(projectId, changes);
 
         this.broadcast({
             type: 'project.updated',
@@ -100,7 +100,7 @@ export class WebSocketHandler {
     if (toolName === 'add_clip') {
         try {
             const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+            const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
             return { success: true, message: 'Clip added successfully', clip };
         } catch (error: any) {
              return { error: error.message };
@@ -297,7 +297,7 @@ export class WebSocketHandler {
               if (toolName === 'add_clip') {
                   try {
                       const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-                      const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+                      const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
                       result = { success: true, message: 'Clip added successfully', clip };
                   } catch (error: any) {
                        result = { error: error.message };
