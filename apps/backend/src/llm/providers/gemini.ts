@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from '../types';
 import { mcpToolToGeminiTool, parseToolCallResult } from '../tool-mapper';
 
 export class GeminiProvider implements LLMProviderInterface {
@@ -12,7 +12,11 @@ export class GeminiProvider implements LLMProviderInterface {
     this.model = config.model;
   }
 
-  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async getModels(): Promise<string[]> {
+      return ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'];
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const systemMessage = messages.find(m => m.role === 'system')?.content;
     const contents = messages.filter(m => m.role !== 'system').map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
@@ -29,7 +33,7 @@ export class GeminiProvider implements LLMProviderInterface {
     }
 
     const response = await this.client.models.generateContent({
-      model: this.model,
+      model: options?.model || this.model,
       contents,
       config
     });
@@ -45,7 +49,7 @@ export class GeminiProvider implements LLMProviderInterface {
     };
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
     const systemMessage = messages.find(m => m.role === 'system')?.content;
     const contents = messages.filter(m => m.role !== 'system').map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',
@@ -62,7 +66,7 @@ export class GeminiProvider implements LLMProviderInterface {
     }
 
     const stream = await this.client.models.generateContentStream({
-      model: this.model,
+      model: options?.model || this.model,
       contents,
       config
     });

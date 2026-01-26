@@ -1,5 +1,5 @@
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from './types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from './types';
 import { AnthropicProvider } from './providers/anthropic';
 import { OpenAIProvider } from './providers/openai';
 import { CustomProvider } from './providers/custom';
@@ -37,14 +37,18 @@ export class LLMOrchestrator {
     this.provider = this.createProvider(config);
   }
 
-  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{
+  async getModels(): Promise<string[]> {
+    return this.provider.getModels();
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{
     content: string
     toolCalls?: ToolCall[]
   }> {
-    return this.provider.chat(messages, tools, executeTool);
+    return this.provider.chat(messages, tools, executeTool, options);
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
-    yield* this.provider.streamChat(messages, tools, executeTool);
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
+    yield* this.provider.streamChat(messages, tools, executeTool, options);
   }
 }

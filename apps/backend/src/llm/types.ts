@@ -21,11 +21,17 @@ export interface StreamChunk {
 
 export type ToolExecutor = (name: string, args: any) => Promise<any>;
 
+export interface LLMProviderOptions {
+  model?: string;
+}
+
 export interface LLMProviderInterface {
-  chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{
+  getModels(): Promise<string[]>;
+
+  chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{
     content: string;
     toolCalls?: ToolCall[];
   }>;
 
-  streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk>;
+  streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk>;
 }
