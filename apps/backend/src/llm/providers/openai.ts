@@ -16,7 +16,13 @@ export class OpenAIProvider implements LLMProviderInterface {
   }
 
   async getModels(): Promise<string[]> {
-      return ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo'];
+      try {
+          const list = await this.client.models.list();
+          return list.data.map(m => m.id);
+      } catch (error) {
+          console.error('Failed to fetch OpenAI models:', error);
+          return [];
+      }
   }
 
   async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {

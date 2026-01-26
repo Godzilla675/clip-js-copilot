@@ -16,7 +16,13 @@ export class AnthropicProvider implements LLMProviderInterface {
   }
 
   async getModels(): Promise<string[]> {
-    return ['claude-3-5-sonnet-20240620', 'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'];
+    try {
+      const list = await this.client.models.list();
+      return list.data.map(m => m.id);
+    } catch (error) {
+      console.error('Failed to fetch Anthropic models:', error);
+      return [];
+    }
   }
 
   private formatMessages(messages: Message[]): any[] {

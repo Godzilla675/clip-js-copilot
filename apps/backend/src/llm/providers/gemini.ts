@@ -13,7 +13,13 @@ export class GeminiProvider implements LLMProviderInterface {
   }
 
   async getModels(): Promise<string[]> {
-      return ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro'];
+      try {
+          const list = await this.client.models.list();
+          return list.map((m: any) => m.name.replace(/^models\//, ''));
+      } catch (error) {
+          console.error('Failed to fetch Gemini models:', error);
+          return [];
+      }
   }
 
   async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
