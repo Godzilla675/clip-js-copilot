@@ -14,7 +14,7 @@ export class ProjectManager {
     this.projectDir = projectDir || config.projectDir;
   }
 
-  createProject(name: string, settings: ProjectSettings): Project {
+  async createProject(name: string, settings: ProjectSettings): Promise<Project> {
     const id = uuidv4();
     const now = new Date().toISOString();
     const project: Project = {
@@ -38,7 +38,7 @@ export class ProjectManager {
     this.histories.set(id, new HistoryManager());
 
     // Save to disk
-    this.saveProject(project);
+    await this.saveProject(project);
 
     return project;
   }
@@ -75,22 +75,20 @@ export class ProjectManager {
     }
   }
 
-  saveProject(project: Project): void {
+  async saveProject(project: Project): Promise<void> {
     const filePath = path.join(this.projectDir, `${project.id}.json`);
 
     // Ensure directory exists
-    if (!fs.existsSync(this.projectDir)) {
-        fs.mkdirSync(this.projectDir, { recursive: true });
-    }
+    await fs.promises.mkdir(this.projectDir, { recursive: true });
 
-    fs.writeFileSync(filePath, JSON.stringify(project, null, 2));
+    await fs.promises.writeFile(filePath, JSON.stringify(project, null, 2));
   }
 
   getProject(id: string): Project | undefined {
     return this.projects.get(id);
   }
 
-  updateProject(id: string, updates: Partial<Project>): Project {
+  async updateProject(id: string, updates: Partial<Project>): Promise<Project> {
     const project = this.projects.get(id);
     if (!project) {
         throw new Error(`Project ${id} not found`);
@@ -108,19 +106,19 @@ export class ProjectManager {
     };
 
     this.projects.set(id, updatedProject);
-    this.saveProject(updatedProject);
+    await this.saveProject(updatedProject);
 
     return updatedProject;
   }
 
-  addClip(
+  async addClip(
     projectId: string,
     assetId: string,
     trackId: string,
     startTime: number,
     clipDuration?: number,
     sourceStart: number = 0
-  ): Clip {
+  ): Promise<Clip> {
     const project = this.projects.get(projectId);
     if (!project) {
       throw new Error(`Project ${projectId} not found`);
@@ -176,12 +174,12 @@ export class ProjectManager {
       }
     };
 
-    this.updateProject(projectId, updates);
+    await this.updateProject(projectId, updates);
 
     return clip;
   }
 
-  undo(id: string): Project | undefined {
+  async undo(id: string): Promise<Project | undefined> {
     const project = this.projects.get(id);
     const history = this.histories.get(id);
     if (!project || !history) return undefined;
@@ -189,13 +187,13 @@ export class ProjectManager {
     const prev = history.undo(project);
     if (prev) {
         this.projects.set(id, prev);
-        this.saveProject(prev);
+        await this.saveProject(prev);
         return prev;
     }
     return undefined;
   }
 
-  redo(id: string): Project | undefined {
+  async redo(id: string): Promise<Project | undefined> {
     const project = this.projects.get(id);
     const history = this.histories.get(id);
     if (!project || !history) return undefined;
@@ -203,7 +201,7 @@ export class ProjectManager {
     const next = history.redo(project);
     if (next) {
         this.projects.set(id, next);
-        this.saveProject(next);
+        await this.saveProject(next);
         return next;
     }
     return undefined;
