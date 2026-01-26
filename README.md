@@ -1,5 +1,9 @@
 # COPILOT AI POWERED VIDEO EDITING POWERED BY GITHUB COPILOT
 
+
+https://github.com/user-attachments/assets/f2d5a46b-36f4-4433-a7dc-18d0f2070d78
+
+
 An AI-powered video editor, powered by GitHub Copilot, built as a monorepo.
 
 ## Features
