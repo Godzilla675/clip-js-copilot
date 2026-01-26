@@ -23,10 +23,12 @@
    Copy `.env.example` to `apps/backend/.env` and `apps/web/.env.local` and fill in the required keys.
 
    **Backend Keys**:
-   - `LLM_PROVIDER`: `anthropic` or `openai`
-   - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`
+   - `LLM_PROVIDER`: `anthropic`, `openai`, `gemini`, or `copilot`
+   - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`
    - `PEXELS_API_KEY` (Optional)
    - `UNSPLASH_ACCESS_KEY` (Optional)
+
+   > **Note**: If using GitHub Copilot, please refer to [GitHub Copilot Integration](./copilot.md) for authentication steps.
 
 4. **Start Development**:
    ```bash
