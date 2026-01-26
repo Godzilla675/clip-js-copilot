@@ -63,7 +63,15 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 // Sort videos by zIndex ascending (lowest drawn first)
                 const sortedMediaFiles = [...mediaFiles].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
 
-                const wroteFiles = new Map<string, string>();
+                // Load all files in parallel
+                const loadedFiles = await Promise.all(sortedMediaFiles.map(async (file, i) => {
+                    const fileData = await getFile(file.fileId);
+                    const buffer = await fileData.arrayBuffer();
+                    const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
+                    const fileName = `input${i}.${ext}`;
+                    await ffmpeg.writeFile(fileName, new Uint8Array(buffer));
+                    return { ext, fileName };
+                }));
 
                 for (let i = 0; i < sortedMediaFiles.length; i++) {
 
