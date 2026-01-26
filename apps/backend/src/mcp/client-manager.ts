@@ -12,10 +12,25 @@ export class MCPClientManager {
   async connectServer(name: string, command: string, args: string[], env?: Record<string, string>): Promise<void> {
     try {
       console.log(`Connecting to MCP server ${name} with command: ${command} ${args.join(' ')}`);
+
+      let mergedEnv: Record<string, string> | undefined;
+
+      if (env) {
+        mergedEnv = { ...env };
+        for (const [key, value] of Object.entries(process.env)) {
+          if (value !== undefined) {
+            mergedEnv[key] = value;
+          }
+        }
+        // Re-apply explicit env to ensure overrides
+        Object.assign(mergedEnv, env);
+      }
+
       const transport = new StdioClientTransport({
         command,
         args,
         env: env ? { ...(process.env as Record<string, string>), ...env } : undefined
+        env: mergedEnv
       });
 
       const client = new Client(

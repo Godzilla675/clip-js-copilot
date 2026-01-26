@@ -1,4 +1,6 @@
-import { Message } from '@ai-video-editor/shared-types';
+import { Message, ToolCall } from '@ai-video-editor/shared-types';
+
+export { ToolCall };
 
 export interface MCPTool {
   name: string;
@@ -11,15 +13,9 @@ export interface MCPTool {
   };
 }
 
-export interface ToolCall {
-  toolName: string;
-  args: any;
-  toolCallId?: string;
-}
-
 export interface StreamChunk {
   content?: string;
-  toolCall?: Partial<ToolCall>;
+  toolCall?: ToolCall;
   done: boolean;
 }
 

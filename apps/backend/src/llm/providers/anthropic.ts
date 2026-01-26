@@ -16,13 +16,69 @@ export class AnthropicProvider implements LLMProviderInterface {
   }
 
   async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
-    const anthropicTools = tools?.map(mcpToolToAnthropicTool);
+  private formatMessages(messages: Message[]): any[] {
+    return messages
+      .filter(m => m.role !== 'system')
+      .map(m => {
+        if (m.role === 'user') {
+          const content: any[] = [];
 
+          if (m.content) {
+            content.push({ type: 'text', text: m.content });
+          }
+
+          if (m.toolResults) {
+            m.toolResults.forEach(tr => {
+              content.push({
+                type: 'tool_result',
+                tool_use_id: tr.toolCallId,
+                content: typeof tr.result === 'string'
+                  ? tr.result
+                  : JSON.stringify(tr.result),
+                is_error: tr.isError
+              });
+            });
+          }
+
+          if (content.length === 0) return { role: 'user', content: '' };
+          if (content.length === 1 && content[0].type === 'text') {
+             return { role: 'user', content: content[0].text };
+          }
+
+          return {
+            role: 'user',
+            content
+          };
+        } else {
+          // Assistant
+          const content: any[] = [];
+          if (m.content) {
+            content.push({ type: 'text', text: m.content });
+          }
+          if (m.toolCalls) {
+            m.toolCalls.forEach(tc => {
+              content.push({
+                type: 'tool_use',
+                id: tc.toolCallId,
+                name: tc.toolName,
+                input: tc.args
+              });
+            });
+          }
+          return {
+            role: 'assistant',
+            content: content.length === 1 && content[0].type === 'text'
+              ? content[0].text
+              : content
+          };
+        }
+      });
+  }
+
+  async chat(messages: Message[], tools?: MCPTool[]): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+    const anthropicTools = tools?.map(mcpToolToAnthropicTool);
     const systemMessage = messages.find(m => m.role === 'system')?.content;
-    const chatMessages = messages.filter(m => m.role !== 'system').map(m => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content
-    }));
+    const chatMessages = this.formatMessages(messages);
 
     const response = await this.client.messages.create({
       model: this.model,
@@ -51,12 +107,8 @@ export class AnthropicProvider implements LLMProviderInterface {
 
   async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
     const anthropicTools = tools?.map(mcpToolToAnthropicTool);
-
     const systemMessage = messages.find(m => m.role === 'system')?.content;
-    const chatMessages = messages.filter(m => m.role !== 'system').map(m => ({
-      role: m.role as 'user' | 'assistant',
-      content: m.content
-    }));
+    const chatMessages = this.formatMessages(messages);
 
     const stream = await this.client.messages.create({
       model: this.model,
