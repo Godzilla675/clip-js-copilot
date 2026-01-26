@@ -6,6 +6,7 @@ import { storeFile } from "../../../../store";
 import { categorizeFile } from "../../../../utils/utils";
 import Image from 'next/image';
 import toast from 'react-hot-toast';
+import { api } from '../../../../lib/api';
 
 export default function AddMedia({ fileId }: { fileId: string }) {
     const { mediaFiles } = useAppSelector((state) => state.projectState);
@@ -18,6 +19,16 @@ export default function AddMedia({ fileId }: { fileId: string }) {
         const mediaId = crypto.randomUUID();
 
         if (fileId) {
+            // Upload file to backend to get server path
+            let serverPath: string | undefined;
+            try {
+                const uploadResult = await api.upload.file(file);
+                serverPath = uploadResult.filePath;
+                console.log('File uploaded to server:', serverPath);
+            } catch (error) {
+                console.warn('Failed to upload to backend, using local only:', error);
+            }
+
             const relevantClips = mediaFiles.filter(clip => clip.type === categorizeFile(file.type));
             const lastEnd = relevantClips.length > 0
                 ? Math.max(...relevantClips.map(f => f.positionEnd))
@@ -30,6 +41,7 @@ export default function AddMedia({ fileId }: { fileId: string }) {
                 startTime: 0,
                 endTime: 30,
                 src: URL.createObjectURL(file),
+                serverPath: serverPath,
                 positionStart: lastEnd,
                 positionEnd: lastEnd + 30,
                 includeInMerge: true,

@@ -50,7 +50,7 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
     const [selectedModel, setSelectedModel] = useState<string>('');
 
     const { client, isConnected, send } = useWebSocket();
-    const projectId = useAppSelector((state) => state.projectState.id);
+    const projectState = useAppSelector((state) => state.projectState);
 
     useEffect(() => {
         api.copilot.getModels()
@@ -196,10 +196,10 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             if (isConnected) {
-                send('copilot.message', { content, model: selectedModel, projectId });
+                send('copilot.message', { content, model: selectedModel, projectId: projectState.id, projectData: projectState });
             } else {
                 // Fallback to REST API if not connected
-                await api.copilot.sendMessage(content, selectedModel, projectId);
+                await api.copilot.sendMessage(content, selectedModel, projectState.id);
             }
         } catch (error) {
             console.error('Error sending message:', error);

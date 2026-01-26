@@ -43,5 +43,18 @@ export const api = {
     tools: {
         list: () => get('/api/tools'),
         invoke: (name: string, args: any) => post('/api/tools', { name, args }),
+    },
+    upload: {
+        file: async (file: File): Promise<{ success: boolean; fileId: string; fileName: string; filePath: string }> => {
+            const formData = new FormData();
+            formData.append('file', file);
+            const res = await fetch(`${BASE_URL}/api/upload`, {
+                method: 'POST',
+                body: formData,
+            });
+            if (!res.ok) throw new Error(`Upload failed: ${res.statusText}`);
+            return res.json();
+        },
+        getInfo: (fileId: string) => get(`/api/upload/${fileId}`),
     }
 };

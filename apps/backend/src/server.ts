@@ -9,6 +9,7 @@ import { createProjectRouter } from './routes/project.js';
 import { createToolsRouter } from './routes/tools.js';
 import { createCopilotRouter } from './routes/copilot.js';
 import { createSettingsRouter } from './routes/settings.js';
+import { createUploadRouter } from './routes/upload.js';
 import { initMCP, mcpClientManager } from './mcp/index.js';
 import { LLMOrchestrator } from './llm/orchestrator.js';
 
@@ -54,9 +55,9 @@ export class Server {
 
   private setupMiddleware() {
     this.app.use(cors({
-        origin: 'http://localhost:3000', // Frontend URL
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        credentials: true
+      origin: 'http://localhost:3000', // Frontend URL
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentials: true
     }));
     this.app.use(express.json());
   }
@@ -66,20 +67,21 @@ export class Server {
     this.app.use('/api/tools', createToolsRouter());
     this.app.use('/api/copilot', createCopilotRouter(this.orchestrator, this.projectManager));
     this.app.use('/api/settings', createSettingsRouter(this));
+    this.app.use('/api/upload', createUploadRouter());
 
     this.app.get('/api/health', (req, res) => {
-        res.json({ status: 'ok' });
+      res.json({ status: 'ok' });
     });
   }
 
   public async start() {
     try {
-        // Initialize MCP connection
-        await initMCP();
+      // Initialize MCP connection
+      await initMCP();
     } catch (error) {
-        console.error('Failed to initialize MCP:', error);
-        // Continue starting server even if MCP fails?
-        // Probably yes, but functionality will be limited.
+      console.error('Failed to initialize MCP:', error);
+      // Continue starting server even if MCP fails?
+      // Probably yes, but functionality will be limited.
     }
 
     this.server.listen(this.port, () => {
@@ -101,10 +103,10 @@ export class Server {
     }
 
     const llmConfig = {
-        provider: config.llm.provider,
-        apiKey,
-        model: config.llm.model,
-        baseUrl: config.llm.baseUrl
+      provider: config.llm.provider,
+      apiKey,
+      model: config.llm.model,
+      baseUrl: config.llm.baseUrl
     };
 
     this.orchestrator = new LLMOrchestrator(llmConfig);
@@ -113,18 +115,18 @@ export class Server {
   }
 
   public async reloadMCP() {
-      console.log('Reloading MCP servers...');
-      await mcpClientManager.disconnectAll();
-      await initMCP();
-      console.log('MCP servers reloaded');
+    console.log('Reloading MCP servers...');
+    await mcpClientManager.disconnectAll();
+    await initMCP();
+    console.log('MCP servers reloaded');
   }
 
   // Helper for testing
   public getApp() {
-      return this.app;
+    return this.app;
   }
 
   public stop() {
-      this.server.close();
+    this.server.close();
   }
 }

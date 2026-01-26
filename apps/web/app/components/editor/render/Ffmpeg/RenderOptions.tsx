@@ -97,52 +97,15 @@ export default function RenderOptions() {
                                 <label htmlFor="includeSubtitles" className="text-lg font-bold text-white cursor-pointer">
                                     Include Subtitles
                                 </label>
-<<<<<<< HEAD
-                            </div >
-                        </div >
-
-        <div className="mt-4 text-sm text-gray-400">
-            <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.fps} FPS, {exportSettings.speed} processing)</p>
-        </div>
-=======
-                            </div>
-
-                            {/* Format Setting */}
-                            <div>
-                                <label className="text-l font-bold mb-2 text-white">File Format</label>
-                                <select
-                                    value={exportSettings.format}
-                                    onChange={(e) => dispatch(setFormat(e.target.value as ExportFormat))}
-                                    className="w-full p-2 bg-darkSurfacePrimary border border-white border-opacity-10 shadow-md text-white rounded focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500"
-                                >
-                                    <option value="mp4">MP4</option>
-                                    <option value="webm">WEBM</option>
-                                    <option value="gif">GIF</option>
-                                </select>
-                            </div>
-
-                            {/* FPS Setting */}
-                            <div>
-                                <label className="text-l font-bold mb-2 text-white">Frame Rate</label>
-                                <select
-                                    value={exportSettings.fps}
-                                    onChange={(e) => dispatch(setFps(parseInt(e.target.value)))}
-                                    className="w-full p-2 bg-darkSurfacePrimary border border-white border-opacity-10 shadow-md text-white rounded focus:outline-none focus:ring-2 focus:ring-white-500 focus:border-white-500"
-                                >
-                                    <option value={24}>24 FPS</option>
-                                    <option value={30}>30 FPS</option>
-                                    <option value={60}>60 FPS</option>
-                                </select>
                             </div>
                         </div>
 
+                        <div className="mt-4 text-sm text-gray-400">
+                            <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.fps} FPS, {exportSettings.speed} processing)</p>
+                        </div>
                     </div>
-                    <div className="mt-4 text-sm text-gray-600">
-                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.speed} processing) - {exportSettings.fps} FPS</p>
->>>>>>> f5aba087bffa5d088c8e123d09f74b61553fe6d5
-                    </div >
-                </div >
-            </div >
-        </div >
+                </div>
+            </div>
+        </div>
     );
 }

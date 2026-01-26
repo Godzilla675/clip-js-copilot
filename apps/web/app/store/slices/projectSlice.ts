@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TextElement, MediaFile, ActiveElement, ExportConfig, ExportFormat } from '../../types';
+import { TextElement, MediaFile, ActiveElement, ExportConfig, ExportFormat, LibraryFile } from '../../types';
 import { ProjectState } from '../../types';
 
 export const initialState: ProjectState = {
@@ -7,6 +7,7 @@ export const initialState: ProjectState = {
     projectName: '',
     createdAt: new Date().toISOString(),
     lastModified: new Date().toISOString(),
+    libraryFiles: [],
     mediaFiles: [],
     textElements: [],
     currentTime: 0,
@@ -124,6 +125,36 @@ const projectStateSlice = createSlice({
         createNewProject: (state) => {
             return { ...initialState };
         },
+        addLibraryFile: (state, action: PayloadAction<LibraryFile>) => {
+            if (!state.libraryFiles) state.libraryFiles = [];
+            if (!state.libraryFiles.some(f => f.id === action.payload.id)) {
+                state.libraryFiles.push(action.payload);
+            }
+        },
+        removeLibraryFile: (state, action: PayloadAction<string>) => {
+            state.libraryFiles = state.libraryFiles.filter(f => f.id !== action.payload);
+        },
+        setLibraryFiles: (state, action: PayloadAction<LibraryFile[]>) => {
+            state.libraryFiles = action.payload;
+        },
+        updateTimelineClip: (state, action: PayloadAction<{ originalServerPath: string, newServerPath: string, newFileName: string, newSrc: string, newDuration: number }>) => {
+            const { originalServerPath, newServerPath, newFileName, newSrc, newDuration } = action.payload;
+            state.mediaFiles = state.mediaFiles.map(clip => {
+                if (clip.serverPath === originalServerPath) {
+                    return {
+                        ...clip,
+                        serverPath: newServerPath,
+                        fileName: newFileName,
+                        src: newSrc,
+                        startTime: 0,
+                        endTime: newDuration,
+                        positionEnd: clip.positionStart + newDuration
+                    };
+                }
+                return clip;
+            });
+            state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+        },
     },
 });
 
@@ -149,6 +180,10 @@ export const {
     setTimelineZoom,
     rehydrate,
     createNewProject,
+    addLibraryFile,
+    removeLibraryFile,
+    setLibraryFiles,
+    updateTimelineClip,
 } = projectStateSlice.actions;
 
 export default projectStateSlice.reducer; 

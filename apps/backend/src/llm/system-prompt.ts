@@ -31,13 +31,15 @@ export function buildSystemPrompt(context: {
     project.timeline.tracks.forEach(track => {
       prompt += `  - Track "${track.name}" (${track.type}, id: ${track.id}): ${track.clips.length} clips\n`;
       track.clips.forEach(clip => {
-         prompt += `    - Clip [${clip.startTime.toFixed(2)}s - ${(clip.startTime + clip.duration).toFixed(2)}s] (Asset: ${clip.assetId})\n`;
+        prompt += `    - Clip [${clip.startTime.toFixed(2)}s - ${(clip.startTime + clip.duration).toFixed(2)}s] (Asset: ${clip.assetId})\n`;
       });
     });
 
     prompt += `\n## Available Assets\n`;
     project.assets.forEach(asset => {
-      prompt += `- ${asset.name} (ID: ${asset.id}, Type: ${asset.type})\n`;
+      const hasRealPath = asset.path && !asset.path.startsWith('blob:') && !asset.path.startsWith('http');
+      const warning = hasRealPath ? '' : ' [⚠️ No server path - re-add file to enable editing]';
+      prompt += `- ${asset.name} (ID: ${asset.id}, Type: ${asset.type}, Path: ${hasRealPath ? asset.path : 'N/A'}${warning}, Duration: ${asset.duration ? asset.duration.toFixed(2) + 's' : 'N/A'})\n`;
     });
 
   } else {

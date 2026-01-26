@@ -16,9 +16,11 @@
     "@github/copilot-sdk": "^0.1.18",
     "@google/genai": "^1.38.0",
     "@modelcontextprotocol/sdk": "^1.0.1",
+    "@types/multer": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "multer": "^2.0.2",
     "openai": "^4.28.0",
     "uuid": "^9.0.1",
     "ws": "^8.16.0"

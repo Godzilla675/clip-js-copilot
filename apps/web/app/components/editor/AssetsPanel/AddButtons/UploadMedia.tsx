@@ -1,10 +1,11 @@
 "use client";
 
 import { listFiles, useAppDispatch, useAppSelector } from "../../../../store";
-import { setMediaFiles, setFilesID } from "../../../../store/slices/projectSlice";
+import { setMediaFiles, setFilesID, addLibraryFile } from "../../../../store/slices/projectSlice";
 import { storeFile } from "../../../../store";
 import { categorizeFile } from "../../../../utils/utils";
 import Image from 'next/image';
+import { api } from "../../../../lib/api";
 
 export default function AddMedia() {
     const { mediaFiles, filesID } = useAppSelector((state) => state.projectState);
@@ -16,7 +17,28 @@ export default function AddMedia() {
         for (const file of newFiles) {
             const fileId = crypto.randomUUID();
             await storeFile(file, fileId);
-            updatedFiles.push(fileId)
+
+            // Upload to backend
+            let serverPath: string | undefined;
+            try {
+                const uploadResult = await api.upload.file(file);
+                serverPath = uploadResult.filePath;
+                console.log('File uploaded to server:', serverPath);
+            } catch (error) {
+                console.warn('Failed to upload to backend:', error);
+            }
+
+            updatedFiles.push(fileId);
+
+            dispatch(addLibraryFile({
+                id: crypto.randomUUID(),
+                fileId: fileId,
+                fileName: file.name,
+                type: categorizeFile(file.type),
+                src: URL.createObjectURL(file), // For immediate display
+                serverPath: serverPath,
+                createdAt: new Date().toISOString()
+            }));
         }
         dispatch(setFilesID(updatedFiles));
         e.target.value = "";

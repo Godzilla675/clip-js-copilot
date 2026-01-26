@@ -14,6 +14,7 @@ export interface MediaFile {
     type: MediaType;
     startTime: number;  // within the source video
     src?: string;
+    serverPath?: string; // Real file path on server for backend processing
     endTime: number;
     positionStart: number;  // position in the final video
     positionEnd: number;
@@ -98,8 +99,19 @@ export interface ExportConfig {
 export type ActiveElement = 'media' | 'text' | 'export';
 
 
+export interface LibraryFile {
+    id: string;
+    fileId: string;
+    fileName: string;
+    type: MediaType;
+    src?: string;
+    serverPath?: string;
+    createdAt: string;
+}
+
 export interface ProjectState {
     id: string;
+    libraryFiles: LibraryFile[];
     mediaFiles: MediaFile[];
     textElements: TextElement[];
     filesID?: string[],

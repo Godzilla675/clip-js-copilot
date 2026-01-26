@@ -2,8 +2,10 @@ import { useEffect, useCallback } from 'react';
 import { useWebSocket } from '../context/WebSocketContext';
 import { api } from '../lib/api';
 import { useAppDispatch, useAppSelector } from '../store';
-import { rehydrate } from '../store/slices/projectSlice';
+import { rehydrate, addLibraryFile, updateTimelineClip } from '../store/slices/projectSlice';
 import { ProjectState } from '../types';
+import { categorizeFile } from '../utils/utils';
+import { storeFile } from '../store';
 
 export const useProject = () => {
     const dispatch = useAppDispatch();
@@ -27,10 +29,98 @@ export const useProject = () => {
             }
         };
 
+        const handleAssetCreated = async (payload: any) => {
+            console.log('Asset created:', payload);
+            const { fileName, filePath, projectId } = payload;
+            if (projectId && projectId !== project.id) return;
+
+            try {
+                const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+                const response = await fetch(`${backendUrl}/api/upload/${fileName}/download`);
+                if (!response.ok) {
+                    console.warn('Could not download created asset:', fileName);
+                    return;
+                }
+                const blob = await response.blob();
+                const file = new File([blob], fileName, { type: blob.type });
+                const fileId = crypto.randomUUID();
+
+                await storeFile(file, fileId);
+
+                dispatch(addLibraryFile({
+                    id: crypto.randomUUID(),
+                    fileId: fileId,
+                    fileName: fileName,
+                    type: categorizeFile(blob.type),
+                    src: URL.createObjectURL(file), // For immediate display
+                    serverPath: filePath,
+                    createdAt: new Date().toISOString()
+                }));
+            } catch (e) {
+                console.error('Error handling asset.created:', e);
+            }
+        };
+
+        const handleTimelineClipUpdated = async (payload: any) => {
+            console.log('Timeline clip updated:', payload);
+            const { originalFilePath, newFilePath, projectId } = payload;
+            if (projectId && projectId !== project.id) return;
+
+            const fileName = newFilePath.split(/[\\/]/).pop();
+            try {
+                const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+                const response = await fetch(`${backendUrl}/api/upload/${fileName}/download`);
+                if (!response.ok) {
+                    console.warn('Could not download updated clip asset:', fileName);
+                    return;
+                }
+
+                const blob = await response.blob();
+                const file = new File([blob], fileName, { type: blob.type });
+                const fileId = crypto.randomUUID();
+                await storeFile(file, fileId);
+
+                const objectUrl = URL.createObjectURL(file);
+                const vid = document.createElement('video');
+                vid.src = objectUrl;
+
+                await new Promise((resolve) => {
+                    vid.onloadedmetadata = () => resolve(true);
+                    vid.onerror = () => resolve(false);
+                });
+
+                dispatch(updateTimelineClip({
+                    originalServerPath: originalFilePath,
+                    newServerPath: newFilePath,
+                    newFileName: fileName,
+                    newSrc: objectUrl,
+                    newDuration: vid.duration
+                }));
+
+                // Also add to library
+                dispatch(addLibraryFile({
+                    id: crypto.randomUUID(),
+                    fileId: fileId,
+                    fileName: fileName,
+                    type: categorizeFile(blob.type),
+                    src: objectUrl,
+                    serverPath: newFilePath,
+                    createdAt: new Date().toISOString()
+                }));
+
+            } catch (e) {
+                console.error('Error handling timeline.clip.updated:', e);
+            }
+        };
+
         client.on('project.updated', handleProjectUpdate);
+        client.on('asset.created', handleAssetCreated);
+        client.on('timeline.clip.updated', handleTimelineClipUpdated);
 
         return () => {
             client.off('project.updated', handleProjectUpdate);
+            client.off('asset.created', handleAssetCreated);
+            client.off('timeline.clip.updated', handleTimelineClipUpdated);
         };
     }, [client, project.id, dispatch]);
 
