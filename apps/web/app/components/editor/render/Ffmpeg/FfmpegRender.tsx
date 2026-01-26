@@ -2,7 +2,6 @@
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { useEffect, useRef, useState } from "react";
 import { getFile, useAppSelector } from "@/app/store";
-import { Heart } from "lucide-react";
 import Image from "next/image";
 import { extractConfigs } from "@/app/utils/extractConfigs";
 import { mimeToExt } from "@/app/types";
@@ -73,6 +72,8 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                     await ffmpeg.writeFile(fileName, new Uint8Array(buffer));
                     return { ext, fileName };
                 }));
+
+                const wroteFiles = new Map<string, string>();
 
                 for (let i = 0; i < sortedMediaFiles.length; i++) {
 
@@ -307,15 +308,6 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                                             width={18}
                                         />
                                         <span className="ml-2">Save Video</span>
-                                    </a>
-                                    <a
-                                        href="https://github.com/sponsors/mohyware"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`inline-flex items-center p-3 bg-pink-600 hover:bg-pink-500 rounded-lg text-gray-900 font-bold transition-all transform`}
-                                    >
-                                        <Heart size={20} className="mr-2" />
-                                        Sponsor on Github
                                     </a>
                                 </div>
                             </div>

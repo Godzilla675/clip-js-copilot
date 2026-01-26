@@ -1,5 +1,4 @@
-import { useAppSelector } from '@/app/store';
-import { useAppDispatch } from '@/app/store';
+import { useAppSelector, useAppDispatch } from '@/app/store';
 import { setResolution, setQuality, setSpeed, setIncludeSubtitles, setFormat, setFps } from '@/app/store/slices/projectSlice';
 import { ExportFormat } from '@/app/types';
 
@@ -103,9 +102,9 @@ export default function RenderOptions() {
                             </div>
                         </div>
 
-                        <div className="mt-4 text-sm text-gray-600">
-                             <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.speed} processing) - {exportSettings.fps} FPS</p>
-                        </div>
+                    </div>
+                    <div className="mt-4 text-sm text-gray-600">
+                        <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.speed} processing) - {exportSettings.fps} FPS</p>
                     </div>
                 </div>
             </div>
