@@ -40,11 +40,11 @@ export default function TextTimeline() {
         }, 100), [dispatch]
     );
 
-    const handleClick = (element: string, index: number | string) => {
+    const handleClick = (element: string, id: string) => {
         if (element === 'text') {
-            dispatch(setActiveElement('text') as any);
+            dispatch(setActiveElement('text'));
             // TODO: find better way to do this
-            const actualIndex = textElements.findIndex(clip => clip.id === index as unknown as string);
+            const actualIndex = textElements.findIndex(clip => clip.id === id);
             dispatch(setActiveElementIndex(actualIndex));
         }
     };
