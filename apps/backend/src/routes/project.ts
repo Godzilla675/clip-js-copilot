@@ -4,9 +4,9 @@ import { ProjectManager } from '../project/state.js';
 export function createProjectRouter(projectManager: ProjectManager): Router {
   const router = Router();
 
-  router.get('/:id', (req, res) => {
+  router.get('/:id', async (req, res) => {
     try {
-      const project = projectManager.loadProject(req.params.id);
+      const project = await projectManager.loadProject(req.params.id);
       res.json(project);
     } catch (error) {
       res.status(404).json({ error: (error as Error).message });
