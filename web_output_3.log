@@ -1,0 +1,24 @@
+
+> ai-video-editor@ dev:web /app
+> turbo dev --filter=@ai-video-editor/web
+
+• turbo 2.7.6
+• Packages in scope: @ai-video-editor/web
+• Running dev in 1 packages
+• Remote caching disabled
+@ai-video-editor/web:dev: cache bypass, force executing 04ca0a2f76f9ea7b
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
+@ai-video-editor/web:dev: > next dev
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:  ⚠ Port 3000 is in use, trying 3001 instead.
+@ai-video-editor/web:dev:   ▲ Next.js 14.2.35
+@ai-video-editor/web:dev:   - Local:        http://localhost:3001
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:  ✓ Starting...
+@ai-video-editor/web:dev:  ✓ Ready in 2.5s
+@ai-video-editor/web:dev:  ○ Compiling / ...
+@ai-video-editor/web:dev:  ✓ Compiled / in 6.2s (691 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 1022ms (339 modules)
+@ai-video-editor/web:dev:  GET / 200 in 7282ms
+@ai-video-editor/web:dev: <w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/app/apps/web/.next/cache/webpack/server-development/2.pack.gz_' -> '/app/apps/web/.next/cache/webpack/server-development/2.pack.gz'

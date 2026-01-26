@@ -1,6 +1,6 @@
-# AI Video Editor
+# COPILOT AI POWERED VIDEO EDITING POWERED BY GITHUB COPILOT
 
-An AI-powered video editor with a copilot interface, built as a monorepo.
+An AI-powered video editor, powered by GitHub Copilot, built as a monorepo.
 
 ## Features
 
