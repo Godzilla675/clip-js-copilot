@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/app/store';
 import { useAppDispatch } from '@/app/store';
-import { setResolution, setQuality, setSpeed } from '@/app/store/slices/projectSlice';
+import { setResolution, setQuality, setSpeed, setIncludeSubtitles } from '@/app/store/slices/projectSlice';
 export default function RenderOptions() {
     const { exportSettings } = useAppSelector(state => state.projectState);
     const dispatch = useAppDispatch();
@@ -14,7 +14,7 @@ export default function RenderOptions() {
                             <div>
 
                                 {/* Resolution Setting */}
-                                <label className="text-l font-bold mb-2 text-white">Resolution</label>
+                                <label className="text-lg font-bold mb-2 text-white">Resolution</label>
                                 <select
                                     value={exportSettings.resolution}
                                     onChange={(e) => dispatch(setResolution(e.target.value))}
@@ -30,7 +30,7 @@ export default function RenderOptions() {
 
                             {/* Quality Setting */}
                             <div>
-                                <label className="text-l font-bold mb-2 text-white">Quality</label>
+                                <label className="text-lg font-bold mb-2 text-white">Quality</label>
                                 <select
                                     value={exportSettings.quality}
                                     onChange={(e) => dispatch(setQuality(e.target.value))}
@@ -45,7 +45,7 @@ export default function RenderOptions() {
 
                             {/* Processing Speed Setting */}
                             <div>
-                                <label className="text-l font-bold mb-2 text-white">Processing Speed</label>
+                                <label className="text-lg font-bold mb-2 text-white">Processing Speed</label>
                                 <select
                                     value={exportSettings.speed}
                                     onChange={(e) => dispatch(setSpeed(e.target.value))}
@@ -57,6 +57,20 @@ export default function RenderOptions() {
                                     <option value="slow">Slow</option>
                                     <option value="slowest">Slowest</option>
                                 </select>
+                            </div>
+
+                            {/* Include Subtitles Setting */}
+                            <div className="flex items-center space-x-2 pt-2">
+                                <input
+                                    type="checkbox"
+                                    id="includeSubtitles"
+                                    checked={exportSettings.includeSubtitles}
+                                    onChange={(e) => dispatch(setIncludeSubtitles(e.target.checked))}
+                                    className="w-5 h-5 bg-darkSurfacePrimary border border-white border-opacity-10 rounded focus:ring-2 focus:ring-white-500"
+                                />
+                                <label htmlFor="includeSubtitles" className="text-lg font-bold text-white cursor-pointer">
+                                    Include Subtitles
+                                </label>
                             </div>
                         </div>
 

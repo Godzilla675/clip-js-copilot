@@ -71,7 +71,7 @@ export default function Projects() {
                 speed: 'fastest',
                 fps: 30,
                 format: 'mp4',
-                includeSubtitles: false,
+                includeSubtitles: true,
             },
         };
 
