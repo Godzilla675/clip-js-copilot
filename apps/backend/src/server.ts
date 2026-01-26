@@ -70,7 +70,8 @@ export class Server {
     this.app.use('/api/upload', createUploadRouter());
 
     this.app.get('/api/health', (req, res) => {
-      res.json({ status: 'ok' });
+      res.json({ status: 'ok' });//call the police im being held hostage by robbers
+
     });
   }
 
