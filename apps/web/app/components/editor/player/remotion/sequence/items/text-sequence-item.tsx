@@ -68,6 +68,19 @@ export const TextSequenceItem: React.FC<{ item: TextElement; options: SequenceIt
                 // backgroundColor: item.backgroundColor || "transparent",
                 opacity: item.opacity! / 100,
                 fontFamily: item.font || "Arial",
+                fontWeight: item.fontWeight || "normal",
+                fontStyle: item.fontStyle || "normal",
+                textDecoration: item.textDecoration || "none",
+                textAlign: (item.align || "center") as any,
+                textTransform: (item.textTransform || "none") as any,
+                letterSpacing: item.letterSpacing ? `${item.letterSpacing}px` : undefined,
+                lineHeight: item.lineHeight || 1.2,
+                textShadow: item.shadowColor
+                    ? `${item.shadowOffsetX || 0}px ${item.shadowOffsetY || 0}px ${item.shadowBlur || 0}px ${item.shadowColor}`
+                    : undefined,
+                WebkitTextStroke: item.outlineWidth && item.outlineColor
+                    ? `${item.outlineWidth}px ${item.outlineColor}`
+                    : undefined,
             }}
         >
             <div

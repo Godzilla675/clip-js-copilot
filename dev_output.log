@@ -1,0 +1,289 @@
+
+> ai-video-editor@ dev /app
+> turbo dev
+
+• turbo 2.7.6
+• Packages in scope: @ai-video-editor/asset-server, @ai-video-editor/backend, @ai-video-editor/code-runner-server, @ai-video-editor/ffmpeg-server, @ai-video-editor/mcp-utils, @ai-video-editor/shared-types, @ai-video-editor/vision-server, @ai-video-editor/web, @ai-video-editor/whisper-server
+• Running dev in 9 packages
+• Remote caching disabled
+@ai-video-editor/web:dev: cache bypass, force executing 9626c9771460e1a1
+@ai-video-editor/backend:dev: cache bypass, force executing f9befd7ec0938051
+@ai-video-editor/mcp-utils:dev: cache bypass, force executing 35f824dafb42161f
+@ai-video-editor/code-runner-server:dev: cache bypass, force executing eab0abe11a3c415e
+@ai-video-editor/ffmpeg-server:dev: cache bypass, force executing 89fe4ae6dd867f5b
+@ai-video-editor/whisper-server:dev: cache bypass, force executing e945058390fed1d9
+@ai-video-editor/asset-server:dev: cache bypass, force executing ee1ce51af6a3cd1a
+@ai-video-editor/vision-server:dev: cache bypass, force executing 9390877cdf2cfb50
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
+@ai-video-editor/web:dev: > next dev
+@ai-video-editor/web:dev:
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: > @ai-video-editor/code-runner-server@1.0.0 dev /app/mcp-servers/code-runner-server
+@ai-video-editor/code-runner-server:dev: > tsc --watch
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: > @ai-video-editor/whisper-server@0.1.0 dev /app/mcp-servers/whisper-server
+@ai-video-editor/whisper-server:dev: > tsc --watch
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/ffmpeg-server:dev: > @ai-video-editor/ffmpeg-server@0.0.1 dev /app/mcp-servers/ffmpeg-server
+@ai-video-editor/ffmpeg-server:dev: > tsc --watch
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: > @ai-video-editor/vision-server@1.0.0 dev /app/mcp-servers/vision-server
+@ai-video-editor/vision-server:dev: > tsc --watch
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/mcp-utils:dev: > @ai-video-editor/mcp-utils@0.0.1 dev /app/packages/mcp-utils
+@ai-video-editor/mcp-utils:dev: > tsc --watch
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: > @ai-video-editor/asset-server@0.1.0 dev /app/mcp-servers/asset-server
+@ai-video-editor/asset-server:dev: > tsc --watch
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: > @ai-video-editor/backend@0.1.0 dev /app/apps/backend
+@ai-video-editor/backend:dev: > tsx watch src/index.ts
+@ai-video-editor/backend:dev:
+@ai-video-editor/ffmpeg-server:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/mcp-utils:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/code-runner-server:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/whisper-server:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/vision-server:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/asset-server:dev: [2J[3J[H12:15:08 PM - Starting compilation in watch mode...
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/web:dev:   ▲ Next.js 14.2.35
+@ai-video-editor/web:dev:   - Local:        http://localhost:3000
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:  ✓ Starting...
+@ai-video-editor/backend:dev: node:internal/modules/run_main:123
+@ai-video-editor/backend:dev:     triggerUncaughtException(
+@ai-video-editor/backend:dev:     ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Transform failed with 1 error:
+@ai-video-editor/backend:dev: /app/apps/backend/src/mcp/client-manager.ts:33:8: ERROR: Expected "}" but found "env"
+@ai-video-editor/backend:dev:     at failureErrorWithLog (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:1467:15)
+@ai-video-editor/backend:dev:     at /app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:736:50
+@ai-video-editor/backend:dev:     at responseCallbacks.<computed> (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:603:9)
+@ai-video-editor/backend:dev:     at handleIncomingPacket (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:658:12)
+@ai-video-editor/backend:dev:     at Socket.readFromStdout (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:581:7)
+@ai-video-editor/backend:dev:     at Socket.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at addChunk (node:internal/streams/readable:561:12)
+@ai-video-editor/backend:dev:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+@ai-video-editor/backend:dev:     at Readable.push (node:internal/streams/readable:392:5)
+@ai-video-editor/backend:dev:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+@ai-video-editor/backend:dev:   name: 'TransformError'
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/mcp-utils:dev: 12:15:15 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/index.ts(11,10): error TS2339: Property 'server' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(18,10): error TS2339: Property 'server' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(28,8): error TS2339: Property 'start' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(28,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/code-runner-server:dev: src/sandbox/executor.ts(2,36): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/sandbox/validator.ts(1,51): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/tools/python-script.ts(3,47): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: 12:15:15 PM - Found 8 errors. Watching for file changes.
+@ai-video-editor/web:dev:  ✓ Ready in 6.4s
+@ai-video-editor/asset-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/asset-server:dev: src/index.ts(15,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(22,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(29,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(36,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(46,8): error TS2339: Property 'start' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/tools/download.ts(6,48): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: 12:15:16 PM - Found 7 errors. Watching for file changes.
+@ai-video-editor/whisper-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/whisper-server:dev: src/index.ts(12,33): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(13,30): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(14,32): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(19,8): error TS2339: Property 'start' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(19,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: 12:15:16 PM - Found 6 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev: [2J[3J[H12:15:17 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(17,31): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(18,28): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(19,31): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(20,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(21,34): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(22,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(23,28): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(24,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(29,8): error TS2339: Property 'start' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(29,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/ffmpeg-server:dev: 12:15:17 PM - Found 11 errors. Watching for file changes.
+@ai-video-editor/vision-server:dev: src/frame-extractor.ts(1,47): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/vision-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/vision-server:dev: src/index.ts(14,36): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(15,35): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(16,37): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(17,38): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(22,8): error TS2339: Property 'start' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(22,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: 12:15:17 PM - Found 8 errors. Watching for file changes.
+@ai-video-editor/asset-server:dev: [2J[3J[H12:15:17 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/whisper-server:dev: [2J[3J[H12:15:18 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/ffmpeg-server:dev: [2J[3J[H12:15:18 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/vision-server:dev: [2J[3J[H12:15:18 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: 12:15:18 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: 12:15:19 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/ffmpeg-server:dev: 12:15:19 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: 12:15:20 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: 12:15:20 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/backend:dev: 12:16:09 PM [tsx] change in ./src/mcp/client-manager.ts Rerunning...
+@ai-video-editor/backend:dev: node:internal/modules/run_main:123
+@ai-video-editor/backend:dev:     triggerUncaughtException(
+@ai-video-editor/backend:dev:     ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Transform failed with 1 error:
+@ai-video-editor/backend:dev: /app/apps/backend/src/llm/providers/anthropic.ts:19:10: ERROR: Expected ";" but found "formatMessages"
+@ai-video-editor/backend:dev:     at failureErrorWithLog (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:1467:15)
+@ai-video-editor/backend:dev:     at /app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:736:50
+@ai-video-editor/backend:dev:     at responseCallbacks.<computed> (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:603:9)
+@ai-video-editor/backend:dev:     at handleIncomingPacket (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:658:12)
+@ai-video-editor/backend:dev:     at Socket.readFromStdout (/app/node_modules/.pnpm/esbuild@0.27.2/node_modules/esbuild/lib/main.js:581:7)
+@ai-video-editor/backend:dev:     at Socket.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at addChunk (node:internal/streams/readable:561:12)
+@ai-video-editor/backend:dev:     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+@ai-video-editor/backend:dev:     at Readable.push (node:internal/streams/readable:392:5)
+@ai-video-editor/backend:dev:     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23) {
+@ai-video-editor/backend:dev:   name: 'TransformError'
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: c12:16:31 PM [tsx] change in ./src/llm/providers/anthropic.ts Rerunning...
+@ai-video-editor/backend:dev: cInitializing MCP connections...
+@ai-video-editor/backend:dev: Connecting to MCP server ffmpeg with command: node /app/mcp-servers/ffmpeg-server/dist/index.js
+@ai-video-editor/backend:dev: ffmpeg-server MCP Server running on stdio
+@ai-video-editor/backend:dev: Connected to MCP server: ffmpeg
+@ai-video-editor/backend:dev: Connecting to MCP server whisper with command: node /app/mcp-servers/whisper-server/dist/index.js
+@ai-video-editor/backend:dev: whisper-server MCP Server running on stdio
+@ai-video-editor/backend:dev: Connected to MCP server: whisper
+@ai-video-editor/backend:dev: Connecting to MCP server vision with command: node /app/mcp-servers/vision-server/dist/index.js
+@ai-video-editor/backend:dev: vision-server MCP Server running on stdio
+@ai-video-editor/backend:dev: Connected to MCP server: vision
+@ai-video-editor/backend:dev: Connecting to MCP server asset with command: node /app/mcp-servers/asset-server/dist/index.js
+@ai-video-editor/backend:dev: [Asset Server] Warning: Missing API keys for: PEXELS_API_KEY, UNSPLASH_ACCESS_KEY. Some tools may not work.
+@ai-video-editor/backend:dev: asset-server MCP Server running on stdio
+@ai-video-editor/backend:dev: Connected to MCP server: asset
+@ai-video-editor/backend:dev: Connecting to MCP server codeRunner with command: node /app/mcp-servers/code-runner-server/dist/index.js
+@ai-video-editor/backend:dev: code-runner-server MCP Server running on stdio
+@ai-video-editor/backend:dev: Connected to MCP server: codeRunner
+@ai-video-editor/backend:dev: Initializing ToolRegistry...
+@ai-video-editor/backend:dev: Registered tool get_video_info from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool trim_video from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool concat_videos from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool extract_audio from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool add_audio_track from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool adjust_volume from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool add_text_overlay from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool apply_filter from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool change_speed from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool export_project from server ffmpeg
+@ai-video-editor/backend:dev: Registered tool transcribe_audio from server whisper
+@ai-video-editor/backend:dev: Registered tool detect_silence from server whisper
+@ai-video-editor/backend:dev: Registered tool generate_subtitles from server whisper
+@ai-video-editor/backend:dev: Registered tool extract_frames from server vision
+@ai-video-editor/backend:dev: Registered tool analyze_frame from server vision
+@ai-video-editor/backend:dev: Registered tool find_scene_changes from server vision
+@ai-video-editor/backend:dev: Registered tool describe_video_segment from server vision
+@ai-video-editor/backend:dev: Registered tool search_images from server asset
+@ai-video-editor/backend:dev: Registered tool search_videos from server asset
+@ai-video-editor/backend:dev: Registered tool search_audio from server asset
+@ai-video-editor/backend:dev: Registered tool download_asset from server asset
+@ai-video-editor/backend:dev: Registered tool run_ffmpeg_command from server codeRunner
+@ai-video-editor/backend:dev: Registered tool run_python_script from server codeRunner
+@ai-video-editor/backend:dev: MCP initialization complete
+@ai-video-editor/backend:dev: Backend server running on port 3001
+@ai-video-editor/backend:dev: WebSocket server ready
+@ai-video-editor/web:dev:  ○ Compiling / ...
+@ai-video-editor/web:dev: request to https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100..700&display=swap failed, reason:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: Retrying 1/3...
+@ai-video-editor/web:dev:  ✓ Compiled / in 9.7s (709 modules)
+@ai-video-editor/web:dev:  GET / 200 in 10725ms
+@ai-video-editor/web:dev:  ✓ Compiled in 1018ms (339 modules)
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 84ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/web:dev:  ○ Compiling /projects ...
+@ai-video-editor/web:dev:  ✓ Compiled /projects in 723ms (683 modules)
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 181ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 36ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 47ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 6s (1429 modules)
+@ai-video-editor/web:dev:  GET / 200 in 211ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 38ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 38ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected

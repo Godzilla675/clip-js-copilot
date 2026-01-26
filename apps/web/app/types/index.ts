@@ -52,10 +52,25 @@ export interface TextElement {
     // Styling
     font?: string;                   // Font family (e.g., 'Arial', 'Roboto')
     fontSize?: number;               // Font size in pixels
+    fontWeight?: string;             // Font weight (e.g., 'normal', 'bold', '400')
+    fontStyle?: string;              // Font style (e.g., 'normal', 'italic')
+    textDecoration?: string;         // Text decoration (e.g., 'none', 'underline')
+    textTransform?: string;          // Text transform (e.g., 'uppercase')
+    letterSpacing?: number;          // Letter spacing in pixels
+    lineHeight?: number;             // Line height (multiplier or px)
+
     color?: string;                  // Text color (hex or rgba)
     backgroundColor?: string;       // Background behind text
     align?: 'left' | 'center' | 'right'; // Horizontal alignment
     zIndex?: number;                 // Layering
+
+    // Advanced Effects
+    shadowColor?: string;
+    shadowBlur?: number;
+    shadowOffsetX?: number;
+    shadowOffsetY?: number;
+    outlineColor?: string;
+    outlineWidth?: number;
 
     // Effects
     opacity?: number;                // Transparency (0 to 1)
