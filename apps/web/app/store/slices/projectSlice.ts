@@ -107,6 +107,7 @@ const projectStateSlice = createSlice({
         },
         setIncludeSubtitles: (state, action: PayloadAction<boolean>) => {
             state.exportSettings.includeSubtitles = action.payload;
+        },
         setFormat: (state, action: PayloadAction<ExportFormat>) => {
             state.exportSettings.format = action.payload;
         },
