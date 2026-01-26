@@ -15,7 +15,6 @@ export class AnthropicProvider implements LLMProviderInterface {
     this.model = config.model;
   }
 
-  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
   private formatMessages(messages: Message[]): any[] {
     return messages
       .filter(m => m.role !== 'system')

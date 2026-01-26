@@ -29,7 +29,6 @@ export class MCPClientManager {
       const transport = new StdioClientTransport({
         command,
         args,
-        env: env ? { ...(process.env as Record<string, string>), ...env } : undefined
         env: mergedEnv
       });
 
