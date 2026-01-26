@@ -56,15 +56,27 @@ export class CopilotProvider implements LLMProviderInterface {
     }
 
     async getModels(): Promise<string[]> {
-        const client = await this.getClient();
-        if (client.listModels) {
-            const models = await client.listModels();
-            return models.map((m: any) => {
-                if (typeof m === 'string') return m;
-                return m.id || m.name || m.slug || m.model || JSON.stringify(m);
-            });
+        const DEFAULT_MODELS = ['gpt-4o', 'claude-3.5-sonnet', 'o1-preview'];
+
+        try {
+            const client = await this.getClient();
+            if (client.listModels) {
+                const models = await client.listModels();
+                console.log('Copilot client.listModels() returned:', models);
+
+                if (Array.isArray(models) && models.length > 0) {
+                    return models.map((m: any) => {
+                        if (typeof m === 'string') return m;
+                        return m.id || m.name || m.slug || m.model || JSON.stringify(m);
+                    });
+                }
+            }
+        } catch (error) {
+            console.warn('Failed to fetch models from Copilot client, utilizing defaults:', error);
         }
-        return [];
+
+        console.log('Using default model list for Copilot');
+        return DEFAULT_MODELS;
     }
 
     async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
@@ -84,6 +96,7 @@ export class CopilotProvider implements LLMProviderInterface {
             if (result && result.type === 'assistant.message') {
                 return { content: result.data.content };
             }
+            console.log('Chat Request Result:', JSON.stringify(result, null, 2));
             return { content: '' };
         } catch (error) {
             await session.destroy().catch(() => { });
@@ -107,6 +120,7 @@ export class CopilotProvider implements LLMProviderInterface {
         let error: any = null;
 
         const onEvent = (event: any) => {
+            console.log('Stream Request Event:', JSON.stringify(event, null, 2));
             if (event.type === 'assistant.message_delta') {
                 if (event.data?.deltaContent) {
                     chunkQueue.push({ done: false, content: event.data.deltaContent });

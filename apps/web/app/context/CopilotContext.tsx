@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode, useEffect } from
 import { v4 as uuidv4 } from 'uuid';
 import { useWebSocket } from './WebSocketContext';
 import { api } from '../lib/api';
+import { useAppSelector } from '../store';
 
 export interface ToolCall {
     id: string;
@@ -49,6 +50,7 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
     const [selectedModel, setSelectedModel] = useState<string>('');
 
     const { client, isConnected, send } = useWebSocket();
+    const projectId = useAppSelector((state) => state.projectState.id);
 
     useEffect(() => {
         api.copilot.getModels()
@@ -194,16 +196,10 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             if (isConnected) {
-                send('copilot.message', { content, model: selectedModel });
+                send('copilot.message', { content, model: selectedModel, projectId });
             } else {
                 // Fallback to REST API if not connected
-                // Note: The backend might not support streaming via REST same way as WS in this architecture
-                // But for now let's try calling it.
-                await api.copilot.sendMessage(content, selectedModel);
-                // The REST API might return the full response or just trigger the process.
-                // If it triggers the process, we still need WS for updates.
-                // If WS is down, we might be stuck.
-                // Let's assume WS is preferred.
+                await api.copilot.sendMessage(content, selectedModel, projectId);
             }
         } catch (error) {
             console.error('Error sending message:', error);
