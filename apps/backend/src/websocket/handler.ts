@@ -383,6 +383,10 @@ export class WebSocketHandler {
       await this.runAgentLoop(ws, nextMessages, tools, wsWithHistory, systemPrompt, depth + 1, executeTool, model);
   }
 
+  public setOrchestrator(orchestrator: LLMOrchestrator) {
+    this.orchestrator = orchestrator;
+  }
+
   private broadcast(message: any) {
     const data = JSON.stringify(message);
     this.wss.clients.forEach((client) => {

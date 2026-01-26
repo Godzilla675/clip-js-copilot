@@ -1,11 +1,51 @@
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from "next/link";
 import Image from "next/image";
 import { featuresGridList } from "./utils/data";
+import { SetupModal } from "./components/onboarding/SetupModal";
 
 export default function Home() {
+  const router = useRouter();
+  const [showSetup, setShowSetup] = useState(false);
+  const [configStatus, setConfigStatus] = useState<any>(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001'}/api/settings`)
+      .then(res => res.json())
+      .then(data => setConfigStatus(data))
+      .catch(err => console.error('Failed to fetch settings status', err));
+  }, []);
+
+  const handleGetStarted = () => {
+    // Check if configured
+    if (configStatus) {
+        // Assets are optional, so we only force setup if LLM is missing
+        const isLLMConfigured = configStatus.llmConfigured;
+
+        if (!isLLMConfigured) {
+            setShowSetup(true);
+            return;
+        }
+    } else {
+        // If fetch failed or not loaded, show setup safely
+        setShowSetup(true);
+        return;
+    }
+
+    router.push('/projects');
+  };
 
   return (
     <div className="space-y-10">
+      <SetupModal
+        isOpen={showSetup}
+        onClose={() => setShowSetup(false)}
+        onComplete={() => {
+            setShowSetup(false);
+            router.push('/projects');
+        }}
+      />
       {/* <Header /> */}
       <div className="mx-auto bg-surfacePrimary max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center lg:pt-32">
         <p className="mx-auto -mt-4 max-w-2xl text-lg tracking-tight text-white-700 sm:mt-6">Welcome to
@@ -27,7 +67,8 @@ export default function Home() {
 
         <div className="mt-12 flex flex-col justify-center gap-y-5 sm:mt-10 sm:flex-row sm:gap-y-0 sm:gap-x-6">
           <div className="relative flex flex-1 flex-col items-stretch sm:flex-none" data-headlessui-state="">
-            <Link href="/projects" as={"/projects"}
+            <button
+              onClick={handleGetStarted}
               className="rounded-full bg-white border border-solid border-transparent transition-colors flex items-center justify-center text-gray-800 gap-2 hover:bg-[#ccc] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
               id="headlessui-menu-button-:r4:" aria-haspopup="true" aria-expanded="false" data-headlessui-state="" type="button">
               <svg
@@ -41,7 +82,7 @@ export default function Home() {
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6H7v2h6v6h2v-6h6v-2h-6z" />
               </svg>
               <span className="ml-3">Get Started</span>
-            </Link>
+            </button>
           </div>
         </div>
       </div>

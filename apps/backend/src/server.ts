@@ -8,7 +8,8 @@ import { WebSocketHandler } from './websocket/handler.js';
 import { createProjectRouter } from './routes/project.js';
 import { createToolsRouter } from './routes/tools.js';
 import { createCopilotRouter } from './routes/copilot.js';
-import { initMCP } from './mcp/index.js';
+import { createSettingsRouter } from './routes/settings.js';
+import { initMCP, mcpClientManager } from './mcp/index.js';
 import { LLMOrchestrator } from './llm/orchestrator.js';
 
 export class Server {
@@ -64,6 +65,7 @@ export class Server {
     this.app.use('/api/project', createProjectRouter(this.projectManager));
     this.app.use('/api/tools', createToolsRouter());
     this.app.use('/api/copilot', createCopilotRouter(this.orchestrator, this.projectManager));
+    this.app.use('/api/settings', createSettingsRouter(this));
 
     this.app.get('/api/health', (req, res) => {
         res.json({ status: 'ok' });
@@ -84,6 +86,37 @@ export class Server {
       console.log(`Backend server running on port ${this.port}`);
       console.log(`WebSocket server ready`);
     });
+  }
+
+  public async reloadLLM() {
+    console.log('Reloading LLM Orchestrator...');
+
+    let apiKey = '';
+    if (config.llm.provider === 'anthropic') {
+      apiKey = config.llm.anthropicApiKey;
+    } else if (config.llm.provider === 'openai') {
+      apiKey = config.llm.openaiApiKey;
+    } else if (config.llm.provider === 'gemini') {
+      apiKey = config.llm.geminiApiKey;
+    }
+
+    const llmConfig = {
+        provider: config.llm.provider,
+        apiKey,
+        model: config.llm.model,
+        baseUrl: config.llm.baseUrl
+    };
+
+    this.orchestrator = new LLMOrchestrator(llmConfig);
+    this.wsHandler.setOrchestrator(this.orchestrator);
+    console.log('LLM Orchestrator reloaded');
+  }
+
+  public async reloadMCP() {
+      console.log('Reloading MCP servers...');
+      await mcpClientManager.disconnectAll();
+      await initMCP();
+      console.log('MCP servers reloaded');
   }
 
   // Helper for testing
