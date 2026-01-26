@@ -43,21 +43,6 @@ export default function Home() {
               <span className="ml-3">Get Started</span>
             </Link>
           </div>
-          <Link href="https://github.com/mohyware/clip.js" target="_blank"
-            className="rounded-full bg-black border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              fill="currentColor"
-              className="h-6 w-6 flex-none"
-            >
-              <path d="M12 0C5.372 0 0 5.372 0 12c0 5.303 3.438 9.8 8.207 11.385.6.111.793-.261.793-.577 0-.285-.011-1.04-.016-2.04-3.338.728-4.04-1.562-4.04-1.562-.545-1.38-1.33-1.748-1.33-1.748-1.087-.743.082-.73.082-.73 1.2.085 1.833 1.25 1.833 1.25 1.065 1.833 2.79 1.302 3.467.997.107-.773.417-1.302.758-1.603-2.664-.306-5.467-1.332-5.467-5.92 0-1.307.466-2.381 1.233-3.221-.123-.306-.534-.92.117-1.89 0 0 .765-.25 2.5.92a8.49 8.49 0 0 1 2.292-.306c.772 0 1.556.1 2.292.306 1.733-1.17 2.5-.92 2.5-.92.651.97.24 1.584.117 1.89.767.84 1.233 1.914 1.233 3.221 0 4.604-2.805 5.607-5.473 5.91.431.373.806 1.105.806 2.24 0 1.616-.016 2.93-.016 3.33 0 .315.192.69.8.577 4.771-1.585 8.207-6.082 8.207-11.385C24 5.372 18.628 0 12 0z" />
-            </svg>
-            <span className="ml-3">Star on GitHub</span>
-          </Link>
         </div>
       </div>
       {/* Features Section */}
