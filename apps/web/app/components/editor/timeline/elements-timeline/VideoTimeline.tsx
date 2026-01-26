@@ -1,9 +1,8 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
-import { useAppSelector } from "@/app/store";
+import { useAppSelector, useAppDispatch } from "@/app/store";
 import { setActiveElement, setActiveElementIndex, setMediaFiles } from "@/app/store/slices/projectSlice";
 import { memo, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import Image from "next/image";
 import Header from "../Header";
 import { MediaFile } from "@/app/types";
@@ -12,7 +11,7 @@ import { debounce, throttle } from "lodash";
 export default function VideoTimeline() {
     const targetRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const { mediaFiles, activeElement, activeElementIndex, timelineZoom } = useAppSelector((state) => state.projectState);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const moveableRef = useRef<Record<string, Moveable | null>>({});
 
     // this affect the performance cause of too much re-renders
@@ -39,11 +38,11 @@ export default function VideoTimeline() {
         }, 100), [dispatch]
     );
 
-    const handleClick = (element: string, index: number | string) => {
+    const handleClick = (element: string, id: string) => {
         if (element === 'media') {
-            dispatch(setActiveElement('media') as any);
+            dispatch(setActiveElement('media'));
             // TODO: cause we pass id when media to find the right index i will change this later (this happens cause each timeline pass its index not index from mediaFiles array)
-            const actualIndex = mediaFiles.findIndex(clip => clip.id === index as unknown as string);
+            const actualIndex = mediaFiles.findIndex(clip => clip.id === id);
             dispatch(setActiveElementIndex(actualIndex));
         }
     };
