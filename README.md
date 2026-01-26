@@ -5,6 +5,7 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
 ## Features
 
 - **AI Copilot**: Chat with an AI assistant to edit videos, find assets, and analyze content.
+- **GitHub Copilot Integration**: Use GitHub Copilot as your LLM provider for advanced coding and reasoning capabilities.
 - **Multimodal Understanding**: The AI can "see" your video frames and understand context.
 - **Asset Integration**: Search and download stock footage/images from Pexels and Unsplash.
 - **Local Processing**: Uses FFmpeg and Whisper locally for privacy and performance.
@@ -42,13 +43,15 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
    **Required Environment Variables:**
 
    *Backend (`apps/backend/.env`)*:
-   - `LLM_PROVIDER`: `anthropic` or `openai`
-   - `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`: API key for the chosen provider.
+   - `LLM_PROVIDER`: `anthropic`, `openai`, `gemini`, or `copilot`
+   - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` / `GEMINI_API_KEY`: API key for the chosen provider.
    - `PEXELS_API_KEY`: For video/image search.
    - `UNSPLASH_ACCESS_KEY`: For image search.
 
    *Frontend (`apps/web/.env.local`)*:
    - `NEXT_PUBLIC_BACKEND_URL`: URL of the backend (e.g., `http://localhost:3001`).
+
+   > **Note**: For GitHub Copilot setup instructions, see [docs/copilot.md](./docs/copilot.md).
 
 3. **Start Development**:
    ```bash
@@ -71,6 +74,7 @@ An AI-powered video editor with a copilot interface, built as a monorepo.
 For detailed documentation, please visit the [docs/](./docs/) directory:
 
 - [Architecture](./docs/architecture.md)
+- [GitHub Copilot Setup](./docs/copilot.md)
 - [API Documentation](./docs/api.md)
 - [MCP Tools](./docs/mcp-tools.md)
 - [Development Guide](./docs/development.md)
