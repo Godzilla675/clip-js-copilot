@@ -1,0 +1,22 @@
+
+> ai-video-editor@ dev:web /app
+> turbo dev --filter=@ai-video-editor/web
+
+• turbo 2.7.6
+• Packages in scope: @ai-video-editor/web
+• Running dev in 1 packages
+• Remote caching disabled
+@ai-video-editor/web:dev: cache bypass, force executing 0f047446fd912db1
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
+@ai-video-editor/web:dev: > next dev
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:   ▲ Next.js 14.2.35
+@ai-video-editor/web:dev:   - Local:        http://localhost:3000
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:  ✓ Starting...
+@ai-video-editor/web:dev:  ✓ Ready in 1846ms
+@ai-video-editor/web:dev:  ○ Compiling / ...
+@ai-video-editor/web:dev:  ✓ Compiled / in 5.9s (697 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 559ms (333 modules)
+@ai-video-editor/web:dev:  GET / 200 in 6528ms

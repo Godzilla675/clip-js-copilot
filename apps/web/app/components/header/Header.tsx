@@ -33,14 +33,6 @@ export default function Header() {
                                 Projects
                             </Link>
                         </li>
-                        <li>
-                            <Link
-                                href="/about"
-                                className="text-md text-white hover:text-gray-800 px-4 py-2 rounded-md hover:bg-gray-100 transition-colors"
-                            >
-                                About Me
-                            </Link>
-                        </li>
                     </ul>
                     {/* <ThemeSwitch /> */}
                 </nav>
