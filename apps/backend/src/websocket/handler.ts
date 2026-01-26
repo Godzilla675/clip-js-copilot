@@ -96,6 +96,24 @@ export class WebSocketHandler {
     }
   }
 
+  private async executeTool(toolName: string, args: any): Promise<any> {
+    if (toolName === 'add_clip') {
+        try {
+            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+            const clip = this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+            return { success: true, message: 'Clip added successfully', clip };
+        } catch (error: any) {
+             return { error: error.message };
+        }
+    } else {
+        const serverName = toolRegistry.getServerForTool(toolName);
+        if (!serverName) {
+            return { error: 'Tool server not found' };
+        }
+        return await mcpClientManager.callTool(serverName, toolName, args);
+    }
+  }
+
   private async handleCopilotMessage(ws: WebSocket, payload: any) {
     const { content, projectId } = payload;
 
@@ -118,6 +136,84 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
+        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, this.executeTool.bind(this));
+        let assistantContent = '';
+
+        for await (const chunk of stream) {
+            if (chunk.content) {
+                assistantContent += chunk.content;
+                ws.send(JSON.stringify({
+                    type: 'copilot.response',
+                    payload: { content: chunk.content, done: false }
+                }));
+            }
+
+            if (chunk.toolCall && chunk.toolCall.toolName && chunk.toolCall.args) {
+                const toolName = chunk.toolCall.toolName;
+                const args = chunk.toolCall.args;
+
+                ws.send(JSON.stringify({
+                    type: 'copilot.tool_call',
+                    payload: { tool: toolName, args }
+                }));
+
+                try {
+                    const result = await this.executeTool(toolName, args);
+
+                    ws.send(JSON.stringify({
+                        type: 'copilot.tool_result',
+                        payload: { tool: toolName, result }
+                    }));
+
+                    if (assistantContent) {
+                        wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
+                        assistantContent = '';
+                    }
+
+                    wsWithHistory.chatHistory.push({
+                        role: 'assistant',
+                        content: `Requesting tool: ${toolName}`
+                    });
+
+                    wsWithHistory.chatHistory.push({
+                            role: 'user',
+                            content: `Tool '${toolName}' result: ${JSON.stringify(result)}`
+                    });
+
+                    // Trigger next turn
+                    const nextMessages: Message[] = [
+                        { role: 'system', content: systemPrompt },
+                        ...wsWithHistory.chatHistory
+                    ];
+
+                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, this.executeTool.bind(this));
+                        for await (const nextChunk of nextStream) {
+                            if (nextChunk.content) {
+                                assistantContent += nextChunk.content;
+                                ws.send(JSON.stringify({
+                                    type: 'copilot.response',
+                                    payload: { content: nextChunk.content, done: false }
+                                }));
+                            }
+                        }
+
+                } catch (err: any) {
+                    ws.send(JSON.stringify({
+                        type: 'copilot.response',
+                        payload: { content: `\nError executing tool: ${err.message}`, done: false }
+                    }));
+                }
+            }
+        }
+
+        if (assistantContent) {
+            wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
+        }
+
+        ws.send(JSON.stringify({
+            type: 'copilot.response',
+            payload: { content: '', done: true }
+        }));
         // Start recursive loop
         await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt);
 

@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
-import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall } from '../types';
+import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor } from '../types';
 import { mcpToolToOpenAIFunction, parseToolCallResult } from '../tool-mapper';
 
 export class OpenAIProvider implements LLMProviderInterface {
@@ -15,7 +15,7 @@ export class OpenAIProvider implements LLMProviderInterface {
     this.model = config.model;
   }
 
-  async chat(messages: Message[], tools?: MCPTool[]): Promise<{ content: string; toolCalls?: ToolCall[] }> {
+  async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
     const chatMessages = messages.map(m => ({
@@ -42,7 +42,7 @@ export class OpenAIProvider implements LLMProviderInterface {
     };
   }
 
-  async *streamChat(messages: Message[], tools?: MCPTool[]): AsyncIterable<StreamChunk> {
+  async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor): AsyncIterable<StreamChunk> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
     const chatMessages = messages.map(m => ({
