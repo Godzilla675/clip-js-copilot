@@ -97,8 +97,8 @@ export default function RenderOptions() {
                                 <label htmlFor="includeSubtitles" className="text-lg font-bold text-white cursor-pointer">
                                     Include Subtitles
                                 </label>
-                            </div>
-                        </div>
+                            </div >
+                        </div >
 
                         <div className="mt-4 text-sm text-gray-400">
                             <p>Current settings: {exportSettings.resolution} at {exportSettings.quality} quality ({exportSettings.format}, {exportSettings.fps} FPS, {exportSettings.speed} processing)</p>
