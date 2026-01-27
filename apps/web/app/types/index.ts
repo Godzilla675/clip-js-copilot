@@ -97,11 +97,26 @@ export interface ExportConfig {
 
 export type ActiveElement = 'media' | 'text' | 'export';
 
+export interface ToolCall {
+    id: string;
+    name: string;
+    args: any;
+    result?: any;
+    status: 'pending' | 'success' | 'error';
+}
+
+export interface Message {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    toolCalls?: ToolCall[];
+}
 
 export interface ProjectState {
     id: string;
     mediaFiles: MediaFile[];
     textElements: TextElement[];
+    chatMessages?: Message[];
     filesID?: string[],
     currentTime: number;
     isPlaying: boolean;
