@@ -26,6 +26,18 @@ const LOCAL_TOOLS = [{
         },
         required: ['projectId', 'assetId', 'trackId', 'startTime']
     }
+}, {
+    name: 'add_asset_to_project',
+    description: 'Add a downloaded asset to the project. Requires projectId and filePath.',
+    inputSchema: {
+        type: 'object',
+        properties: {
+            projectId: { type: 'string', description: 'The ID of the project' },
+            filePath: { type: 'string', description: 'The local path of the downloaded file (returned by download_asset)' },
+            type: { type: 'string', description: 'The type of asset (video, audio, image)' }
+        },
+        required: ['projectId', 'filePath']
+    }
 }];
 
 export class WebSocketHandler {
@@ -102,7 +114,33 @@ export class WebSocketHandler {
         try {
             const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
             const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+
+            const project = this.projectManager.getProject(projectId);
+            if (project) {
+                this.broadcast({
+                    type: 'project.updated',
+                    payload: { project }
+                });
+            }
+
             return { success: true, message: 'Clip added successfully', clip };
+        } catch (error: any) {
+             return { error: error.message };
+        }
+    } else if (toolName === 'add_asset_to_project') {
+        try {
+            const { projectId, filePath, type } = args as any;
+            const asset = await this.projectManager.addAsset(projectId, filePath, type);
+
+            const project = this.projectManager.getProject(projectId);
+            if (project) {
+                this.broadcast({
+                    type: 'project.updated',
+                    payload: { project }
+                });
+            }
+
+            return { success: true, message: 'Asset added successfully', asset };
         } catch (error: any) {
              return { error: error.message };
         }
@@ -333,6 +371,15 @@ export class WebSocketHandler {
                       const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
                       const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
                       result = { success: true, message: 'Clip added successfully', clip };
+                  } catch (error: any) {
+                       result = { error: error.message };
+                       isError = true;
+                  }
+              } else if (toolName === 'add_asset_to_project') {
+                  try {
+                      const { projectId, filePath, type } = args as any;
+                      const asset = await this.projectManager.addAsset(projectId, filePath, type);
+                      result = { success: true, message: 'Asset added successfully', asset };
                   } catch (error: any) {
                        result = { error: error.message };
                        isError = true;

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { Project, ProjectSettings, Clip } from '@ai-video-editor/shared-types';
+import { Project, ProjectSettings, Clip, Asset, AssetType } from '@ai-video-editor/shared-types';
 import { config } from '../config.js';
 import { HistoryManager } from './history.js';
 
@@ -109,6 +109,40 @@ export class ProjectManager {
     await this.saveProject(updatedProject);
 
     return updatedProject;
+  }
+
+  async addAsset(projectId: string, filePath: string, type?: AssetType): Promise<Asset> {
+    const project = this.projects.get(projectId);
+    if (!project) {
+      throw new Error(`Project ${projectId} not found`);
+    }
+
+    const assetId = uuidv4();
+    const fileName = path.basename(filePath);
+    let assetType = type;
+
+    if (!assetType) {
+      if (fileName.match(/\.(mp4|mov|avi|mkv|webm)$/i)) assetType = 'video';
+      else if (fileName.match(/\.(mp3|wav|ogg|aac)$/i)) assetType = 'audio';
+      else if (fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i)) assetType = 'image';
+      else assetType = 'video'; // default
+    }
+
+    const asset: Asset = {
+      id: assetId,
+      name: fileName,
+      path: filePath,
+      type: assetType,
+      duration: assetType === 'image' ? 5 : 10 // Default duration
+    };
+
+    const updates: Partial<Project> = {
+      assets: [...project.assets, asset]
+    };
+
+    await this.updateProject(projectId, updates);
+
+    return asset;
   }
 
   async addClip(
