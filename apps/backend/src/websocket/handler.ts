@@ -102,6 +102,15 @@ export class WebSocketHandler {
         try {
             const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
             const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
+
+            const project = this.projectManager.getProject(projectId);
+            if (project) {
+                this.broadcast({
+                    type: 'project.updated',
+                    payload: { project }
+                });
+            }
+
             return { success: true, message: 'Clip added successfully', clip };
         } catch (error: any) {
              return { error: error.message };
@@ -328,23 +337,9 @@ export class WebSocketHandler {
           let isError = false;
 
           try {
-              if (toolName === 'add_clip') {
-                  try {
-                      const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-                      const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
-                      result = { success: true, message: 'Clip added successfully', clip };
-                  } catch (error: any) {
-                       result = { error: error.message };
-                       isError = true;
-                  }
-              } else {
-                  const serverName = toolRegistry.getServerForTool(toolName);
-                  if (!serverName) {
-                      result = { error: 'Tool server not found' };
-                      isError = true;
-                  } else {
-                      result = await mcpClientManager.callTool(serverName, toolName, args);
-                  }
+              result = await this.executeTool(toolName, args);
+              if (result && result.error) {
+                  isError = true;
               }
           } catch (err: any) {
               result = { error: err.message };
