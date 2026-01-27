@@ -111,7 +111,7 @@ export class ProjectManager {
     return updatedProject;
   }
 
-  async addAsset(projectId: string, filePath: string, type?: AssetType): Promise<Asset> {
+  async addAsset(projectId: string, filePath: string, type?: AssetType, duration?: number): Promise<Asset> {
     const project = this.projects.get(projectId);
     if (!project) {
       throw new Error(`Project ${projectId} not found`);
@@ -133,7 +133,7 @@ export class ProjectManager {
       name: fileName,
       path: filePath,
       type: assetType,
-      duration: assetType === 'image' ? 5 : 10 // Default duration
+      duration: duration || (assetType === 'image' ? 5 : 10) // Use provided duration or default
     };
 
     const updates: Partial<Project> = {

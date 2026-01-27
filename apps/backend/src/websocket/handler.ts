@@ -130,7 +130,27 @@ export class WebSocketHandler {
     } else if (toolName === 'add_asset_to_project') {
         try {
             const { projectId, filePath, type } = args as any;
-            const asset = await this.projectManager.addAsset(projectId, filePath, type);
+            let duration: number | undefined;
+
+            // Try to get duration if it's a video or audio
+            if (type !== 'image') {
+                try {
+                    const serverName = toolRegistry.getServerForTool('get_video_info');
+                    if (serverName) {
+                        const infoResult = await mcpClientManager.callTool(serverName, 'get_video_info', { inputPath: filePath });
+                        if (infoResult.content && infoResult.content[0] && infoResult.content[0].text) {
+                            const info = JSON.parse(infoResult.content[0].text);
+                            if (info.duration) {
+                                duration = parseFloat(info.duration);
+                            }
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Failed to get asset duration via get_video_info:', err);
+                }
+            }
+
+            const asset = await this.projectManager.addAsset(projectId, filePath, type, duration);
 
             const project = this.projectManager.getProject(projectId);
             if (project) {
@@ -366,32 +386,9 @@ export class WebSocketHandler {
           let isError = false;
 
           try {
-              if (toolName === 'add_clip') {
-                  try {
-                      const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
-                      const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
-                      result = { success: true, message: 'Clip added successfully', clip };
-                  } catch (error: any) {
-                       result = { error: error.message };
-                       isError = true;
-                  }
-              } else if (toolName === 'add_asset_to_project') {
-                  try {
-                      const { projectId, filePath, type } = args as any;
-                      const asset = await this.projectManager.addAsset(projectId, filePath, type);
-                      result = { success: true, message: 'Asset added successfully', asset };
-                  } catch (error: any) {
-                       result = { error: error.message };
-                       isError = true;
-                  }
-              } else {
-                  const serverName = toolRegistry.getServerForTool(toolName);
-                  if (!serverName) {
-                      result = { error: 'Tool server not found' };
-                      isError = true;
-                  } else {
-                      result = await mcpClientManager.callTool(serverName, toolName, args);
-                  }
+              result = await this.executeTool(toolName, args);
+              if (result && result.error) {
+                  isError = true;
               }
           } catch (err: any) {
               result = { error: err.message };
