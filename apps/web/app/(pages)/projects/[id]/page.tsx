@@ -127,7 +127,7 @@ export default function Project({ params }: { params: { id: string } }) {
                         <PanelGroup orientation="horizontal">
 
                             {/* Assets Panel (Add Media/Text) */}
-                            <Panel defaultSize={20} minSize={15}>
+                            <Panel defaultSize={25} minSize={15}>
                                 <div className="h-full w-full border-r border-gray-800 overflow-y-auto p-4">
                                     {activeSection === "media" && (
                                         <div>
@@ -164,7 +164,7 @@ export default function Project({ params }: { params: { id: string } }) {
                             <ResizeHandle direction="horizontal" />
 
                             {/* Right Panel (Properties or Copilot) */}
-                            <Panel defaultSize={25} minSize={15}>
+                            <Panel defaultSize={30} minSize={15}>
                                 <div className={`h-full w-full border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
                                     {isPanelOpen ? (
                                         <CopilotPanel />
