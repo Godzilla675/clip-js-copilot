@@ -28,6 +28,14 @@ export default function VideoTimeline() {
         mediaFilesRef.current = mediaFiles;
     }, [mediaFiles]);
 
+    const mediaFileIndices = useMemo(() => {
+        const indices = new Map<string, number>();
+        mediaFiles.forEach((file, index) => {
+            indices.set(file.id, index);
+        });
+        return indices;
+    }, [mediaFiles]);
+
     const onUpdateMedia = useMemo(() =>
         throttle((id: string, updates: Partial<MediaFile>) => {
             const currentFiles = mediaFilesRef.current;
@@ -40,10 +48,15 @@ export default function VideoTimeline() {
 
     const handleClick = (element: string, id: string) => {
         if (element === 'media') {
-            dispatch(setActiveElement('media'));
-            // TODO: cause we pass id when media to find the right index i will change this later (this happens cause each timeline pass its index not index from mediaFiles array)
-            const actualIndex = mediaFiles.findIndex(clip => clip.id === id);
-            dispatch(setActiveElementIndex(actualIndex));
+            const actualIndex = mediaFileIndices.get(id);
+            if (actualIndex !== undefined) {
+                if (activeElement !== 'media') {
+                    dispatch(setActiveElement('media'));
+                }
+                if (activeElementIndex !== actualIndex) {
+                    dispatch(setActiveElementIndex(actualIndex));
+                }
+            }
         }
     };
 
