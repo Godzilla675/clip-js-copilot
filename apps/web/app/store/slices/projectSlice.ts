@@ -123,7 +123,10 @@ const projectStateSlice = createSlice({
         },
         // Special reducer for rehydrating state from IndexedDB
         rehydrate: (state, action: PayloadAction<ProjectState>) => {
-            return { ...state, ...action.payload };
+            const newState = { ...state, ...action.payload };
+            // Ensure duration is calculated from the media files if it's missing or if mediaFiles changed
+            newState.duration = calculateTotalDuration(newState.mediaFiles, newState.textElements);
+            return newState;
         },
         createNewProject: (state) => {
             return { ...initialState };

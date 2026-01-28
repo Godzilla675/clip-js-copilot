@@ -112,7 +112,20 @@ export class WebSocketHandler {
   private async executeTool(toolName: string, args: any): Promise<any> {
     if (toolName === 'add_clip') {
         try {
-            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+            const argsObj = args as any;
+            const projectId = argsObj.projectId;
+            const assetId = argsObj.assetId;
+            const trackId = argsObj.trackId;
+            const startTime = Number(argsObj.startTime);
+            const clipDuration = argsObj.clipDuration != null ? Number(argsObj.clipDuration) : undefined;
+            const sourceStart = argsObj.sourceStart != null ? Number(argsObj.sourceStart) : 0;
+
+            if (isNaN(startTime) || (clipDuration != null && isNaN(clipDuration)) || (argsObj.sourceStart != null && isNaN(sourceStart))) {
+                return { error: `Invalid numeric value for one of the arguments: startTime, clipDuration, or sourceStart.` };
+            }
+
+            console.log(`[WebSocketHandler] Executing add_clip: projectId=${projectId}, assetId=${assetId}, trackId=${trackId}, startTime=${startTime}`);
+
             const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
 
             const project = this.projectManager.getProject(projectId);
