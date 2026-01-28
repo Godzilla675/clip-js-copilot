@@ -13,10 +13,10 @@ export class ToolRegistry {
 
   async initialize(): Promise<void> {
     console.log('Initializing ToolRegistry...');
-    this.toolsCache = await this.fetchTools();
+    await this.refreshTools();
   }
 
-  private async fetchTools(): Promise<Tool[]> {
+  private async refreshTools(): Promise<Tool[]> {
     const clients = this.clientManager.getAllClients();
 
     const results = await Promise.all(
@@ -25,8 +25,8 @@ export class ToolRegistry {
           const result = await client.listTools();
           for (const tool of result.tools) {
             this.toolToServer.set(tool.name, serverName);
-            console.log(`Registered tool ${tool.name} from server ${serverName}`);
           }
+          console.log(`Registered ${result.tools.length} tools from server ${serverName}`);
           return result.tools;
         } catch (error) {
           console.error(`Failed to fetch tools from ${serverName}:`, error);
@@ -35,16 +35,16 @@ export class ToolRegistry {
       })
     );
 
-    return results.flat();
+    const allTools = results.flat();
+    this.toolsCache = allTools;
+    return allTools;
   }
 
   async getTools(): Promise<Tool[]> {
     if (this.toolsCache) {
       return this.toolsCache;
     }
-
-    this.toolsCache = await this.fetchTools();
-    return this.toolsCache;
+    return this.refreshTools();
   }
 
   getServerForTool(toolName: string): string | undefined {
