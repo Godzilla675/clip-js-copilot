@@ -25,7 +25,6 @@ export class ToolRegistry {
           const result = await client.listTools();
           for (const tool of result.tools) {
             this.toolToServer.set(tool.name, serverName);
-            // Log only during initialization or if needed, but here we can just log
           }
           console.log(`Registered ${result.tools.length} tools from server ${serverName}`);
           return result.tools;
