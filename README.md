@@ -80,6 +80,3 @@ For detailed documentation, please visit the [docs/](./docs/) directory:
 - [Development Guide](./docs/development.md)
 - [Security](./docs/security.md)
 
-## Contributing
-
-See `MASTERPLAN.MD` for architectural details.
