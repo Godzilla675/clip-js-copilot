@@ -14,6 +14,11 @@ const getMediaDuration = (file: File, type: MediaType): Promise<number> => {
             return;
         }
 
+        if (type === 'unknown') {
+            resolve(30); // Default 30 seconds for unknown types
+            return;
+        }
+
         const url = URL.createObjectURL(file);
         const element = type === 'video' ? document.createElement('video') : document.createElement('audio');
         element.preload = 'metadata';
