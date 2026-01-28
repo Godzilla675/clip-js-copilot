@@ -68,6 +68,7 @@ export default function RenderOptions() {
                                     <option value="mp4">MP4</option>
                                     <option value="webm">WEBM</option>
                                     <option value="gif">GIF</option>
+                                    <option value="mov">MOV</option>
                                 </select>
                             </div>
 
