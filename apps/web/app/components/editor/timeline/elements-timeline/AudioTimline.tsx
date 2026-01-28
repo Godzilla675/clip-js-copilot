@@ -1,9 +1,8 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
-import { useAppSelector } from "@/app/store";
+import { useAppSelector, useAppDispatch } from "@/app/store";
 import { setActiveElement, setActiveElementIndex, setMediaFiles } from "@/app/store/slices/projectSlice";
 import { memo, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import Image from "next/image";
 import Header from "../Header";
 import { MediaFile } from "@/app/types";
@@ -12,7 +11,7 @@ import { debounce, throttle } from "lodash";
 export default function AudioTimeline() {
     const targetRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const { mediaFiles, textElements, activeElement, activeElementIndex, timelineZoom } = useAppSelector((state) => state.projectState);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const moveableRef = useRef<Record<string, Moveable | null>>({});
 
 
@@ -30,6 +29,14 @@ export default function AudioTimeline() {
         mediaFilesRef.current = mediaFiles;
     }, [mediaFiles]);
 
+    const mediaFileIndices = useMemo(() => {
+        const indices = new Map<string, number>();
+        mediaFiles.forEach((file, index) => {
+            indices.set(file.id, index);
+        });
+        return indices;
+    }, [mediaFiles]);
+
     const onUpdateMedia = useMemo(() =>
         throttle((id: string, updates: Partial<MediaFile>) => {
             const currentFiles = mediaFilesRef.current;
@@ -40,12 +47,17 @@ export default function AudioTimeline() {
         }, 100), [dispatch]
     );
 
-    const handleClick = (element: string, index: number | string) => {
+    const handleClick = (element: string, id: string) => {
         if (element === 'media') {
-            dispatch(setActiveElement('media') as any);
-            // TODO: cause we pass id when media to find the right index i will change this later (this happens cause each timeline pass its index not index from mediaFiles array)
-            const actualIndex = mediaFiles.findIndex(clip => clip.id === index as unknown as string);
-            dispatch(setActiveElementIndex(actualIndex));
+            const actualIndex = mediaFileIndices.get(id);
+            if (actualIndex !== undefined) {
+                if (activeElement !== 'media') {
+                    dispatch(setActiveElement('media'));
+                }
+                if (activeElementIndex !== actualIndex) {
+                    dispatch(setActiveElementIndex(actualIndex));
+                }
+            }
         }
     };
 
