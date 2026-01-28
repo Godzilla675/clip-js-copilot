@@ -69,14 +69,21 @@ export default function TextTimeline() {
         })
     };
     const handleLeftResize = (clip: TextElement, target: HTMLElement, width: number) => {
-        const newPositionEnd = width / timelineZoom;
-        // Ensure we do not resize beyond the right edge of the clip
-        const constrainedLeft = Math.max(clip.positionStart + ((clip.positionEnd - clip.positionStart) - newPositionEnd), 0);
+        const rightPos = clip.positionEnd * timelineZoom;
+        let newLeftPos = rightPos - width;
+
+        // Ensure we do not resize beyond the start of the timeline
+        newLeftPos = Math.max(newLeftPos, 0);
+
+        // Recalculate width in case we hit the constraint
+        const constrainedWidth = rightPos - newLeftPos;
 
         onUpdateText(clip.id, {
-            positionStart: constrainedLeft,
-            // startTime: constrainedLeft,
-        })
+            positionStart: newLeftPos / timelineZoom,
+        });
+
+        target.style.width = `${constrainedWidth}px`;
+        target.style.left = `${newLeftPos}px`;
     };
 
     useEffect(() => {
@@ -160,10 +167,8 @@ export default function TextTimeline() {
 
                             }
                             else if (direction[0] === -1) {
-                                // TODO: handle left resize
-                                // handleClick('text', clip.id)
-                                // delta[0] && (target!.style.width = `${width}px`);
-                                // handleLeftResize(clip, target as HTMLElement, width);
+                                handleClick('text', clip.id);
+                                handleLeftResize(clip, target as HTMLElement, width);
                             }
                         }}
                         onResizeEnd={({ target, isDrag, clientX, clientY }) => {
