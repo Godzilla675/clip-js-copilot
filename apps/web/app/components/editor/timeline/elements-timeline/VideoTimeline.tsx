@@ -82,14 +82,28 @@ export default function VideoTimeline() {
         })
     };
     const handleLeftResize = (clip: MediaFile, target: HTMLElement, width: number) => {
-        const newPositionStart = width / timelineZoom;
-        // Ensure we do not resize beyond the right edge of the clip
-        const constrainedLeft = Math.max(clip.positionStart + ((clip.positionEnd - clip.positionStart) - newPositionStart), 0);
+        const visualRightEdge = (clip.positionStart + (clip.positionEnd - clip.positionStart) / clip.playbackSpeed);
+        let newPositionStart = visualRightEdge - (width / timelineZoom);
+
+        newPositionStart = Math.max(newPositionStart, 0);
+
+        const minStartBasedOnMedia = clip.positionStart - (clip.startTime / clip.playbackSpeed);
+        newPositionStart = Math.max(newPositionStart, minStartBasedOnMedia);
+
+        const finalDelta = newPositionStart - clip.positionStart;
+        const newStartTime = clip.startTime + finalDelta * clip.playbackSpeed;
+
+        const newVisualWidth = (visualRightEdge - newPositionStart) * timelineZoom;
+        const newPositionEnd = newPositionStart + (visualRightEdge - newPositionStart) * clip.playbackSpeed;
 
         onUpdateMedia(clip.id, {
-            positionStart: constrainedLeft,
-            startTime: constrainedLeft,
-        })
+            positionStart: newPositionStart,
+            startTime: newStartTime,
+            positionEnd: newPositionEnd
+        });
+
+        target.style.left = `${newPositionStart * timelineZoom}px`;
+        target.style.width = `${newVisualWidth}px`;
     };
 
     useEffect(() => {
@@ -173,10 +187,8 @@ export default function VideoTimeline() {
                                     handleRightResize(clip, target as HTMLElement, width);
                                 }
                                 else if (direction[0] === -1) {
-                                    // TODO: handle left resize
-                                    // handleClick('media', clip.id)
-                                    // delta[0] && (target!.style.width = `${width}px`);
-                                    // handleLeftResize(clip, target as HTMLElement, width);
+                                    handleClick('media', clip.id)
+                                    handleLeftResize(clip, target as HTMLElement, width);
                                 }
                             }}
                             onResizeEnd={({ target, isDrag, clientX, clientY }) => {
