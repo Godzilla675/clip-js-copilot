@@ -112,7 +112,16 @@ export class WebSocketHandler {
   private async executeTool(toolName: string, args: any): Promise<any> {
     if (toolName === 'add_clip') {
         try {
-            const { projectId, assetId, trackId, startTime, clipDuration, sourceStart } = args as any;
+            const argsObj = args as any;
+            const projectId = argsObj.projectId;
+            const assetId = argsObj.assetId;
+            const trackId = argsObj.trackId;
+            const startTime = Number(argsObj.startTime);
+            const clipDuration = argsObj.clipDuration ? Number(argsObj.clipDuration) : undefined;
+            const sourceStart = argsObj.sourceStart ? Number(argsObj.sourceStart) : 0;
+
+            console.log(`[WebSocketHandler] Executing add_clip: projectId=${projectId}, assetId=${assetId}, trackId=${trackId}, startTime=${startTime}`);
+
             const clip = await this.projectManager.addClip(projectId, assetId, trackId, startTime, clipDuration, sourceStart);
 
             const project = this.projectManager.getProject(projectId);
