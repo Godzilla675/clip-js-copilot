@@ -59,11 +59,16 @@ export function createCopilotRouter(
         iterations++;
 
         // Append assistant response
-        messages.push({ role: 'assistant', content: currentResult.content });
+        messages.push({
+          role: 'assistant',
+          content: currentResult.content,
+          toolCalls: currentResult.toolCalls
+        });
 
         // Execute tools
         for (const call of currentResult.toolCalls) {
            const toolName = call.toolName;
+           const toolCallId = call.toolCallId;
 
            try {
              const serverName = toolRegistry.getServerForTool(toolName);
@@ -73,14 +78,37 @@ export function createCopilotRouter(
 
                messages.push({
                  role: 'user',
-                 content: `Tool '${toolName}' result: ${JSON.stringify(toolResult)}`
+                 content: `Tool '${toolName}' result: ${JSON.stringify(toolResult)}`,
+                 toolResults: [{
+                    toolCallId,
+                    toolName,
+                    result: toolResult
+                 }]
                });
              } else {
-               messages.push({ role: 'user', content: `Tool '${toolName}' not found.` });
+               messages.push({
+                 role: 'user',
+                 content: `Tool '${toolName}' not found.`,
+                 toolResults: [{
+                    toolCallId,
+                    toolName,
+                    result: { error: `Tool '${toolName}' not found.` },
+                    isError: true
+                 }]
+               });
              }
            } catch (error: any) {
              console.error(`Tool execution failed: ${toolName}`, error);
-             messages.push({ role: 'user', content: `Tool '${toolName}' failed: ${error.message}` });
+             messages.push({
+                 role: 'user',
+                 content: `Tool '${toolName}' failed: ${error.message}`,
+                 toolResults: [{
+                    toolCallId,
+                    toolName,
+                    result: { error: error.message },
+                    isError: true
+                 }]
+             });
            }
         }
 
