@@ -40,12 +40,10 @@ export default function TextTimeline() {
         }, 100), [dispatch]
     );
 
-    const handleClick = (element: string, id: string) => {
+    const handleClick = (element: string, index: number) => {
         if (element === 'text') {
             dispatch(setActiveElement('text'));
-            // TODO: find better way to do this
-            const actualIndex = textElements.findIndex(clip => clip.id === id);
-            dispatch(setActiveElementIndex(actualIndex));
+            dispatch(setActiveElementIndex(index));
         }
     };
 
@@ -96,7 +94,7 @@ export default function TextTimeline() {
                                 targetRefs.current[clip.id] = el;
                             }
                         }}
-                        onClick={() => handleClick('text', clip.id)}
+                        onClick={() => handleClick('text', index)}
                         className={`absolute border border-gray-500 border-opacity-50 rounded-md top-2 h-12 rounded bg-[#27272A] text-white text-sm flex items-center justify-center cursor-pointer ${activeElement === 'text' && textElements[activeElementIndex].id === clip.id ? 'bg-[#3F3F46] border-blue-500' : ''}`}
                         style={{
                             left: `${clip.positionStart * timelineZoom}px`,
@@ -138,7 +136,7 @@ export default function TextTimeline() {
                             delta, dist,
                             transform,
                         }: OnDrag) => {
-                            handleClick('text', clip.id)
+                            handleClick('text', index)
                             handleDrag(clip, target as HTMLElement, left);
                         }}
                         onDragEnd={({ target, isDrag, clientX, clientY }) => {
@@ -154,7 +152,7 @@ export default function TextTimeline() {
                             delta, direction,
                         }: OnResize) => {
                             if (direction[0] === 1) {
-                                handleClick('text', clip.id)
+                                handleClick('text', index)
                                 delta[0] && (target!.style.width = `${width}px`);
                                 handleResize(clip, target as HTMLElement, width);
 
