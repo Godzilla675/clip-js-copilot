@@ -4,6 +4,7 @@ import { MCPClientManager } from './client-manager.js';
 export class ToolRegistry {
   private clientManager: MCPClientManager;
   private toolToServer: Map<string, string>; // toolName -> serverName
+  private toolsCache: Tool[] | null = null;
 
   constructor(clientManager: MCPClientManager) {
     this.clientManager = clientManager;
@@ -12,43 +13,38 @@ export class ToolRegistry {
 
   async initialize(): Promise<void> {
     console.log('Initializing ToolRegistry...');
-    const clients = this.clientManager.getAllClients();
-
-    await Promise.all(
-      Array.from(clients.entries()).map(async ([serverName, client]) => {
-        try {
-            const result = await client.listTools();
-            for (const tool of result.tools) {
-                this.toolToServer.set(tool.name, serverName);
-                console.log(`Registered tool ${tool.name} from server ${serverName}`);
-            }
-        } catch (error) {
-            console.error(`Failed to fetch tools from ${serverName}:`, error);
-        }
-      })
-    );
+    this.toolsCache = await this.fetchTools();
   }
 
-  async getTools(): Promise<Tool[]> {
+  private async fetchTools(): Promise<Tool[]> {
       const clients = this.clientManager.getAllClients();
 
       const results = await Promise.all(
         Array.from(clients.entries()).map(async ([serverName, client]) => {
             try {
                 const result = await client.listTools();
-                // Update map
                 for (const tool of result.tools) {
                     this.toolToServer.set(tool.name, serverName);
+                    console.log(`Registered tool ${tool.name} from server ${serverName}`);
                 }
                 return result.tools;
-            } catch (e) {
-                console.error(`Error listing tools for ${serverName}`, e);
+            } catch (error) {
+                console.error(`Failed to fetch tools from ${serverName}:`, error);
                 return [];
             }
         })
       );
 
       return results.flat();
+  }
+
+  async getTools(): Promise<Tool[]> {
+      if (this.toolsCache) {
+          return this.toolsCache;
+      }
+
+      this.toolsCache = await this.fetchTools();
+      return this.toolsCache;
   }
 
   getServerForTool(toolName: string): string | undefined {
