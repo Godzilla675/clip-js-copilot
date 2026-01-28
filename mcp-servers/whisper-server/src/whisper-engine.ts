@@ -37,7 +37,9 @@ export class WhisperEngine {
     let modelName = options.model || this.defaultModel;
 
     // Check if input exists
-    if (!fs.existsSync(inputPath)) {
+    try {
+      await fs.promises.access(inputPath);
+    } catch (error) {
       throw new Error(`Input file not found: ${inputPath}`);
     }
 
@@ -113,7 +115,9 @@ export class WhisperEngine {
   ): Promise<void> {
     let modelName = options.model || this.defaultModel;
 
-    if (!fs.existsSync(inputPath)) {
+    try {
+      await fs.promises.access(inputPath);
+    } catch (error) {
       throw new Error(`Input file not found: ${inputPath}`);
     }
 
