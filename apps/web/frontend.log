@@ -1,0 +1,27 @@
+
+> @ai-video-editor/web@0.1.0 dev /app/apps/web
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 1836ms
+ ○ Compiling / ...
+ ✓ Compiled / in 5.9s (715 modules)
+ ✓ Compiled in 524ms (342 modules)
+ GET / 200 in 6423ms
+ GET / 200 in 100ms
+ ○ Compiling /projects ...
+ ✓ Compiled /projects in 783ms (689 modules)
+ ○ Compiling /projects/[id] ...
+ ✓ Compiled /projects/[id] in 5.8s (1436 modules)
+ GET / 200 in 178ms
+ GET / 200 in 64ms
+ GET / 200 in 37ms
+ GET / 200 in 45ms

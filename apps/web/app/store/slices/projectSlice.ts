@@ -53,6 +53,14 @@ const projectStateSlice = createSlice({
             // Calculate duration based on the last video's end time
             state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
         },
+        updateMediaFile: (state, action: PayloadAction<{ id: string; updates: Partial<MediaFile> }>) => {
+            const { id, updates } = action.payload;
+            const index = state.mediaFiles.findIndex((f) => f.id === id);
+            if (index !== -1) {
+                state.mediaFiles[index] = { ...state.mediaFiles[index], ...updates };
+                state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+            }
+        },
         setProjectName: (state, action: PayloadAction<string>) => {
             state.projectName = action.payload;
         },
@@ -69,6 +77,14 @@ const projectStateSlice = createSlice({
         setTextElements: (state, action: PayloadAction<TextElement[]>) => {
             state.textElements = action.payload;
             state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+        },
+        updateTextElement: (state, action: PayloadAction<{ id: string; updates: Partial<TextElement> }>) => {
+            const { id, updates } = action.payload;
+            const index = state.textElements.findIndex((f) => f.id === id);
+            if (index !== -1) {
+                state.textElements[index] = { ...state.textElements[index], ...updates };
+                state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+            }
         },
         setCurrentTime: (state, action: PayloadAction<number>) => {
             state.currentTime = action.payload;
@@ -136,7 +152,9 @@ const projectStateSlice = createSlice({
 
 export const {
     setMediaFiles,
+    updateMediaFile,
     setTextElements,
+    updateTextElement,
     setCurrentTime,
     setProjectName,
     setIsPlaying,
