@@ -109,7 +109,6 @@ export class WhisperEngine {
 
     } finally {
       try {
-        await fs.promises.access(audioPath);
         await fs.promises.unlink(audioPath);
       } catch {
         // Ignore if file doesn't exist
@@ -174,9 +173,9 @@ export class WhisperEngine {
 
       await fs.promises.copyFile(generatedFile, outputPath);
       await fs.promises.unlink(generatedFile);
+
     } finally {
       try {
-        await fs.promises.access(audioPath);
         await fs.promises.unlink(audioPath);
       } catch {
         // Ignore if file doesn't exist
