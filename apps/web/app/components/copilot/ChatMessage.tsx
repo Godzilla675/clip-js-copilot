@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Message } from '../../context/CopilotContext';
+import { Message } from '../../types';
 import ToolCallDisplay from './ToolCallDisplay';
 import { User, Bot } from 'lucide-react';
 

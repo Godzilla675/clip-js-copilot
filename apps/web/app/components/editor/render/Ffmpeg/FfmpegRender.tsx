@@ -201,19 +201,43 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                     '-map', '[outv]',
                 ];
 
-                if (audioDelays.length > 0) {
+                const { format } = exportSettings;
+                const outputFilename = `output.${format}`;
+
+                if (audioDelays.length > 0 && format !== 'gif') {
                     ffmpegArgs.push('-map', '[outa]');
                 }
 
-                ffmpegArgs.push(
-                    '-c:v', 'libx264',
-                    '-c:a', 'aac',
-                    '-preset', params.preset,
-                    '-crf', params.crf.toString(),
-                    '-r', `${exportSettings.fps}`,
-                    '-t', totalDuration.toFixed(3),
-                    'output.mp4'
-                );
+                const outputArgs = [];
+                if (format === 'mp4' || format === 'mov') {
+                    outputArgs.push(
+                        '-c:v', 'libx264',
+                        '-c:a', 'aac',
+                        '-preset', params.preset,
+                        '-crf', params.crf.toString()
+                    );
+                } else if (format === 'webm') {
+                    outputArgs.push(
+                        '-c:v', 'libvpx',
+                        '-c:a', 'libvorbis',
+                        '-b:v', '0',
+                        '-crf', params.crf.toString(),
+                        '-deadline', 'realtime'
+                    );
+                } else if (format === 'gif') {
+                    outputArgs.push(
+                        '-c:v', 'gif'
+                    );
+                }
+
+                if (format !== 'gif') {
+                    outputArgs.push('-r', `${exportSettings.fps}`);
+                }
+
+                outputArgs.push('-t', totalDuration.toFixed(3));
+                outputArgs.push(outputFilename);
+
+                ffmpegArgs.push(...outputArgs);
 
                 await ffmpeg.exec(ffmpegArgs);
 
@@ -222,8 +246,14 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
             }
 
             // return the output url
-            const outputData = await ffmpeg.readFile('output.mp4');
-            const outputBlob = new Blob([outputData as Uint8Array], { type: 'video/mp4' });
+            const { format } = exportSettings;
+            const outputFilename = `output.${format}`;
+            let mimeType = `video/${format}`;
+            if (format === 'mov') mimeType = 'video/quicktime';
+            if (format === 'gif') mimeType = 'image/gif';
+
+            const outputData = await ffmpeg.readFile(outputFilename);
+            const outputBlob = new Blob([outputData as Uint8Array], { type: mimeType });
             const outputUrl = URL.createObjectURL(outputBlob);
             return outputUrl;
         };
@@ -297,7 +327,7 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                                 <div className="flex justify-between">
                                     <a
                                         href={previewUrl || '#'}
-                                        download={`${projectName}.mp4`}
+                                        download={`${projectName}.${exportSettings.format}`}
                                         className={`inline-flex items-center p-3 bg-white hover:bg-[#ccc] rounded-lg text-gray-900 font-bold transition-all transform `}
                                     >
                                         <Image
