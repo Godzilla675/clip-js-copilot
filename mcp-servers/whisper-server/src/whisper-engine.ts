@@ -93,6 +93,16 @@ export class WhisperEngine {
 
       if (!(await checkFileExists(jsonPath)) && (await checkFileExists(audioPath + '.wav.json'))) {
          jsonPath = audioPath + '.wav.json';
+      try {
+        await fs.promises.access(jsonPath);
+      } catch {
+        const altPath = audioPath + '.wav.json';
+        try {
+          await fs.promises.access(altPath);
+          jsonPath = altPath;
+        } catch {
+          // Neither exists
+        }
       }
 
       let result: TranscriptionResult = {};
@@ -102,6 +112,11 @@ export class WhisperEngine {
         result = JSON.parse(jsonContent);
         await fs.promises.unlink(jsonPath);
       } else {
+      try {
+        const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
+        result = JSON.parse(jsonContent);
+        await fs.promises.unlink(jsonPath);
+      } catch {
         console.warn(`Expected JSON output not found at ${jsonPath}`);
       }
 
@@ -167,6 +182,8 @@ export class WhisperEngine {
 
       try {
         await fs.promises.access(generatedFile);
+        await fs.promises.copyFile(generatedFile, outputPath);
+        await fs.promises.unlink(generatedFile);
       } catch {
         throw new Error(`Subtitle file not generated at ${generatedFile}`);
       }

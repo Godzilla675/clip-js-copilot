@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
 import { useAppSelector } from "@/app/store";
-import { setActiveElement, setActiveElementIndex, setTextElements } from "@/app/store/slices/projectSlice";
+import { setActiveElement, setActiveElementIndex, updateTextElement } from "@/app/store/slices/projectSlice";
 import { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Image from "next/image";
@@ -24,19 +24,9 @@ export default function TextTimeline() {
     //     )));
     // };
 
-    // TODO: this is a hack to prevent the mediaFiles from being updated too often while dragging or resizing
-    const textElementsRef = useRef(textElements);
-    useEffect(() => {
-        textElementsRef.current = textElements;
-    }, [textElements]);
-
     const onUpdateText = useMemo(() =>
         throttle((id: string, updates: Partial<TextElement>) => {
-            const currentFiles = textElementsRef.current;
-            const updated = currentFiles.map(text =>
-                text.id === id ? { ...text, ...updates } : text
-            );
-            dispatch(setTextElements(updated));
+            dispatch(updateTextElement({ id, updates }));
         }, 100), [dispatch]
     );
 
