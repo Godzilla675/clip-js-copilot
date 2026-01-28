@@ -1,0 +1,409 @@
+
+> ai-video-editor@ dev /app
+> turbo dev
+
+
+Attention:
+Turborepo now collects completely anonymous telemetry regarding usage.
+This information is used to shape the Turborepo roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://turborepo.dev/docs/telemetry
+
+• turbo 2.7.6
+• Packages in scope: @ai-video-editor/asset-server, @ai-video-editor/backend, @ai-video-editor/code-runner-server, @ai-video-editor/ffmpeg-server, @ai-video-editor/mcp-utils, @ai-video-editor/shared-types, @ai-video-editor/vision-server, @ai-video-editor/web, @ai-video-editor/whisper-server
+• Running dev in 9 packages
+• Remote caching disabled
+@ai-video-editor/web:dev: cache bypass, force executing 80f7333b80e1ef25
+@ai-video-editor/code-runner-server:dev: cache bypass, force executing eab0abe11a3c415e
+@ai-video-editor/vision-server:dev: cache bypass, force executing 9390877cdf2cfb50
+@ai-video-editor/mcp-utils:dev: cache bypass, force executing 35f824dafb42161f
+@ai-video-editor/asset-server:dev: cache bypass, force executing ee1ce51af6a3cd1a
+@ai-video-editor/backend:dev: cache bypass, force executing cbc0fe1151833a05
+@ai-video-editor/ffmpeg-server:dev: cache bypass, force executing 89fe4ae6dd867f5b
+@ai-video-editor/whisper-server:dev: cache bypass, force executing e945058390fed1d9
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: > @ai-video-editor/vision-server@1.0.0 dev /app/mcp-servers/vision-server
+@ai-video-editor/vision-server:dev: > tsc --watch
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/ffmpeg-server:dev: > @ai-video-editor/ffmpeg-server@0.0.1 dev /app/mcp-servers/ffmpeg-server
+@ai-video-editor/ffmpeg-server:dev: > tsc --watch
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev: > @ai-video-editor/web@0.1.0 dev /app/apps/web
+@ai-video-editor/web:dev: > next dev
+@ai-video-editor/web:dev:
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/mcp-utils:dev: > @ai-video-editor/mcp-utils@0.0.1 dev /app/packages/mcp-utils
+@ai-video-editor/mcp-utils:dev: > tsc --watch
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: > @ai-video-editor/code-runner-server@1.0.0 dev /app/mcp-servers/code-runner-server
+@ai-video-editor/code-runner-server:dev: > tsc --watch
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: > @ai-video-editor/asset-server@0.1.0 dev /app/mcp-servers/asset-server
+@ai-video-editor/asset-server:dev: > tsc --watch
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: > @ai-video-editor/backend@0.1.0 dev /app/apps/backend
+@ai-video-editor/backend:dev: > tsx watch src/index.ts
+@ai-video-editor/backend:dev:
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: > @ai-video-editor/whisper-server@0.1.0 dev /app/mcp-servers/whisper-server
+@ai-video-editor/whisper-server:dev: > tsc --watch
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/vision-server:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/mcp-utils:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/whisper-server:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/code-runner-server:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/asset-server:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/ffmpeg-server:dev: [2J[3J[H6:01:30 PM - Starting compilation in watch mode...
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/web:dev:   ▲ Next.js 14.2.35
+@ai-video-editor/web:dev:   - Local:        http://localhost:3000
+@ai-video-editor/web:dev:
+@ai-video-editor/web:dev:  ✓ Starting...
+@ai-video-editor/web:dev: Attention: Next.js now collects completely anonymous telemetry regarding usage.
+@ai-video-editor/web:dev: This information is used to shape Next.js' roadmap and prioritize features.
+@ai-video-editor/web:dev: You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+@ai-video-editor/web:dev: https://nextjs.org/telemetry
+@ai-video-editor/web:dev:
+@ai-video-editor/backend:dev: Initializing MCP connections...
+@ai-video-editor/backend:dev: Connecting to MCP server ffmpeg with command: node /app/mcp-servers/ffmpeg-server/dist/index.js
+@ai-video-editor/backend:dev: Initializing CopilotClient with cliPath: C:\Users\Ahmed\Desktop\clip-js\apps\backend\node_modules\@github\copilot\index.js
+@ai-video-editor/backend:dev: node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev:   throw err;
+@ai-video-editor/backend:dev:   ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Cannot find module '/app/mcp-servers/ffmpeg-server/dist/index.js'
+@ai-video-editor/backend:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev:     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev:     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev:     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev:   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev:   requireStack: []
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: Connecting to MCP server whisper with command: node /app/mcp-servers/whisper-server/dist/index.js
+@ai-video-editor/backend:dev: Failed to connect to MCP server ffmpeg: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at Socket.<anonymous> (node:internal/child_process:456:11)
+@ai-video-editor/backend:dev:     at Socket.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at Pipe.<anonymous> (node:net:346:12) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Failed to connect to ffmpeg MCP server: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at Socket.<anonymous> (node:internal/child_process:456:11)
+@ai-video-editor/backend:dev:     at Socket.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at Pipe.<anonymous> (node:net:346:12) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: [CLI subprocess] node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev: [CLI subprocess]   throw err;
+@ai-video-editor/backend:dev: [CLI subprocess]   ^
+@ai-video-editor/backend:dev: [CLI subprocess] Error: Cannot find module '/app/apps/backend/C:\Users\Ahmed\Desktop\clip-js\apps\backend\node_modules\@github\copilot\index.js'
+@ai-video-editor/backend:dev: [CLI subprocess]     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev: [CLI subprocess]     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev: [CLI subprocess]     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev: [CLI subprocess]     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev: [CLI subprocess]     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev: [CLI subprocess]     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev: [CLI subprocess]     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev: [CLI subprocess]     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev: [CLI subprocess]   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev: [CLI subprocess]   requireStack: []
+@ai-video-editor/backend:dev: [CLI subprocess] }
+@ai-video-editor/backend:dev: [CLI subprocess] Node.js v22.22.0
+@ai-video-editor/backend:dev: node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev:   throw err;
+@ai-video-editor/backend:dev:   ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Cannot find module '/app/mcp-servers/whisper-server/dist/index.js'
+@ai-video-editor/backend:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev:     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev:     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev:     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev:   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev:   requireStack: []
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: Failed to connect to MCP server whisper: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Connecting to MCP server vision with command: node /app/mcp-servers/vision-server/dist/index.js
+@ai-video-editor/backend:dev: Failed to connect to whisper MCP server: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev:   throw err;
+@ai-video-editor/backend:dev:   ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Cannot find module '/app/mcp-servers/vision-server/dist/index.js'
+@ai-video-editor/backend:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev:     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev:     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev:     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev:   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev:   requireStack: []
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: Failed to connect to MCP server vision: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Failed to connect to vision MCP server: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Connecting to MCP server asset with command: node /app/mcp-servers/asset-server/dist/index.js
+@ai-video-editor/backend:dev: node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev:   throw err;
+@ai-video-editor/backend:dev:   ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Cannot find module '/app/mcp-servers/asset-server/dist/index.js'
+@ai-video-editor/backend:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev:     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev:     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev:     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev:   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev:   requireStack: []
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: Failed to connect to MCP server asset: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Failed to connect to asset MCP server: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Connecting to MCP server codeRunner with command: node /app/mcp-servers/code-runner-server/dist/index.js
+@ai-video-editor/backend:dev: node:internal/modules/cjs/loader:1386
+@ai-video-editor/backend:dev:   throw err;
+@ai-video-editor/backend:dev:   ^
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Error: Cannot find module '/app/mcp-servers/code-runner-server/dist/index.js'
+@ai-video-editor/backend:dev:     at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+@ai-video-editor/backend:dev:     at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+@ai-video-editor/backend:dev:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+@ai-video-editor/backend:dev:     at Function._load (node:internal/modules/cjs/loader:1192:37)
+@ai-video-editor/backend:dev:     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+@ai-video-editor/backend:dev:     at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+@ai-video-editor/backend:dev:     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+@ai-video-editor/backend:dev:     at node:internal/main/run_main_module:36:49 {
+@ai-video-editor/backend:dev:   code: 'MODULE_NOT_FOUND',
+@ai-video-editor/backend:dev:   requireStack: []
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev:
+@ai-video-editor/backend:dev: Node.js v22.22.0
+@ai-video-editor/backend:dev: Failed to connect to MCP server codeRunner: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/backend:dev: Failed to connect to codeRunner MCP server: McpError: MCP error -32000: Connection closed
+@ai-video-editor/backend:dev: Initializing ToolRegistry...
+@ai-video-editor/backend:dev: MCP initialization complete
+@ai-video-editor/backend:dev: Backend server running on port 3001
+@ai-video-editor/backend:dev:     at Function.fromError (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/types.ts:2316:16)
+@ai-video-editor/backend:dev:     at Client._onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:645:32)
+@ai-video-editor/backend:dev: WebSocket server ready
+@ai-video-editor/backend:dev:     at StdioClientTransport._transport.onclose (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/shared/protocol.ts:612:18)
+@ai-video-editor/backend:dev:     at ChildProcess.<anonymous> (/app/node_modules/.pnpm/@modelcontextprotocol+sdk@1.25.3_hono@4.11.5_zod@4.3.6/node_modules/@modelcontextprotocol/sdk/src/client/stdio.ts:143:31)
+@ai-video-editor/backend:dev:     at ChildProcess.emit (node:events:519:28)
+@ai-video-editor/backend:dev:     at maybeClose (node:internal/child_process:1101:16)
+@ai-video-editor/backend:dev:     at ChildProcess._handle.onexit (node:internal/child_process:304:5) {
+@ai-video-editor/backend:dev:   code: -32000,
+@ai-video-editor/backend:dev:   data: undefined
+@ai-video-editor/backend:dev: }
+@ai-video-editor/mcp-utils:dev:
+@ai-video-editor/mcp-utils:dev: 6:01:36 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/index.ts(11,10): error TS2339: Property 'server' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(18,10): error TS2339: Property 'server' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(28,8): error TS2339: Property 'start' does not exist on type 'CodeRunnerServer'.
+@ai-video-editor/code-runner-server:dev: src/index.ts(28,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/code-runner-server:dev: src/sandbox/executor.ts(2,36): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/sandbox/validator.ts(1,51): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev: src/tools/python-script.ts(3,47): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: 6:01:37 PM - Found 8 errors. Watching for file changes.
+@ai-video-editor/web:dev:  ✓ Ready in 6.2s
+@ai-video-editor/asset-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/asset-server:dev: src/index.ts(15,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(22,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(29,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(36,10): error TS2339: Property 'server' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/index.ts(46,8): error TS2339: Property 'start' does not exist on type 'AssetServer'.
+@ai-video-editor/asset-server:dev: src/tools/download.ts(6,48): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: 6:01:38 PM - Found 7 errors. Watching for file changes.
+@ai-video-editor/whisper-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/whisper-server:dev: src/index.ts(12,33): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(13,30): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(14,32): error TS2339: Property 'server' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(19,8): error TS2339: Property 'start' does not exist on type 'WhisperServer'.
+@ai-video-editor/whisper-server:dev: src/index.ts(19,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: 6:01:38 PM - Found 6 errors. Watching for file changes.
+@ai-video-editor/vision-server:dev: src/frame-extractor.ts(1,47): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/vision-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/vision-server:dev: src/index.ts(14,36): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(15,35): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(16,37): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(17,38): error TS2339: Property 'server' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(22,8): error TS2339: Property 'start' does not exist on type 'VisionServer'.
+@ai-video-editor/vision-server:dev: src/index.ts(22,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: 6:01:38 PM - Found 8 errors. Watching for file changes.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(1,31): error TS2307: Cannot find module '@ai-video-editor/mcp-utils' or its corresponding type declarations.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(17,31): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(18,28): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(19,31): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(20,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(21,34): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(22,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(23,28): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(24,29): error TS2339: Property 'server' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(29,8): error TS2339: Property 'start' does not exist on type 'FFmpegServer'.
+@ai-video-editor/ffmpeg-server:dev: src/index.ts(29,23): error TS7006: Parameter 'error' implicitly has an 'any' type.
+@ai-video-editor/ffmpeg-server:dev:
+@ai-video-editor/ffmpeg-server:dev: 6:01:38 PM - Found 11 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev: [2J[3J[H6:01:39 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/asset-server:dev: [2J[3J[H6:01:39 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/whisper-server:dev: [2J[3J[H6:01:40 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/vision-server:dev: [2J[3J[H6:01:40 PM - File change detected. Starting incremental compilation...
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/whisper-server:dev:
+@ai-video-editor/whisper-server:dev: 6:01:40 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/code-runner-server:dev:
+@ai-video-editor/code-runner-server:dev: 6:01:40 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/vision-server:dev:
+@ai-video-editor/vision-server:dev: 6:01:42 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/asset-server:dev:
+@ai-video-editor/asset-server:dev: 6:01:42 PM - Found 0 errors. Watching for file changes.
+@ai-video-editor/web:dev:  ○ Compiling / ...
+@ai-video-editor/web:dev:  ✓ Compiled / in 6.3s (715 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 793ms (342 modules)
+@ai-video-editor/web:dev:  GET / 200 in 7101ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/web:dev:  ○ Compiling /projects ...
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/web:dev:  ✓ Compiled /projects in 2.4s (689 modules)
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET /projects 200 in 1417ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
+@ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 5.4s (1436 modules)
+@ai-video-editor/web:dev:  GET / 200 in 81ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/web:dev:  GET / 200 in 89ms
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client connected
+@ai-video-editor/backend:dev: Client disconnected
+@ai-video-editor/backend:dev: Client disconnected
