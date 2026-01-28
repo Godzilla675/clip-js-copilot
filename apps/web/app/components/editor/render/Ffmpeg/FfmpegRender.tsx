@@ -50,6 +50,12 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
 
         const renderFunction = async () => {
             const params = extractConfigs(exportSettings);
+            const { format } = exportSettings;
+            const outputFilename = `output.${format}`;
+            let mimeType = `video/${format}`;
+            if (format === 'mov') mimeType = 'video/quicktime';
+            if (format === 'gif') mimeType = 'image/gif';
+
             const wroteFiles = new Map<string, string>();
 
             try {
@@ -201,9 +207,6 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                     '-map', '[outv]',
                 ];
 
-                const { format } = exportSettings;
-                const outputFilename = `output.${format}`;
-
                 if (audioDelays.length > 0 && format !== 'gif') {
                     ffmpegArgs.push('-map', '[outa]');
                 }
@@ -246,12 +249,6 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
             }
 
             // return the output url
-            const { format } = exportSettings;
-            const outputFilename = `output.${format}`;
-            let mimeType = `video/${format}`;
-            if (format === 'mov') mimeType = 'video/quicktime';
-            if (format === 'gif') mimeType = 'image/gif';
-
             const outputData = await ffmpeg.readFile(outputFilename);
             const outputBlob = new Blob([outputData as Uint8Array], { type: mimeType });
             const outputUrl = URL.createObjectURL(outputBlob);

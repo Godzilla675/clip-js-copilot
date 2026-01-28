@@ -27,3 +27,4 @@
 @ai-video-editor/web:dev:  GET /projects 200 in 1085ms
 @ai-video-editor/web:dev:  ○ Compiling /projects/[id] ...
 @ai-video-editor/web:dev:  ✓ Compiled /projects/[id] in 5.8s (1436 modules)
+@ai-video-editor/web:dev:  ✓ Compiled in 8.3s (1085 modules)
