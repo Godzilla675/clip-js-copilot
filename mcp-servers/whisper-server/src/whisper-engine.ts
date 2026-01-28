@@ -39,7 +39,7 @@ export class WhisperEngine {
     // Check if input exists
     try {
       await fs.promises.access(inputPath);
-    } catch (error) {
+    } catch {
       throw new Error(`Input file not found: ${inputPath}`);
     }
 
@@ -81,25 +81,36 @@ export class WhisperEngine {
       // nodejs-whisper output is audioPath + '.json' (e.g. file.wav.json)
       // We check both likely variants to be safe, but usually it appends extension
       let jsonPath = audioPath + '.json';
-      if (!fs.existsSync(jsonPath) && fs.existsSync(audioPath + '.wav.json')) {
-         jsonPath = audioPath + '.wav.json';
+
+      try {
+        await fs.promises.access(jsonPath);
+      } catch {
+        const altPath = audioPath + '.wav.json';
+        try {
+          await fs.promises.access(altPath);
+          jsonPath = altPath;
+        } catch {
+          // Neither exists
+        }
       }
 
       let result: TranscriptionResult = {};
 
-      if (fs.existsSync(jsonPath)) {
-        const jsonContent = fs.readFileSync(jsonPath, 'utf-8');
+      try {
+        const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
         result = JSON.parse(jsonContent);
-        fs.unlinkSync(jsonPath);
-      } else {
+        await fs.promises.unlink(jsonPath);
+      } catch {
         console.warn(`Expected JSON output not found at ${jsonPath}`);
       }
 
       return result;
 
     } finally {
-      if (fs.existsSync(audioPath)) {
-        fs.unlinkSync(audioPath);
+      try {
+        await fs.promises.unlink(audioPath);
+      } catch {
+        // Ignore if file doesn't exist
       }
     }
   }
@@ -117,7 +128,7 @@ export class WhisperEngine {
 
     try {
       await fs.promises.access(inputPath);
-    } catch (error) {
+    } catch {
       throw new Error(`Input file not found: ${inputPath}`);
     }
 
@@ -153,15 +164,18 @@ export class WhisperEngine {
       // Find the generated file
       const generatedFile = audioPath + '.' + format; // e.g. file.wav.srt
 
-      if (fs.existsSync(generatedFile)) {
-        fs.copyFileSync(generatedFile, outputPath);
-        fs.unlinkSync(generatedFile);
-      } else {
+      try {
+        await fs.promises.access(generatedFile);
+        await fs.promises.copyFile(generatedFile, outputPath);
+        await fs.promises.unlink(generatedFile);
+      } catch {
         throw new Error(`Subtitle file not generated at ${generatedFile}`);
       }
     } finally {
-      if (fs.existsSync(audioPath)) {
-        fs.unlinkSync(audioPath);
+      try {
+        await fs.promises.unlink(audioPath);
+      } catch {
+        // Ignore if file doesn't exist
       }
     }
   }
