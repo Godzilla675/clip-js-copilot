@@ -12,7 +12,7 @@ export default function Ffmpeg() {
 
     const loadFFmpegFunction = async () => {
         setLoadedFfmpeg(false);
-        const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd";
+        const baseURL = "https://unpkg.com/@ffmpeg/core-mt@0.12.10/dist/umd";
 
         const ffmpeg = new FFmpeg();
         ffmpegRef.current = ffmpeg;
@@ -24,8 +24,7 @@ export default function Ffmpeg() {
         await ffmpeg.load({
             coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
             wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
-            // TODO: For Multi Threading as mentioned in the ffmpeg docs but it is not fetched for some reason
-            // workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
+            workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, 'text/javascript'),
         });
 
         setLoadedFfmpeg(true);
