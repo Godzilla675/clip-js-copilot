@@ -13,14 +13,16 @@ export async function initMCP() {
   const allServers = { ...serverConfigs, ...customServers };
 
   // Connect to all configured servers
-  for (const [name, config] of Object.entries(allServers)) {
-    try {
-      const conf = config as { command: string; args: string[]; env?: Record<string, string> };
-      await mcpClientManager.connectServer(name, conf.command, conf.args, conf.env);
-    } catch (error) {
-      console.error(`Failed to connect to ${name} MCP server:`, error);
-    }
-  }
+  await Promise.all(
+    Object.entries(allServers).map(async ([name, config]) => {
+      try {
+        const conf = config as { command: string; args: string[]; env?: Record<string, string> };
+        await mcpClientManager.connectServer(name, conf.command, conf.args, conf.env);
+      } catch (error) {
+        console.error(`Failed to connect to ${name} MCP server:`, error);
+      }
+    })
+  );
 
   // Initialize registry (discover tools)
   await toolRegistry.initialize();
