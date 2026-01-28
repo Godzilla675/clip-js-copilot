@@ -12,7 +12,7 @@ export async function initMCP() {
   const customServers = loadCustomServers();
   const allServers = { ...serverConfigs, ...customServers };
 
-  // Connect to all configured servers
+  // Connect to all configured servers in parallel
   await Promise.all(
     Object.entries(allServers).map(async ([name, config]) => {
       try {
