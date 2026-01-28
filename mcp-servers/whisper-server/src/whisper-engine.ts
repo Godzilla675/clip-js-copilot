@@ -82,6 +82,17 @@ export class WhisperEngine {
       // We check both likely variants to be safe, but usually it appends extension
       let jsonPath = audioPath + '.json';
 
+      const checkFileExists = async (p: string) => {
+        try {
+          await fs.promises.access(p);
+          return true;
+        } catch {
+          return false;
+        }
+      };
+
+      if (!(await checkFileExists(jsonPath)) && (await checkFileExists(audioPath + '.wav.json'))) {
+         jsonPath = audioPath + '.wav.json';
       try {
         await fs.promises.access(jsonPath);
       } catch {
@@ -96,6 +107,11 @@ export class WhisperEngine {
 
       let result: TranscriptionResult = {};
 
+      if (await checkFileExists(jsonPath)) {
+        const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
+        result = JSON.parse(jsonContent);
+        await fs.promises.unlink(jsonPath);
+      } else {
       try {
         const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
         result = JSON.parse(jsonContent);
@@ -171,6 +187,10 @@ export class WhisperEngine {
       } catch {
         throw new Error(`Subtitle file not generated at ${generatedFile}`);
       }
+
+      await fs.promises.copyFile(generatedFile, outputPath);
+      await fs.promises.unlink(generatedFile);
+
     } finally {
       try {
         await fs.promises.unlink(audioPath);
