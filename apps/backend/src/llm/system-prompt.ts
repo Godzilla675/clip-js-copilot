@@ -21,7 +21,8 @@ export function buildSystemPrompt(context: {
 `;
 
   if (project) {
-    prompt += `- Name: ${project.name}
+    prompt += `- Project ID: ${project.id}
+- Name: ${project.name}
 - Resolution: ${project.settings.width}x${project.settings.height} @ ${project.settings.fps}fps
 - Duration: ${project.timeline.duration}s
 - Tracks: ${project.timeline.tracks.length}
