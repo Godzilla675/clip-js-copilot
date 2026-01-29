@@ -3,7 +3,7 @@ import type { Server } from '../server.js';
 import { updateEnvFile } from '../utils/env-manager.js';
 import { config } from '../config.js';
 
-export function createSettingsRouter(server: Server) {
+export function createSettingsRouter(server: Server): Router {
   const router = Router();
 
   router.get('/', (req, res) => {

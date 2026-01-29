@@ -17,8 +17,8 @@ export class AnthropicProvider implements LLMProviderInterface {
 
   async getModels(): Promise<string[]> {
     try {
-      const list = await this.client.models.list();
-      return list.data.map(m => m.id);
+      const list = await (this.client as any).models.list();
+      return list.data.map((m: any) => m.id);
     } catch (error) {
       console.error('Failed to fetch Anthropic models:', error);
       return [];

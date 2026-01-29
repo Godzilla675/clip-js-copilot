@@ -17,6 +17,7 @@ async function checkCopilot() {
         console.log('Keys on client:', Object.keys(client));
         console.log('Methods in prototype:', Object.getOwnPropertyNames(Object.getPrototypeOf(client)));
 
+        // @ts-ignore
         if (client.listModels) {
             console.log('client.listModels EXISTS');
         } else {

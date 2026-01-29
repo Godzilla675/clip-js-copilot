@@ -15,7 +15,7 @@ export class GeminiProvider implements LLMProviderInterface {
   async getModels(): Promise<string[]> {
       try {
           const list = await this.client.models.list();
-          return list.map((m: any) => m.name.replace(/^models\//, ''));
+          return (list as any).models.map((m: any) => m.name.replace(/^models\//, ''));
       } catch (error) {
           console.error('Failed to fetch Gemini models:', error);
           return [];

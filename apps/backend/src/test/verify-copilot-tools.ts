@@ -1,6 +1,7 @@
 
 import { CopilotProvider } from '../llm/providers/copilot.js';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
+import { MCPTool } from '../llm/types.js';
 import path from 'path';
 
 async function verifyTools() {
@@ -10,6 +11,7 @@ async function verifyTools() {
     const config: LLMConfig = {
         provider: 'copilot',
         model: 'gpt-4',
+        apiKey: '',
     };
 
     // simplified path - hardcoded to what we know exists on the file system from previous `find_by_name`
@@ -22,7 +24,7 @@ async function verifyTools() {
         { role: 'user', content: 'What is the weather in Paris?' }
     ];
 
-    const tools = [{
+    const tools: MCPTool[] = [{
         name: 'get_weather',
         description: 'Get the current weather for a location',
         inputSchema: {

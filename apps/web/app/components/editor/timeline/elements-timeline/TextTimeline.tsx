@@ -165,7 +165,7 @@ export default function TextTimeline() {
 
                             }
                             else if (direction[0] === -1) {
-                                handleClick('text', clip.id);
+                                handleClick('text', index);
                                 handleLeftResize(clip, target as HTMLElement, width);
                             }
                         }}
