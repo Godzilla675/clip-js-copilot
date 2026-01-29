@@ -2,11 +2,42 @@
 
 import { getFile, useAppDispatch, useAppSelector } from "../../../../store";
 import { setMediaFiles } from "../../../../store/slices/projectSlice";
-import { storeFile } from "../../../../store";
 import { categorizeFile } from "../../../../utils/utils";
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { api } from '../../../../lib/api';
+import { MediaType } from "../../../../types";
+
+const getMediaDuration = (file: File, type: MediaType): Promise<number> => {
+    return new Promise((resolve) => {
+        if (type === 'image') {
+            resolve(5); // Default 5 seconds for images
+            return;
+        }
+
+        if (type === 'unknown') {
+            resolve(30); // Default 30 seconds for unknown types
+            return;
+        }
+
+        const url = URL.createObjectURL(file);
+        const element = type === 'video' ? document.createElement('video') : document.createElement('audio');
+        element.preload = 'metadata';
+        element.src = url;
+
+        element.onloadedmetadata = () => {
+             // Ensure duration is finite and valid
+             const duration = (isFinite(element.duration) && element.duration > 0) ? element.duration : 30;
+             resolve(duration);
+             URL.revokeObjectURL(url);
+        };
+
+        element.onerror = () => {
+             resolve(30); // fallback
+             URL.revokeObjectURL(url);
+        };
+    });
+};
 
 export default function AddMedia({ fileId }: { fileId: string }) {
     const { mediaFiles } = useAppSelector((state) => state.projectState);
@@ -16,7 +47,15 @@ export default function AddMedia({ fileId }: { fileId: string }) {
         const updatedMedia = [...mediaFiles];
 
         const file = await getFile(fileId);
+
+        if (!file) {
+            toast.error("File not found");
+            return;
+        }
+
         const mediaId = crypto.randomUUID();
+        const type = categorizeFile(file.type);
+        const duration = await getMediaDuration(file, type);
 
         if (fileId) {
             // Upload file to backend to get server path
@@ -29,7 +68,7 @@ export default function AddMedia({ fileId }: { fileId: string }) {
                 console.warn('Failed to upload to backend, using local only:', error);
             }
 
-            const relevantClips = mediaFiles.filter(clip => clip.type === categorizeFile(file.type));
+            const relevantClips = mediaFiles.filter(clip => clip.type === type);
             const lastEnd = relevantClips.length > 0
                 ? Math.max(...relevantClips.map(f => f.positionEnd))
                 : 0;
@@ -39,11 +78,11 @@ export default function AddMedia({ fileId }: { fileId: string }) {
                 fileName: file.name,
                 fileId: fileId,
                 startTime: 0,
-                endTime: 30,
+                endTime: duration,
                 src: URL.createObjectURL(file),
                 serverPath: serverPath,
                 positionStart: lastEnd,
-                positionEnd: lastEnd + 30,
+                positionEnd: lastEnd + duration,
                 includeInMerge: true,
                 x: 0,
                 y: 0,
@@ -54,7 +93,7 @@ export default function AddMedia({ fileId }: { fileId: string }) {
                 crop: { x: 0, y: 0, width: 1920, height: 1080 },
                 playbackSpeed: 1,
                 volume: 100,
-                type: categorizeFile(file.type),
+                type: type,
                 zIndex: 0,
             });
         }

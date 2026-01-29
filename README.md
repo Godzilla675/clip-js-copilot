@@ -30,7 +30,6 @@ https://github.com/user-attachments/assets/f2d5a46b-36f4-4433-a7dc-18d0f2070d78
 ## Getting Started
 
 1. **Install dependencies**:
-   > **Note**: `pnpm-lock.yaml` is not committed. After cloning, run `pnpm install` to generate it.
 
    ```bash
    pnpm install

@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
 import { useAppSelector } from "@/app/store";
-import { setActiveElement, setActiveElementIndex, setMediaFiles } from "@/app/store/slices/projectSlice";
+import { setActiveElement, setActiveElementIndex, updateMediaFile } from "@/app/store/slices/projectSlice";
 import { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Image from "next/image";
@@ -24,19 +24,9 @@ export default function ImageTimeline() {
     //     )));
     // };
 
-    // TODO: this is a hack to prevent the mediaFiles from being updated too often while dragging or resizing
-    const mediaFilesRef = useRef(mediaFiles);
-    useEffect(() => {
-        mediaFilesRef.current = mediaFiles;
-    }, [mediaFiles]);
-
     const onUpdateMedia = useMemo(() =>
         throttle((id: string, updates: Partial<MediaFile>) => {
-            const currentFiles = mediaFilesRef.current;
-            const updated = currentFiles.map(media =>
-                media.id === id ? { ...media, ...updates } : media
-            );
-            dispatch(setMediaFiles(updated));
+            dispatch(updateMediaFile({ id, updates }));
         }, 100), [dispatch]
     );
 
@@ -71,14 +61,21 @@ export default function ImageTimeline() {
         })
     };
     const handleLeftResize = (clip: MediaFile, target: HTMLElement, width: number) => {
-        const newPositionEnd = width / timelineZoom;
-        // Ensure we do not resize beyond the right edge of the clip
-        const constrainedLeft = Math.max(clip.positionStart + ((clip.positionEnd - clip.positionStart) - newPositionEnd), 0);
+        const rightPos = clip.positionEnd * timelineZoom;
+        let newLeftPos = rightPos - width;
+
+        // Ensure we do not resize beyond the start of the timeline
+        newLeftPos = Math.max(newLeftPos, 0);
+
+        // Recalculate width in case we hit the constraint
+        const constrainedWidth = rightPos - newLeftPos;
 
         onUpdateMedia(clip.id, {
-            positionStart: constrainedLeft,
-            // startTime: constrainedLeft,
-        })
+            positionStart: newLeftPos / timelineZoom,
+        });
+
+        target.style.width = `${constrainedWidth}px`;
+        target.style.left = `${newLeftPos}px`;
     };
 
     useEffect(() => {
@@ -164,10 +161,8 @@ export default function ImageTimeline() {
 
                                 }
                                 else if (direction[0] === -1) {
-                                    // TODO: handle left resize
-                                    // handleClick('media', clip.id)
-                                    // delta[0] && (target!.style.width = `${width}px`);
-                                    // handleLeftResize(clip, target as HTMLElement, width);
+                                    handleClick('media', clip.id)
+                                    handleLeftResize(clip, target as HTMLElement, width);
                                 }
 
                             }}

@@ -38,13 +38,12 @@ export const VideoSequenceItem: React.FC<VideoSequenceItemProps> = ({ item, opti
         fps
     );
 
-    // TODO: Add crop
-    // const crop = item.crop || {
-    //     x: 0,
-    //     y: 0,
-    //     width: item.width,
-    //     height: item.height
-    // };
+    const crop = item.crop || {
+        x: 0,
+        y: 0,
+        width: item.width,
+        height: item.height
+    };
 
     const trim = {
         from: (item.startTime) / playbackRate,
@@ -65,8 +64,8 @@ export const VideoSequenceItem: React.FC<VideoSequenceItemProps> = ({ item, opti
                     pointerEvents: "auto",
                     top: item.y,
                     left: item.x,
-                    width: item.width || "100%",
-                    height: item.height || "auto",
+                    width: crop.width || "100%",
+                    height: crop.height || "auto",
                     transform: "none",
                     zIndex: item.zIndex,
                     opacity:
@@ -94,8 +93,8 @@ export const VideoSequenceItem: React.FC<VideoSequenceItemProps> = ({ item, opti
                         volume={item.volume / 100 || 100}
                         style={{
                             pointerEvents: "none",
-                            top: 0,
-                            left: 0,
+                            top: -crop.y || 0,
+                            left: -crop.x || 0,
                             width: item.width || "100%", // Default width
                             height: item.height || "auto", // Default height
                             position: "absolute"

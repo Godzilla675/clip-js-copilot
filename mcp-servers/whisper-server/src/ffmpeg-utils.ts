@@ -17,13 +17,10 @@ if (ffmpegPath) {
  * @returns Promise that resolves when extraction is complete
  */
 export async function extractAudio(inputPath: string, outputPath: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // Ensure output directory exists
-    const outputDir = path.dirname(outputPath);
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
+  const outputDir = path.dirname(outputPath);
+  await fs.promises.mkdir(outputDir, { recursive: true });
 
+  return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
       .noVideo()
       .audioFrequency(16000) // Whisper expects 16kHz

@@ -54,6 +54,13 @@ const projectStateSlice = createSlice({
             // Calculate duration based on the last video's end time
             state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
         },
+        updateMediaFile: (state, action: PayloadAction<{ id: string; updates: Partial<MediaFile> }>) => {
+            const index = state.mediaFiles.findIndex(f => f.id === action.payload.id);
+            if (index !== -1) {
+                state.mediaFiles[index] = { ...state.mediaFiles[index], ...action.payload.updates };
+                state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+            }
+        },
         setProjectName: (state, action: PayloadAction<string>) => {
             state.projectName = action.payload;
         },
@@ -70,6 +77,13 @@ const projectStateSlice = createSlice({
         setTextElements: (state, action: PayloadAction<TextElement[]>) => {
             state.textElements = action.payload;
             state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+        },
+        updateTextElement: (state, action: PayloadAction<{ id: string; updates: Partial<TextElement> }>) => {
+            const index = state.textElements.findIndex(f => f.id === action.payload.id);
+            if (index !== -1) {
+                state.textElements[index] = { ...state.textElements[index], ...action.payload.updates };
+                state.duration = calculateTotalDuration(state.mediaFiles, state.textElements);
+            }
         },
         setCurrentTime: (state, action: PayloadAction<number>) => {
             state.currentTime = action.payload;
@@ -124,7 +138,10 @@ const projectStateSlice = createSlice({
         },
         // Special reducer for rehydrating state from IndexedDB
         rehydrate: (state, action: PayloadAction<ProjectState>) => {
-            return { ...state, ...action.payload };
+            const newState = { ...state, ...action.payload };
+            // Ensure duration is calculated from the media files if it's missing or if mediaFiles changed
+            newState.duration = calculateTotalDuration(newState.mediaFiles, newState.textElements);
+            return newState;
         },
         createNewProject: (state) => {
             return { ...initialState };
@@ -164,7 +181,9 @@ const projectStateSlice = createSlice({
 
 export const {
     setMediaFiles,
+    updateMediaFile,
     setTextElements,
+    updateTextElement,
     setCurrentTime,
     setProjectName,
     setIsPlaying,

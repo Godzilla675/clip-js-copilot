@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
 import { useAppSelector, useAppDispatch } from "@/app/store";
-import { setActiveElement, setActiveElementIndex, setMediaFiles } from "@/app/store/slices/projectSlice";
+import { setActiveElement, setActiveElementIndex, updateMediaFile } from "@/app/store/slices/projectSlice";
 import { memo, useEffect, useState } from "react";
 import Image from "next/image";
 import Header from "../Header";
@@ -22,12 +22,6 @@ export default function VideoTimeline() {
     //     )));
     // };
 
-    // TODO: this is a hack to prevent the mediaFiles from being updated too often while dragging or resizing
-    const mediaFilesRef = useRef(mediaFiles);
-    useEffect(() => {
-        mediaFilesRef.current = mediaFiles;
-    }, [mediaFiles]);
-
     const mediaFileIndices = useMemo(() => {
         const indices = new Map<string, number>();
         mediaFiles.forEach((file, index) => {
@@ -38,11 +32,7 @@ export default function VideoTimeline() {
 
     const onUpdateMedia = useMemo(() =>
         throttle((id: string, updates: Partial<MediaFile>) => {
-            const currentFiles = mediaFilesRef.current;
-            const updated = currentFiles.map(media =>
-                media.id === id ? { ...media, ...updates } : media
-            );
-            dispatch(setMediaFiles(updated));
+            dispatch(updateMediaFile({ id, updates }));
         }, 100), [dispatch]
     );
 
@@ -82,14 +72,28 @@ export default function VideoTimeline() {
         })
     };
     const handleLeftResize = (clip: MediaFile, target: HTMLElement, width: number) => {
-        const newPositionStart = width / timelineZoom;
-        // Ensure we do not resize beyond the right edge of the clip
-        const constrainedLeft = Math.max(clip.positionStart + ((clip.positionEnd - clip.positionStart) - newPositionStart), 0);
+        const visualRightEdge = (clip.positionStart + (clip.positionEnd - clip.positionStart) / clip.playbackSpeed);
+        let newPositionStart = visualRightEdge - (width / timelineZoom);
+
+        newPositionStart = Math.max(newPositionStart, 0);
+
+        const minStartBasedOnMedia = clip.positionStart - (clip.startTime / clip.playbackSpeed);
+        newPositionStart = Math.max(newPositionStart, minStartBasedOnMedia);
+
+        const finalDelta = newPositionStart - clip.positionStart;
+        const newStartTime = clip.startTime + finalDelta * clip.playbackSpeed;
+
+        const newVisualWidth = (visualRightEdge - newPositionStart) * timelineZoom;
+        const newPositionEnd = newPositionStart + (visualRightEdge - newPositionStart) * clip.playbackSpeed;
 
         onUpdateMedia(clip.id, {
-            positionStart: constrainedLeft,
-            startTime: constrainedLeft,
-        })
+            positionStart: newPositionStart,
+            startTime: newStartTime,
+            positionEnd: newPositionEnd
+        });
+
+        target.style.left = `${newPositionStart * timelineZoom}px`;
+        target.style.width = `${newVisualWidth}px`;
     };
 
     useEffect(() => {
@@ -173,10 +177,8 @@ export default function VideoTimeline() {
                                     handleRightResize(clip, target as HTMLElement, width);
                                 }
                                 else if (direction[0] === -1) {
-                                    // TODO: handle left resize
-                                    // handleClick('media', clip.id)
-                                    // delta[0] && (target!.style.width = `${width}px`);
-                                    // handleLeftResize(clip, target as HTMLElement, width);
+                                    handleClick('media', clip.id)
+                                    handleLeftResize(clip, target as HTMLElement, width);
                                 }
                             }}
                             onResizeEnd={({ target, isDrag, clientX, clientY }) => {
