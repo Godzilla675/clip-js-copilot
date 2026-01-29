@@ -91,33 +91,24 @@ export class WhisperEngine {
         }
       };
 
-      if (!(await checkFileExists(jsonPath)) && (await checkFileExists(audioPath + '.wav.json'))) {
-         jsonPath = audioPath + '.wav.json';
-      try {
-        await fs.promises.access(jsonPath);
-      } catch {
-        const altPath = audioPath + '.wav.json';
-        try {
-          await fs.promises.access(altPath);
-          jsonPath = altPath;
-        } catch {
-          // Neither exists
+      if (!(await checkFileExists(jsonPath))) {
+        if (await checkFileExists(audioPath + '.wav.json')) {
+           jsonPath = audioPath + '.wav.json';
         }
       }
 
       let result: TranscriptionResult = {};
 
       if (await checkFileExists(jsonPath)) {
-        const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
-        result = JSON.parse(jsonContent);
-        await fs.promises.unlink(jsonPath);
+        try {
+          const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
+          result = JSON.parse(jsonContent);
+          await fs.promises.unlink(jsonPath);
+        } catch (error) {
+           console.warn(`Error reading or parsing JSON output at ${jsonPath}:`, error);
+        }
       } else {
-      try {
-        const jsonContent = await fs.promises.readFile(jsonPath, 'utf-8');
-        result = JSON.parse(jsonContent);
-        await fs.promises.unlink(jsonPath);
-      } catch {
-        console.warn(`Expected JSON output not found at ${jsonPath}`);
+         console.warn(`Expected JSON output not found at ${jsonPath}`);
       }
 
       return result;
@@ -187,9 +178,6 @@ export class WhisperEngine {
       } catch {
         throw new Error(`Subtitle file not generated at ${generatedFile}`);
       }
-
-      await fs.promises.copyFile(generatedFile, outputPath);
-      await fs.promises.unlink(generatedFile);
 
     } finally {
       try {
