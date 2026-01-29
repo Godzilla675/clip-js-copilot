@@ -3,7 +3,7 @@ import { useWebSocket } from '../context/WebSocketContext';
 import { api } from '../lib/api';
 import { useAppDispatch, useAppSelector } from '../store';
 import { rehydrate, addLibraryFile, updateTimelineClip } from '../store/slices/projectSlice';
-import { ProjectState } from '../types';
+import { MediaFile, MediaType, ProjectState } from '../types';
 import { categorizeFile } from '../utils/utils';
 import { storeFile } from '../store';
 
@@ -22,6 +22,48 @@ export const useProject = () => {
             // Note: remoteProject might be partial or full.
             // Assuming full state for now based on 'rehydrate' usage.
             if (remoteProject && remoteProject.id === project.id) {
+                // Synchronization Logic: Convert Backend Project (tracks/assets) to Frontend State (mediaFiles)
+                if (remoteProject.assets && remoteProject.timeline && remoteProject.timeline.tracks) {
+                    const newMediaFiles: MediaFile[] = [];
+                    const assetsMap = new Map<string, any>(remoteProject.assets.map((a: any) => [a.id, a]));
+                    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+
+                    remoteProject.timeline.tracks.forEach((track: any) => {
+                         if (track.type === 'video' || track.type === 'audio') {
+                             track.clips.forEach((clip: any) => {
+                                 const asset = assetsMap.get(clip.assetId);
+                                 if (asset) {
+                                     // Construct Src URL
+                                     const filename = asset.path.split(/[/\\]/).pop();
+                                     const src = `${BACKEND_URL}/assets/${filename}`;
+
+                                     newMediaFiles.push({
+                                         id: clip.id,
+                                         fileName: asset.name,
+                                         fileId: asset.id, // Using asset ID as file ID
+                                         type: asset.type as MediaType,
+                                         startTime: clip.sourceStart || 0,
+                                         endTime: (clip.sourceStart || 0) + clip.duration,
+                                         positionStart: clip.startTime,
+                                         positionEnd: clip.startTime + clip.duration,
+                                         src: src,
+                                         includeInMerge: true,
+                                         playbackSpeed: 1,
+                                         volume: 100,
+                                         zIndex: 0,
+                                         x: 0, y: 0, width: 1920, height: 1080,
+                                         rotation: 0, opacity: 1,
+                                         crop: { x: 0, y: 0, width: 1920, height: 1080 }
+                                     });
+                                 }
+                             });
+                         }
+                    });
+
+                    // Update remoteProject with converted mediaFiles
+                    remoteProject.mediaFiles = newMediaFiles;
+                }
+
                 // TODO: Implement more sophisticated merging strategy
                 // For now, we simply replace the state with the server state
                 // This might overwrite local unsaved changes if not careful

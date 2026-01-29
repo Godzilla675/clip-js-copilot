@@ -1,25 +1,12 @@
 'use client';
 
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useWebSocket } from './WebSocketContext';
 import { api } from '../lib/api';
-import { useAppSelector } from '../store';
-
-export interface ToolCall {
-    id: string;
-    name: string;
-    args: any;
-    result?: any;
-    status: 'pending' | 'success' | 'error';
-}
-
-export interface Message {
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    toolCalls?: ToolCall[];
-}
+import { useAppSelector, useAppDispatch } from '../store';
+import { Message, ToolCall } from '../types';
+import { setChatMessages } from '../store/slices/projectSlice';
 
 interface CopilotContextType {
     messages: Message[];
@@ -37,6 +24,11 @@ interface CopilotContextType {
 const CopilotContext = createContext<CopilotContextType | undefined>(undefined);
 
 export const CopilotProvider = ({ children }: { children: ReactNode }) => {
+    const dispatch = useAppDispatch();
+    const projectId = useAppSelector((state) => state.projectState.id);
+    const storedMessages = useAppSelector((state) => state.projectState.chatMessages);
+    const prevProjectId = useRef<string | null>(null);
+
     const [messages, setMessages] = useState<Message[]>([
         {
             id: 'welcome',
@@ -51,6 +43,34 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
 
     const { client, isConnected, send } = useWebSocket();
     const projectState = useAppSelector((state) => state.projectState);
+
+    // Sync FROM Redux when project changes
+    useEffect(() => {
+        if (projectId !== prevProjectId.current) {
+            prevProjectId.current = projectId;
+            if (storedMessages && storedMessages.length > 0) {
+                setMessages(storedMessages);
+            } else {
+                setMessages([
+                    {
+                        id: 'welcome',
+                        role: 'assistant',
+                        content: 'Hi! I am your AI video editing assistant. How can I help you today?'
+                    }
+                ]);
+            }
+        }
+    }, [projectId, storedMessages]);
+
+    // Sync TO Redux when messages change (debounced)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (projectId && messages.length > 0) {
+                dispatch(setChatMessages(messages));
+            }
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [messages, projectId, dispatch]);
 
     useEffect(() => {
         api.copilot.getModels()

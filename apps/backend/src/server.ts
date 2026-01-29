@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
 import { WebSocketServer } from 'ws';
 import cors from 'cors';
 import { config } from './config.js';
@@ -60,6 +61,8 @@ export class Server {
       credentials: true
     }));
     this.app.use(express.json());
+    // Serve static assets
+    this.app.use('/assets', express.static(path.resolve(process.cwd(), 'assets')));
   }
 
   private setupRoutes() {

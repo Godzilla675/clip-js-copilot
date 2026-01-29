@@ -40,12 +40,10 @@ export default function TextTimeline() {
         }, 100), [dispatch]
     );
 
-    const handleClick = (element: string, id: string) => {
+    const handleClick = (element: string, index: number) => {
         if (element === 'text') {
             dispatch(setActiveElement('text'));
-            // TODO: find better way to do this
-            const actualIndex = textElements.findIndex(clip => clip.id === id);
-            dispatch(setActiveElementIndex(actualIndex));
+            dispatch(setActiveElementIndex(index));
         }
     };
 
@@ -69,14 +67,21 @@ export default function TextTimeline() {
         })
     };
     const handleLeftResize = (clip: TextElement, target: HTMLElement, width: number) => {
-        const newPositionEnd = width / timelineZoom;
-        // Ensure we do not resize beyond the right edge of the clip
-        const constrainedLeft = Math.max(clip.positionStart + ((clip.positionEnd - clip.positionStart) - newPositionEnd), 0);
+        const rightPos = clip.positionEnd * timelineZoom;
+        let newLeftPos = rightPos - width;
+
+        // Ensure we do not resize beyond the start of the timeline
+        newLeftPos = Math.max(newLeftPos, 0);
+
+        // Recalculate width in case we hit the constraint
+        const constrainedWidth = rightPos - newLeftPos;
 
         onUpdateText(clip.id, {
-            positionStart: constrainedLeft,
-            // startTime: constrainedLeft,
-        })
+            positionStart: newLeftPos / timelineZoom,
+        });
+
+        target.style.width = `${constrainedWidth}px`;
+        target.style.left = `${newLeftPos}px`;
     };
 
     useEffect(() => {
@@ -96,7 +101,7 @@ export default function TextTimeline() {
                                 targetRefs.current[clip.id] = el;
                             }
                         }}
-                        onClick={() => handleClick('text', clip.id)}
+                        onClick={() => handleClick('text', index)}
                         className={`absolute border border-gray-500 border-opacity-50 rounded-md top-2 h-12 rounded bg-[#27272A] text-white text-sm flex items-center justify-center cursor-pointer ${activeElement === 'text' && textElements[activeElementIndex].id === clip.id ? 'bg-[#3F3F46] border-blue-500' : ''}`}
                         style={{
                             left: `${clip.positionStart * timelineZoom}px`,
@@ -138,7 +143,7 @@ export default function TextTimeline() {
                             delta, dist,
                             transform,
                         }: OnDrag) => {
-                            handleClick('text', clip.id)
+                            handleClick('text', index)
                             handleDrag(clip, target as HTMLElement, left);
                         }}
                         onDragEnd={({ target, isDrag, clientX, clientY }) => {
@@ -154,16 +159,14 @@ export default function TextTimeline() {
                             delta, direction,
                         }: OnResize) => {
                             if (direction[0] === 1) {
-                                handleClick('text', clip.id)
+                                handleClick('text', index)
                                 delta[0] && (target!.style.width = `${width}px`);
                                 handleResize(clip, target as HTMLElement, width);
 
                             }
                             else if (direction[0] === -1) {
-                                // TODO: handle left resize
-                                // handleClick('text', clip.id)
-                                // delta[0] && (target!.style.width = `${width}px`);
-                                // handleLeftResize(clip, target as HTMLElement, width);
+                                handleClick('text', clip.id);
+                                handleLeftResize(clip, target as HTMLElement, width);
                             }
                         }}
                         onResizeEnd={({ target, isDrag, clientX, clientY }) => {

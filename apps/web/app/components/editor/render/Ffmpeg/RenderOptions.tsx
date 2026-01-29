@@ -68,6 +68,7 @@ export default function RenderOptions() {
                                     <option value="mp4">MP4</option>
                                     <option value="webm">WEBM</option>
                                     <option value="gif">GIF</option>
+                                    <option value="mov">MOV</option>
                                 </select>
                             </div>
 
@@ -94,9 +95,6 @@ export default function RenderOptions() {
                                     onChange={(e) => dispatch(setIncludeSubtitles(e.target.checked))}
                                     className="w-5 h-5 bg-darkSurfacePrimary border border-white border-opacity-10 rounded focus:ring-2 focus:ring-white-500"
                                 />
-                                <label htmlFor="includeSubtitles" className="text-lg font-bold text-white cursor-pointer">
-                                    Include Subtitles
-                                </label>
                             </div>
                         </div>
 

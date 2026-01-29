@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ToolCall } from '../../context/CopilotContext';
+import { ToolCall } from '../../types';
 import { ChevronDown, ChevronRight, Terminal, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 
 interface ToolCallDisplayProps {

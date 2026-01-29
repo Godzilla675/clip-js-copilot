@@ -1,7 +1,0 @@
-
-> ai-video-editor@ dev:web /app
-> turbo dev --filter=@ai-video-editor/web
-
-sh: 1: turbo: not found
- ELIFECYCLE  Command failed.
- WARN   Local package.json exists, but node_modules missing, did you mean to install?

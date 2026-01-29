@@ -92,12 +92,26 @@ export interface ExportConfig {
     quality: string;
     speed: string;
     fps: number;
-    format: ExportFormat; // TODO: add this as an option
+    format: ExportFormat;
     includeSubtitles: boolean;
 }
 
 export type ActiveElement = 'media' | 'text' | 'export';
 
+export interface ToolCall {
+    id: string;
+    name: string;
+    args: any;
+    result?: any;
+    status: 'pending' | 'success' | 'error';
+}
+
+export interface Message {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    toolCalls?: ToolCall[];
+}
 
 export interface LibraryFile {
     id: string;
@@ -114,6 +128,7 @@ export interface ProjectState {
     libraryFiles: LibraryFile[];
     mediaFiles: MediaFile[];
     textElements: TextElement[];
+    chatMessages?: Message[];
     filesID?: string[],
     currentTime: number;
     isPlaying: boolean;
