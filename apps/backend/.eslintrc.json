@@ -1,0 +1,17 @@
+{
+  "extends": "eslint:recommended",
+  "parser": "@typescript-eslint/parser",
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true
+  },
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "ignorePatterns": ["dist", "node_modules"],
+  "rules": {
+    "no-unused-vars": "off",
+    "no-undef": "off"
+  }
+}
