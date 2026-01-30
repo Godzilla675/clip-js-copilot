@@ -42,7 +42,6 @@ export default function CanvasPreview() {
     const animationFrameRef = useRef<number | null>(null);
     const startTimeRef = useRef<number>(0);
     const timelineRef = useRef<HTMLDivElement>(null);
-    const isFirstRun = useRef(true);
 
     const videoIndexMap = useRef<number[]>([]);
     const audioIndexMap = useRef<number[]>([]);
@@ -507,8 +506,7 @@ export default function CanvasPreview() {
                 }
             }
         });
-        // TODO: For Now Cause There is a bug here where the animation frame is being requested when the video is not playing
-        if (!isPlaying && !isFirstRun.current) {
+        if (isPlaying) {
             animationFrameRef.current = requestAnimationFrame(drawFrame);
         }
     };
@@ -578,7 +576,6 @@ export default function CanvasPreview() {
 
     // Toggle Buttons
     const togglePlay = () => {
-        isFirstRun.current = false;
         if (!isPlaying) {
             // If we're at the end, reset to start
             if (currentTime >= duration) {
