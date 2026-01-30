@@ -90,19 +90,13 @@ export default function Home() {
         </h2>
 
         <div className="grid w-full max-w-[1680px] mx-auto py-4 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-          {featuresGridList.items.map(({ id, title, description, icon }) => (
+          {featuresGridList.items.map(({ id, title, description, icon: Icon }) => (
             <article
               key={id}
               className="flex flex-col gap-3 md:gap-4 rounded-lg border border-white border-opacity-10 shadow-md p-3 md:p-4 [box-shadow:_70px_-20px_130px_0px_rgba(255,255,255,0.05)_inset] dark:[box-shadow:_70px_-20px_130px_0px_rgba(255,255,255,0.05)_inset]"
             >
               <figure className="flex size-8 md:size-9 items-center justify-start rounded-full bg-surface-secondary p-2 dark:border-dark-border dark:bg-dark-surface-secondary">
-                <Image
-                  alt={icon.alt ?? title}
-                  className="invert"
-                  height={18}
-                  src={icon.url}
-                  width={18}
-                />
+                <Icon size={18} className="text-white" />
               </figure>
               <div className="flex flex-col items-start gap-1">
                 <h5 className="text-base md:text-lg font-medium">{title}</h5>

@@ -20,7 +20,7 @@ import { Timeline } from "../../../components/editor/timeline/Timline";
 import { PreviewPlayer } from "../../../components/editor/player/remotion/Player";
 import { MediaFile } from "@/app/types";
 import ExportList from "../../../components/editor/AssetsPanel/tools-section/ExportList";
-import Image from "next/image";
+import { Video, Music, Image as ImageIcon, Type } from 'lucide-react';
 import ProjectName from "../../../components/editor/player/ProjectName";
 import CopilotButton from "@/app/components/editor/AssetsPanel/SidebarButtons/CopilotButton";
 import CopilotPanel from "@/app/components/copilot/CopilotPanel";
@@ -203,49 +203,25 @@ export default function Project({ params }: { params: { id: string } }) {
 
                             <div className="relative h-16 w-full flex justify-center">
                                 <div className="flex items-center gap-2 p-2">
-                                    <Image
-                                        alt="Video"
-                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
-                                        height={30}
-                                        width={30}
-                                        src="https://www.svgrepo.com/show/532727/video.svg"
-                                    />
+                                    <Video size={24} className="text-white" />
                                 </div>
                             </div>
 
                             <div className="relative h-16 w-full flex justify-center">
                                 <div className="flex items-center gap-2 p-2">
-                                    <Image
-                                        alt="Music"
-                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
-                                        height={30}
-                                        width={30}
-                                        src="https://www.svgrepo.com/show/532708/music.svg"
-                                    />
+                                    <Music size={24} className="text-white" />
                                 </div>
                             </div>
 
                             <div className="relative h-16 w-full flex justify-center">
                                 <div className="flex items-center gap-2 p-2">
-                                    <Image
-                                        alt="Image"
-                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
-                                        height={30}
-                                        width={30}
-                                        src="https://www.svgrepo.com/show/535454/image.svg"
-                                    />
+                                    <ImageIcon size={24} className="text-white" />
                                 </div>
                             </div>
 
                             <div className="relative h-16 w-full flex justify-center">
                                 <div className="flex items-center gap-2 p-2">
-                                    <Image
-                                        alt="Text"
-                                        className="invert h-auto w-auto max-w-[24px] max-h-[24px]"
-                                        height={30}
-                                        width={30}
-                                        src="https://www.svgrepo.com/show/535686/text.svg"
-                                    />
+                                    <Type size={24} className="text-white" />
                                 </div>
                             </div>
                         </div>

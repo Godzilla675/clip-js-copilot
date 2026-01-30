@@ -2,7 +2,6 @@ import { useAppSelector } from "@/app/store";
 import { setMarkerTrack, setTextElements, setMediaFiles, setTimelineZoom, setCurrentTime, setIsPlaying, setActiveElement } from "@/app/store/slices/projectSlice";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
-import Image from "next/image";
 import Header from "./Header";
 import VideoTimeline from "./elements-timeline/VideoTimeline";
 import ImageTimeline from "./elements-timeline/ImageTimeline";
@@ -11,6 +10,8 @@ import TextTimeline from "./elements-timeline/TextTimeline";
 import { throttle } from 'lodash';
 import GlobalKeyHandlerProps from "../../../components/editor/keys/GlobalKeyHandlerProps";
 import toast from "react-hot-toast";
+import { Check, X, Scissors, Copy, Trash2 } from 'lucide-react';
+
 export const Timeline = () => {
     const { currentTime, timelineZoom, enableMarkerTracking, activeElement, activeElementIndex, mediaFiles, textElements, duration, isPlaying } = useAppSelector((state) => state.projectState);
     const dispatch = useDispatch();
@@ -212,19 +213,11 @@ export const Timeline = () => {
                         onClick={() => dispatch(setMarkerTrack(!enableMarkerTracking))}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
-                        {enableMarkerTracking ? <Image
-                            alt="cut"
-                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
-                            height={30}
-                            width={30}
-                            src="https://www.svgrepo.com/show/447546/yes-alt.svg"
-                        /> : <Image
-                            alt="cut"
-                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
-                            height={30}
-                            width={30}
-                            src="https://www.svgrepo.com/show/447315/dismiss.svg"
-                        />}
+                        {enableMarkerTracking ?
+                            <Check size={20} className="text-gray-800" />
+                            :
+                            <X size={20} className="text-gray-800" />
+                        }
                         <span className="ml-2">Track Marker <span className="text-xs">(T)</span></span>
                     </button>
                     {/* Split */}
@@ -232,13 +225,7 @@ export const Timeline = () => {
                         onClick={handleSplit}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
-                        <Image
-                            alt="cut"
-                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
-                            height={30}
-                            width={30}
-                            src="https://www.svgrepo.com/show/509075/cut.svg"
-                        />
+                        <Scissors size={20} className="text-gray-800" />
                         <span className="ml-2">Split <span className="text-xs">(S)</span></span>
                     </button>
                     {/* Duplicate */}
@@ -246,13 +233,7 @@ export const Timeline = () => {
                         onClick={handleDuplicate}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
-                        <Image
-                            alt="cut"
-                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
-                            height={30}
-                            width={30}
-                            src="https://www.svgrepo.com/show/521623/duplicate.svg"
-                        />
+                        <Copy size={20} className="text-gray-800" />
                         <span className="ml-2">Duplicate <span className="text-xs">(D)</span></span>
                     </button>
                     {/* Delete */}
@@ -260,13 +241,7 @@ export const Timeline = () => {
                         onClick={handleDelete}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
-                        <Image
-                            alt="Delete"
-                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
-                            height={30}
-                            width={30}
-                            src="https://www.svgrepo.com/show/511788/delete-1487.svg"
-                        />
+                        <Trash2 size={20} className="text-gray-800" />
                         <span className="ml-2">Delete <span className="text-xs">(Del)</span></span>
                     </button>
                 </div>
