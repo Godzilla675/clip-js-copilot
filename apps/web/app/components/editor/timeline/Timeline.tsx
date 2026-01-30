@@ -11,6 +11,8 @@ import TextTimeline from "./elements-timeline/TextTimeline";
 import { throttle } from 'lodash';
 import GlobalKeyHandlerProps from "../../../components/editor/keys/GlobalKeyHandlerProps";
 import toast from "react-hot-toast";
+import { Check, X, Scissors, Copy, Trash2 } from 'lucide-react';
+
 export const Timeline = () => {
     const { currentTime, timelineZoom, enableMarkerTracking, activeElement, activeElementIndex, mediaFiles, textElements, duration, isPlaying } = useAppSelector((state) => state.projectState);
     const dispatch = useDispatch();
@@ -232,6 +234,7 @@ export const Timeline = () => {
                         onClick={handleSplit}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
+                        <Scissors size={20} className="text-gray-800" />
                         <Image
                             alt="cut"
                             className="h-auto w-auto max-w-[20px] max-h-[20px]"
@@ -246,6 +249,7 @@ export const Timeline = () => {
                         onClick={handleDuplicate}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
+                        <Copy size={20} className="text-gray-800" />
                         <Image
                             alt="cut"
                             className="h-auto w-auto max-w-[20px] max-h-[20px]"
@@ -260,6 +264,7 @@ export const Timeline = () => {
                         onClick={handleDelete}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
+                        <Trash2 size={20} className="text-gray-800" />
                         <Image
                             alt="Delete"
                             className="h-auto w-auto max-w-[20px] max-h-[20px]"

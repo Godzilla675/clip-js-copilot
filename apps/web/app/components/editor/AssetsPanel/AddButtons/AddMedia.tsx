@@ -3,7 +3,7 @@
 import { getFile, useAppDispatch, useAppSelector } from "../../../../store";
 import { setMediaFiles } from "../../../../store/slices/projectSlice";
 import { categorizeFile } from "../../../../utils/utils";
-import Image from 'next/image';
+import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { api } from '../../../../lib/api';
 import { MediaType } from "../../../../types";
@@ -107,13 +107,7 @@ export default function AddMedia({ fileId }: { fileId: string }) {
             <label
                 className="cursor-pointer rounded-full bg-white border border-solid border-transparent transition-colors flex flex-col items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] font-medium sm:text-base py-2 px-2"
             >
-                <Image
-                    alt="Add Project"
-                    className="Black"
-                    height={12}
-                    width={12}
-                    src="https://www.svgrepo.com/show/513803/add.svg"
-                />
+                <Plus size={12} className="text-black" />
                 {/* <span className="text-xs">Add Media</span> */}
                 <button
                     onClick={handleFileChange}

@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from '../../store';
 import { addProject, deleteProject, rehydrateProjects, setCurrentProject } from '../../store/slices/projectsSlice';
 import { listProjects, storeProject, deleteProject as deleteProjectFromDB } from '../../store';
 import { ProjectState } from '../../types';
 import { toast } from 'react-hot-toast';
+import { Plus, Video, Trash2 } from 'lucide-react';
+
 export default function Projects() {
     const dispatch = useAppDispatch();
     const { projects, currentProjectId } = useAppSelector((state) => state.projects);
@@ -117,13 +118,7 @@ export default function Projects() {
                                     <figure className="flex items-center justify-between w-full rounded-full bg-surface-secondary p-2 dark:border-dark-border dark:bg-dark-surface-secondary">
                                         <div className="flex items-center space-x-4">
                                             <div className="flex size-9 items-center justify-center rounded-full bg-surface-secondary">
-                                                <Image
-                                                    alt="Add Project"
-                                                    className="invert"
-                                                    height={18}
-                                                    src="https://www.svgrepo.com/show/421119/add-create-new.svg"
-                                                    width={18}
-                                                />
+                                                <Plus size={18} className="text-white" />
                                             </div>
                                             <h5 className="text-lg font-medium">Add Project</h5>
                                         </div>
@@ -144,13 +139,7 @@ export default function Projects() {
                                                     {/*  Project Name */}
                                                     <div className="flex items-center space-x-3 flex-1 min-w-0">
                                                         <div className="flex-shrink-0 flex size-9 items-center justify-center rounded-full bg-surface-secondary">
-                                                            <Image
-                                                                alt={projectName}
-                                                                className="invert"
-                                                                height={18}
-                                                                src="https://www.svgrepo.com/show/522461/video.svg"
-                                                                width={18}
-                                                            />
+                                                            <Video size={18} className="text-white" />
                                                         </div>
                                                         <h5 className="truncate font-medium text-base sm:text-lg" title={projectName}>
                                                             {projectName}
@@ -166,9 +155,7 @@ export default function Projects() {
                                                         className="flex-shrink-0 ml-2 text-red-500 hover:text-red-600 transition-colors"
                                                         aria-label="Delete project"
                                                     >
-                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                                                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                        </svg>
+                                                        <Trash2 size={24} />
                                                     </button>
                                                 </figure>
                                                 <div className="flex flex-col items-start py-1 gap-1 text-sm">

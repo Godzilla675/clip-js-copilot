@@ -4,7 +4,7 @@ import { listFiles, useAppDispatch, useAppSelector } from "../../../../store";
 import { setMediaFiles, setFilesID, addLibraryFile } from "../../../../store/slices/projectSlice";
 import { storeFile } from "../../../../store";
 import { categorizeFile } from "../../../../utils/utils";
-import Image from 'next/image';
+import { UploadCloud } from 'lucide-react';
 import { api } from "../../../../lib/api";
 
 export default function AddMedia() {
@@ -51,13 +51,7 @@ export default function AddMedia() {
                 htmlFor="file-upload"
                 className="cursor-pointer rounded-full bg-white border border-solid border-transparent transition-colors flex flex-row gap-2 items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-auto py-2 px-2 sm:px-5 sm:w-auto"
             >
-                <Image
-                    alt="Add Project"
-                    className="Black"
-                    height={12}
-                    width={12}
-                    src="https://www.svgrepo.com/show/514275/upload-cloud.svg"
-                />
+                <UploadCloud size={12} className="text-black" />
                 <span className="text-xs">Add Media</span>
             </label>
             <input
