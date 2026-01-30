@@ -48,9 +48,9 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
         }
 
         onComplete();
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
-        alert('Failed to save settings. Please check console for details.');
+        alert(`Failed to save settings: ${error.message || 'Unknown error'}`);
     } finally {
         setLoading(false);
     }
