@@ -20,24 +20,22 @@ export const PreviewPlayer = () => {
             playerRef.current.pause();
             playerRef.current.seekTo(frame);
         }
-    }, [currentTime, fps]);
+    }, [currentTime, isPlaying]);
 
     useEffect(() => {
-        playerRef?.current?.addEventListener("play", () => {
-            dispatch(setIsPlaying(true));
-        });
-        playerRef?.current?.addEventListener("pause", () => {
-            dispatch(setIsPlaying(false));
-        });
+        const player = playerRef.current;
+        if (!player) return;
+
+        const onPlay = () => dispatch(setIsPlaying(true));
+        const onPause = () => dispatch(setIsPlaying(false));
+
+        player.addEventListener("play", onPlay);
+        player.addEventListener("pause", onPause);
         return () => {
-            playerRef?.current?.removeEventListener("play", () => {
-                dispatch(setIsPlaying(true));
-            });
-            playerRef?.current?.removeEventListener("pause", () => {
-                dispatch(setIsPlaying(false));
-            });
+            player.removeEventListener("play", onPlay);
+            player.removeEventListener("pause", onPause);
         };
-    }, [playerRef]);
+    }, [dispatch]);
 
     // to control with keyboard
     useEffect(() => {

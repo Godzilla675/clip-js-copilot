@@ -82,7 +82,7 @@ export default function ImageTimeline() {
         for (const clip of mediaFiles) {
             moveableRef.current[clip.id]?.updateRect();
         }
-    }, [timelineZoom]);
+    }, [timelineZoom, mediaFiles]);
 
     return (
         <div >

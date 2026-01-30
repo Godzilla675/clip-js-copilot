@@ -20,7 +20,7 @@ export const Header = () => {
                 block: 'nearest',
             });
         }
-    }, [currentTime]);
+    }, [currentTime, enableMarkerTracking]);
 
     return (
         <div className="flex items-center py-2 w-full" ref={containerRef}>
