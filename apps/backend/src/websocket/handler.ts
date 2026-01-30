@@ -3,6 +3,7 @@ import { ProjectManager } from '../project/state.js';
 import { LLMOrchestrator } from '../llm/orchestrator.js';
 import { toolRegistry, mcpClientManager } from '../mcp/index.js';
 import { buildSystemPrompt } from '../llm/system-prompt.js';
+import { mapProjectStateToProject } from '../utils/project-mapper.js';
 import { Message, ToolCall, MessageToolResult } from '@ai-video-editor/shared-types';
 import { ToolExecutor } from '../llm/types.js';
 
@@ -187,10 +188,19 @@ export class WebSocketHandler {
   }
 
   private async handleCopilotMessage(ws: WebSocket, payload: any) {
-    const { content, projectId, model } = payload;
+    const { content, projectId, model, projectData } = payload;
 
     try {
-        const project = projectId ? this.projectManager.getProject(projectId) : undefined;
+        let project = projectId ? this.projectManager.getProject(projectId) : undefined;
+
+        if (projectData) {
+            try {
+                project = mapProjectStateToProject(projectData);
+            } catch (err) {
+                console.error('Failed to map project state:', err);
+            }
+        }
+
         const tools = await toolRegistry.getTools();
         const allTools = [...tools, ...LOCAL_TOOLS];
         const systemPrompt = buildSystemPrompt({ project, tools: allTools as any });
