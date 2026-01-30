@@ -11,9 +11,17 @@ const nextConfig = {
                     },
                     {
                         key: 'Cross-Origin-Embedder-Policy',
-                        value: 'require-corp',
+                        value: 'credentialless',
                     },
                 ],
+            },
+        ]
+    },
+    async rewrites() {
+        return [
+            {
+                source: '/api/:path*',
+                destination: (process.env.BACKEND_URL || 'http://localhost:3001') + '/api/:path*',
             },
         ]
     },
