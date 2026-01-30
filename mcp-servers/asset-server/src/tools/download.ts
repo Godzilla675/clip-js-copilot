@@ -36,12 +36,7 @@ export const downloadAssetTool = {
     }
 
     // Create directory if it doesn't exist
-    if (!fs.existsSync(targetDir)) {
-      // Check if we can create it (parent must be allowed?)
-      // Simplification: We assume if the path is allowed, we can mkdir recursive.
-      // But wait, validatePath checks if it is *inside* an allowed dir.
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
+    await fs.promises.mkdir(targetDir, { recursive: true });
 
     try {
       const response = await fetch(url);

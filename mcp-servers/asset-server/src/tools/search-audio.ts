@@ -8,7 +8,7 @@ export const searchAudioTool = {
     type: z.enum(['music', 'sfx']).optional().default('music'),
     duration: z.number().optional(),
   }),
-  handler: async () => {
+  handler: async (_args: { query: string; type?: 'music' | 'sfx'; duration?: number }) => {
     // Placeholder implementation
     // In a future update, we can add Pixabay or other audio providers here.
     return {
