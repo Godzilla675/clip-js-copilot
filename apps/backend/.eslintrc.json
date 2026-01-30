@@ -1,5 +1,5 @@
 {
-  "extends": "eslint:recommended",
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "env": {
@@ -7,11 +7,11 @@
     "es2022": true
   },
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "ignorePatterns": ["dist", "node_modules"],
   "rules": {
-    "no-unused-vars": "off",
-    "no-undef": "off"
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }
