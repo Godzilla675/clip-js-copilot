@@ -78,7 +78,7 @@ export default function TextTimeline() {
         for (const clip of textElements) {
             moveableRef.current[clip.id]?.updateRect();
         }
-    }, [timelineZoom]);
+    }, [timelineZoom, textElements]);
 
     return (
         <div >
