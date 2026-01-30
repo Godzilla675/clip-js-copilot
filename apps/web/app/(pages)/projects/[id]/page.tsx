@@ -16,7 +16,7 @@ import HomeButton from "@/app/components/editor/AssetsPanel/SidebarButtons/HomeB
 import ShortcutsButton from "@/app/components/editor/AssetsPanel/SidebarButtons/ShortcutsButton";
 import MediaProperties from "../../../components/editor/PropertiesSection/MediaProperties";
 import TextProperties from "../../../components/editor/PropertiesSection/TextProperties";
-import { Timeline } from "../../../components/editor/timeline/Timline";
+import { Timeline } from "../../../components/editor/timeline/Timeline";
 import { PreviewPlayer } from "../../../components/editor/player/remotion/Player";
 import { MediaFile } from "@/app/types";
 import ExportList from "../../../components/editor/AssetsPanel/tools-section/ExportList";
@@ -53,7 +53,7 @@ export default function Project({ params }: { params: { id: string } }) {
             }
         };
         loadProject();
-    }, [id, dispatch]);
+    }, [id, dispatch, router]);
 
     // set project state from with the current project id
     useEffect(() => {
@@ -84,7 +84,7 @@ export default function Project({ params }: { params: { id: string } }) {
             dispatch(updateProject(projectState));
         };
         saveProject();
-    }, [projectState, dispatch]);
+    }, [projectState, dispatch, currentProjectId]);
 
 
     const handleFocus = (section: "media" | "text" | "export") => {

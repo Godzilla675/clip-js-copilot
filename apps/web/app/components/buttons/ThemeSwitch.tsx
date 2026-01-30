@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import { AiOutlineSun, AiOutlineMoon } from "react-icons/ai";
+import { Sun, Moon } from "lucide-react";
 
 const ThemeSwitch = () => {
   const [mounted, setMounted] = useState(false);
@@ -15,13 +15,17 @@ const ThemeSwitch = () => {
     return null;
   }
 
+  const toggleTheme = () => {
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  };
+
   return (
     <button
-      onClick={() => setTheme("dark")}
-      className="p-2 text-gray-800 dark:text-gray-200 bg-transparent dark:bg-black"
+      onClick={toggleTheme}
+      className="p-2 text-gray-800 dark:text-gray-200 bg-transparent rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
       aria-label="Toggle Dark Mode"
     >
-      {resolvedTheme === "dark" ? <AiOutlineSun size={20} /> : <AiOutlineMoon size={20} />}
+      {resolvedTheme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
     </button>
   );
 };

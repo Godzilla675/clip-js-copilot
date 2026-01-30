@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import Header from "./Header";
 import VideoTimeline from "./elements-timeline/VideoTimeline";
 import ImageTimeline from "./elements-timeline/ImageTimeline";
-import AudioTimeline from "./elements-timeline/AudioTimline";
+import AudioTimeline from "./elements-timeline/AudioTimeline";
 import TextTimeline from "./elements-timeline/TextTimeline";
 import { throttle } from 'lodash';
 import GlobalKeyHandlerProps from "../../../components/editor/keys/GlobalKeyHandlerProps";

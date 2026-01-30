@@ -100,7 +100,7 @@ export default function VideoTimeline() {
         for (const clip of mediaFiles) {
             moveableRef.current[clip.id]?.updateRect();
         }
-    }, [timelineZoom]);
+    }, [timelineZoom, mediaFiles]);
 
     return (
         <div >

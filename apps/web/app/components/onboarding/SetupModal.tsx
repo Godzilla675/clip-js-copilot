@@ -35,7 +35,7 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
     e.preventDefault();
     setLoading(true);
     try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '';
         const res = await fetch(`${backendUrl}/api/settings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -48,9 +48,9 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
         }
 
         onComplete();
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
-        alert('Failed to save settings. Please check console for details.');
+        alert(`Failed to save settings: ${error.message || 'Unknown error'}`);
     } finally {
         setLoading(false);
     }
