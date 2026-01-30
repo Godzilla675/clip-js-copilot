@@ -2,6 +2,7 @@ import { useAppSelector } from "@/app/store";
 import { setMarkerTrack, setTextElements, setMediaFiles, setTimelineZoom, setCurrentTime, setIsPlaying, setActiveElement } from "@/app/store/slices/projectSlice";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
+import Image from "next/image";
 import Header from "./Header";
 import VideoTimeline from "./elements-timeline/VideoTimeline";
 import ImageTimeline from "./elements-timeline/ImageTimeline";
@@ -213,11 +214,19 @@ export const Timeline = () => {
                         onClick={() => dispatch(setMarkerTrack(!enableMarkerTracking))}
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
-                        {enableMarkerTracking ?
-                            <Check size={20} className="text-gray-800" />
-                            :
-                            <X size={20} className="text-gray-800" />
-                        }
+                        {enableMarkerTracking ? <Image
+                            alt="cut"
+                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
+                            height={30}
+                            width={30}
+                            src="https://www.svgrepo.com/show/447546/yes-alt.svg"
+                        /> : <Image
+                            alt="cut"
+                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
+                            height={30}
+                            width={30}
+                            src="https://www.svgrepo.com/show/447315/dismiss.svg"
+                        />}
                         <span className="ml-2">Track Marker <span className="text-xs">(T)</span></span>
                     </button>
                     {/* Split */}
@@ -226,6 +235,13 @@ export const Timeline = () => {
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
                         <Scissors size={20} className="text-gray-800" />
+                        <Image
+                            alt="cut"
+                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
+                            height={30}
+                            width={30}
+                            src="https://www.svgrepo.com/show/509075/cut.svg"
+                        />
                         <span className="ml-2">Split <span className="text-xs">(S)</span></span>
                     </button>
                     {/* Duplicate */}
@@ -234,6 +250,13 @@ export const Timeline = () => {
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
                         <Copy size={20} className="text-gray-800" />
+                        <Image
+                            alt="cut"
+                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
+                            height={30}
+                            width={30}
+                            src="https://www.svgrepo.com/show/521623/duplicate.svg"
+                        />
                         <span className="ml-2">Duplicate <span className="text-xs">(D)</span></span>
                     </button>
                     {/* Delete */}
@@ -242,6 +265,13 @@ export const Timeline = () => {
                         className="bg-white border rounded-md border-transparent transition-colors flex flex-row items-center justify-center text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc] mt-2 font-medium text-sm sm:text-base h-auto px-2 py-1 sm:w-auto"
                     >
                         <Trash2 size={20} className="text-gray-800" />
+                        <Image
+                            alt="Delete"
+                            className="h-auto w-auto max-w-[20px] max-h-[20px]"
+                            height={30}
+                            width={30}
+                            src="https://www.svgrepo.com/show/511788/delete-1487.svg"
+                        />
                         <span className="ml-2">Delete <span className="text-xs">(Del)</span></span>
                     </button>
                 </div>
