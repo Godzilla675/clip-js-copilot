@@ -41,6 +41,8 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
                     updates.llmModel = 'claude-3-5-sonnet-20241022';
                 } else if (value === 'openai') {
                     updates.llmModel = 'gpt-4o-mini';
+                } else {
+                    updates.llmModel = '';
                 }
             }
             return updates;
