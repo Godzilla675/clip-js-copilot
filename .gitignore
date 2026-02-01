@@ -41,3 +41,6 @@ next-env.d.ts
 
 # logs
 web_output.log
+
+# local environment files
+.env

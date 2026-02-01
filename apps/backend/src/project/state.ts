@@ -88,6 +88,13 @@ export class ProjectManager {
     return this.projects.get(id);
   }
 
+  setProject(project: Project): void {
+    this.projects.set(project.id, project);
+    if (!this.histories.has(project.id)) {
+      this.histories.set(project.id, new HistoryManager());
+    }
+  }
+
   async updateProject(id: string, updates: Partial<Project>): Promise<Project> {
     const project = this.projects.get(id);
     if (!project) {

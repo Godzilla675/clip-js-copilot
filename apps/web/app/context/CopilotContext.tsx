@@ -77,7 +77,8 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
             .then(fetchedModels => {
                 setModels(fetchedModels);
                 if (fetchedModels && fetchedModels.length > 0) {
-                    setSelectedModel(fetchedModels[0]);
+                    const preferred = fetchedModels.find((model: string) => model.toLowerCase().startsWith('gemini')) || fetchedModels[0];
+                    setSelectedModel(preferred);
                 }
             })
             .catch(err => console.error('Failed to fetch models:', err));

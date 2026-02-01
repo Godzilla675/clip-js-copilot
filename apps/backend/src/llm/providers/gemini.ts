@@ -22,10 +22,13 @@ export class GeminiProvider implements LLMProviderInterface {
                   models.push(m.name.replace(/^models\//, ''));
               }
           }
+          if (models.length === 0) {
+              return [this.model];
+          }
           return models;
       } catch (error) {
           console.error('Failed to fetch Gemini models:', error);
-          return [];
+          return [this.model];
       }
   }
 
