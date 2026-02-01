@@ -129,7 +129,7 @@ export default function Project({ params }: { params: { id: string } }) {
                             <PanelGroup orientation="horizontal" className="flex-1 min-w-0">
 
                             {/* Assets Panel (Add Media/Text) */}
-                            <Panel defaultSize="25%" minSize="15%">
+                            <Panel defaultSize={25} minSize={15}>
                                 <div className="h-full w-full min-w-0 border-r border-gray-800 overflow-y-auto p-4">
                                     {activeSection === "media" && (
                                         <div>
@@ -156,7 +156,7 @@ export default function Project({ params }: { params: { id: string } }) {
                             <ResizeHandle direction="horizontal" />
 
                             {/* Center Panel (Video Preview) */}
-                            <Panel minSize="20%">
+                            <Panel minSize={20}>
                                 <div className="h-full w-full min-w-0 flex items-center justify-center flex-col overflow-hidden bg-black/20">
                                     <ProjectName />
                                     <PreviewPlayer />
@@ -166,7 +166,7 @@ export default function Project({ params }: { params: { id: string } }) {
                             <ResizeHandle direction="horizontal" />
 
                             {/* Right Panel (Properties or Copilot) */}
-                            <Panel defaultSize="30%" minSize="15%">
+                            <Panel defaultSize={30} minSize={15}>
                                 <div className={`h-full w-full min-w-0 border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
                                     {isPanelOpen ? (
                                         <CopilotPanel />

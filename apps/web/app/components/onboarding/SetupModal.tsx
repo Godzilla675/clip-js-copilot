@@ -35,6 +35,14 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
             if (value === 'gemini' && !prev.llmModel.startsWith('gemini')) {
                 updates.llmModel = 'gemini-2.0-flash';
             }
+
+            if (value !== 'gemini' && prev.llmModel.startsWith('gemini')) {
+                if (value === 'anthropic') {
+                    updates.llmModel = 'claude-3-5-sonnet-20241022';
+                } else if (value === 'openai') {
+                    updates.llmModel = 'gpt-4o-mini';
+                }
+            }
             return updates;
         }
         return { ...prev, [name]: value };
