@@ -60,7 +60,8 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
                 try {
                     const err = JSON.parse(raw);
                     errorMessage = err.error || errorMessage;
-                } catch {
+                } catch (parseError) {
+                    console.warn('Failed to parse error response as JSON:', parseError, raw);
                     errorMessage = raw;
                 }
             }
