@@ -114,7 +114,7 @@ export default function Project({ params }: { params: { id: string } }) {
                 <Panel defaultSize={75} minSize={30}>
                     <div className="flex h-full w-full overflow-hidden">
                         {/* Left Sidebar - Buttons (Fixed Width) */}
-                        <div className="w-[70px] flex-none border-r border-gray-700 overflow-y-auto px-2 py-4 flex flex-col items-center overflow-x-hidden">
+                        <div className="w-[70px] flex-none border-r border-gray-700 overflow-y-auto px-2 py-4 flex flex-col items-center">
                             <div className="flex flex-col space-y-4 w-full items-center">
                                 <HomeButton />
                                 <TextButton onClick={() => handleFocus("text")} />
