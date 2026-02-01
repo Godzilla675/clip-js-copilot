@@ -25,6 +25,7 @@ import ProjectName from "../../../components/editor/player/ProjectName";
 import CopilotButton from "@/app/components/editor/AssetsPanel/SidebarButtons/CopilotButton";
 import CopilotPanel from "@/app/components/copilot/CopilotPanel";
 import { useCopilot } from "@/app/hooks/useCopilot";
+import { useProject } from "@/app/hooks/useProject";
 import { Panel, Group as PanelGroup } from "react-resizable-panels";
 import ResizeHandle from "@/app/components/ui/ResizeHandle";
 
@@ -35,6 +36,7 @@ export default function Project({ params }: { params: { id: string } }) {
     const { currentProjectId } = useAppSelector((state) => state.projects);
     const [isLoading, setIsLoading] = useState(true);
     const { isPanelOpen } = useCopilot();
+    useProject();
 
     const router = useRouter();
     const { activeSection, activeElement } = projectState;
@@ -112,7 +114,7 @@ export default function Project({ params }: { params: { id: string } }) {
                 <Panel defaultSize={75} minSize={30}>
                     <div className="flex h-full w-full overflow-hidden">
                         {/* Left Sidebar - Buttons (Fixed Width) */}
-                        <div className="w-[70px] flex-none border-r border-gray-700 overflow-y-auto p-4 flex flex-col items-center">
+                        <div className="w-[70px] flex-none border-r border-gray-700 overflow-y-auto px-2 py-4 flex flex-col items-center overflow-x-hidden">
                             <div className="flex flex-col space-y-4 w-full items-center">
                                 <HomeButton />
                                 <TextButton onClick={() => handleFocus("text")} />
@@ -124,11 +126,11 @@ export default function Project({ params }: { params: { id: string } }) {
                         </div>
 
                         {/* Resizable Horizontal Panels */}
-                        <PanelGroup orientation="horizontal">
+                            <PanelGroup orientation="horizontal" className="flex-1 min-w-0">
 
                             {/* Assets Panel (Add Media/Text) */}
-                            <Panel defaultSize={25} minSize={15}>
-                                <div className="h-full w-full border-r border-gray-800 overflow-y-auto p-4">
+                            <Panel defaultSize="25%" minSize="15%">
+                                <div className="h-full w-full min-w-0 border-r border-gray-800 overflow-y-auto p-4">
                                     {activeSection === "media" && (
                                         <div>
                                             <h2 className="text-lg flex flex-row gap-2 items-center justify-center font-semibold mb-2">
@@ -154,8 +156,8 @@ export default function Project({ params }: { params: { id: string } }) {
                             <ResizeHandle direction="horizontal" />
 
                             {/* Center Panel (Video Preview) */}
-                            <Panel minSize={20}>
-                                <div className="h-full w-full flex items-center justify-center flex-col overflow-hidden bg-black/20">
+                            <Panel minSize="20%">
+                                <div className="h-full w-full min-w-0 flex items-center justify-center flex-col overflow-hidden bg-black/20">
                                     <ProjectName />
                                     <PreviewPlayer />
                                 </div>
@@ -164,8 +166,8 @@ export default function Project({ params }: { params: { id: string } }) {
                             <ResizeHandle direction="horizontal" />
 
                             {/* Right Panel (Properties or Copilot) */}
-                            <Panel defaultSize={30} minSize={15}>
-                                <div className={`h-full w-full border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
+                            <Panel defaultSize="30%" minSize="15%">
+                                <div className={`h-full w-full min-w-0 border-l border-gray-800 overflow-y-auto ${isPanelOpen ? 'p-0' : 'p-4'}`}>
                                     {isPanelOpen ? (
                                         <CopilotPanel />
                                     ) : (

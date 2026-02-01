@@ -6,7 +6,7 @@ export default function CopilotButton() {
 
     return (
         <button
-            className={`border border-solid rounded border-transparent transition-colors flex flex-col items-center justify-center font-medium text-sm sm:text-base h-auto py-2 px-2 sm:px-5 sm:w-auto ${
+            className={`border border-solid rounded border-transparent transition-colors flex flex-col items-center justify-center font-medium text-sm sm:text-base h-auto py-2 px-2 w-full ${
                 isPanelOpen
                     ? 'bg-blue-600 text-white hover:bg-blue-700'
                     : 'bg-white text-gray-800 hover:bg-[#ccc] dark:hover:bg-[#ccc]'

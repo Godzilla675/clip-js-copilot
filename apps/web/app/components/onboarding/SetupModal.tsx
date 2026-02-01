@@ -28,23 +28,43 @@ export function SetupModal({ isOpen, onClose, onComplete }: SetupModalProps) {
   if (!isOpen) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => {
+        if (name === 'llmProvider') {
+            const updates: typeof prev = { ...prev, llmProvider: value };
+            if (value === 'gemini' && !prev.llmModel.startsWith('gemini')) {
+                updates.llmModel = 'gemini-2.0-flash';
+            }
+            return updates;
+        }
+        return { ...prev, [name]: value };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '';
-        const res = await fetch(`${backendUrl}/api/settings`, {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+        const normalizedBaseUrl = backendUrl.replace(/\/$/, '');
+        const res = await fetch(`${normalizedBaseUrl}/api/settings`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         });
 
         if (!res.ok) {
-            const err = await res.json();
-            throw new Error(err.error || 'Failed to save settings');
+            const raw = await res.text();
+            let errorMessage = 'Failed to save settings';
+            if (raw) {
+                try {
+                    const err = JSON.parse(raw);
+                    errorMessage = err.error || errorMessage;
+                } catch {
+                    errorMessage = raw;
+                }
+            }
+            throw new Error(errorMessage);
         }
 
         onComplete();

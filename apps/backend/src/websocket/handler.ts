@@ -191,15 +191,16 @@ export class WebSocketHandler {
     const { content, projectId, model, projectData } = payload;
 
     try {
-        let project = projectId ? this.projectManager.getProject(projectId) : undefined;
+         let project = projectId ? this.projectManager.getProject(projectId) : undefined;
 
-        if (projectData) {
-            try {
-                project = mapProjectStateToProject(projectData);
-            } catch (err) {
-                console.error('Failed to map project state:', err);
-            }
-        }
+         if (projectData) {
+             try {
+                 project = mapProjectStateToProject(projectData);
+                 this.projectManager.setProject(project);
+             } catch (err) {
+                 console.error('Failed to map project state:', err);
+             }
+         }
 
         const tools = await toolRegistry.getTools();
         const allTools = [...tools, ...LOCAL_TOOLS];
