@@ -30,13 +30,15 @@ export const useProject = () => {
                     const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
                     // Convert assets to libraryFiles
+                    // Note: We use asset.id as fileId since the backend doesn't preserve the original frontend fileId.
+                    // This is consistent with how mediaFiles also reference assets by asset.id.
                     remoteProject.assets.forEach((asset: any) => {
                         const filename = asset.path ? asset.path.split(/[/\\]/).pop() : asset.name;
                         const src = asset.path ? `${BACKEND_URL}/assets/${filename}` : '';
                         
                         newLibraryFiles.push({
                             id: asset.id,
-                            fileId: asset.id, // Use asset ID as file ID
+                            fileId: asset.id,
                             fileName: asset.name || filename || '',
                             type: asset.type as MediaType,
                             src: src,

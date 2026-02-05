@@ -72,7 +72,7 @@ export function createSettingsRouter(server: Server): Router {
       try {
         await server.reloadMCP();
       } catch (mcpError: any) {
-        console.warn('MCP reload failed (non-critical):', mcpError.message);
+        console.warn(`MCP reload failed (non-critical): ${mcpError.message}. Settings were saved successfully.`);
         // Don't throw - settings were saved successfully
       }
 

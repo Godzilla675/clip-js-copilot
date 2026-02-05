@@ -2,20 +2,21 @@ import { Project, Asset, Clip, Track, Timeline } from '@ai-video-editor/shared-t
 
 export function mapProjectStateToProject(projectState: any): Project {
     // Build a map of fileId -> duration from mediaFiles so we can use it for assets
+    // We use the first occurrence's endTime as an estimate since this represents
+    // the full source file duration in most cases
     const fileIdToDuration = new Map<string, number>();
     (projectState.mediaFiles || []).forEach((m: any) => {
-        if (m.fileId && m.endTime !== undefined && m.startTime !== undefined) {
-            // Use the source duration (endTime - startTime) as the full duration
-            const duration = m.endTime - m.startTime;
-            if (!fileIdToDuration.has(m.fileId) || duration > (fileIdToDuration.get(m.fileId) || 0)) {
-                fileIdToDuration.set(m.fileId, duration);
+        if (m.fileId && m.endTime !== undefined) {
+            // Only set if not already present (use first occurrence)
+            if (!fileIdToDuration.has(m.fileId)) {
+                fileIdToDuration.set(m.fileId, m.endTime);
             }
         }
     });
 
     const assets: Asset[] = (projectState.libraryFiles || []).map((f: any) => {
-        // Try to get duration from mediaFiles first, then from libraryFile itself
-        const duration = fileIdToDuration.get(f.fileId) || f.duration || 0;
+        // Prefer libraryFile.duration if explicitly set, otherwise fallback to mediaFile estimate
+        const duration = f.duration || fileIdToDuration.get(f.fileId) || 0;
         return {
             id: f.id,
             name: f.fileName,
