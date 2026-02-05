@@ -3,7 +3,7 @@ import { useWebSocket } from '../context/WebSocketContext';
 import { api } from '../lib/api';
 import { useAppDispatch, useAppSelector } from '../store';
 import { rehydrate, addLibraryFile, updateTimelineClip } from '../store/slices/projectSlice';
-import { MediaFile, MediaType, ProjectState } from '../types';
+import { LibraryFile, MediaFile, MediaType, ProjectState } from '../types';
 import { categorizeFile } from '../utils/utils';
 import { storeFile } from '../store';
 
@@ -25,8 +25,27 @@ export const useProject = () => {
                 // Synchronization Logic: Convert Backend Project (tracks/assets) to Frontend State (mediaFiles)
                 if (remoteProject.assets && remoteProject.timeline && remoteProject.timeline.tracks) {
                     const newMediaFiles: MediaFile[] = [];
+                    const newLibraryFiles: LibraryFile[] = [];
                     const assetsMap = new Map<string, any>(remoteProject.assets.map((a: any) => [a.id, a]));
                     const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+
+                    // Convert assets to libraryFiles
+                    // Note: We use asset.id as fileId since the backend doesn't preserve the original frontend fileId.
+                    // This is consistent with how mediaFiles also reference assets by asset.id.
+                    remoteProject.assets.forEach((asset: any) => {
+                        const filename = asset.path ? asset.path.split(/[/\\]/).pop() : asset.name;
+                        const src = asset.path ? `${BACKEND_URL}/assets/${filename}` : '';
+                        
+                        newLibraryFiles.push({
+                            id: asset.id,
+                            fileId: asset.id,
+                            fileName: asset.name || filename || '',
+                            type: asset.type as MediaType,
+                            src: src,
+                            serverPath: asset.path || '',
+                            createdAt: new Date().toISOString()
+                        });
+                    });
 
                     remoteProject.timeline.tracks.forEach((track: any) => {
                          if (track.type === 'video' || track.type === 'audio') {
@@ -47,6 +66,7 @@ export const useProject = () => {
                                          positionStart: clip.startTime,
                                          positionEnd: clip.startTime + clip.duration,
                                          src: src,
+                                         serverPath: asset.path,
                                          includeInMerge: true,
                                          playbackSpeed: 1,
                                          volume: 100,
@@ -60,8 +80,9 @@ export const useProject = () => {
                          }
                     });
 
-                    // Update remoteProject with converted mediaFiles
+                    // Update remoteProject with converted mediaFiles and libraryFiles
                     remoteProject.mediaFiles = newMediaFiles;
+                    remoteProject.libraryFiles = newLibraryFiles;
                 }
 
                 // TODO: Implement more sophisticated merging strategy

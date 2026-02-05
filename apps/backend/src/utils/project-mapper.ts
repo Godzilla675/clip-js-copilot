@@ -1,13 +1,30 @@
 import { Project, Asset, Clip, Track, Timeline } from '@ai-video-editor/shared-types';
 
 export function mapProjectStateToProject(projectState: any): Project {
-    const assets: Asset[] = (projectState.libraryFiles || []).map((f: any) => ({
-        id: f.id,
-        name: f.fileName,
-        path: f.serverPath || f.src || '',
-        type: f.type,
-        duration: 0
-    }));
+    // Build a map of fileId -> duration from mediaFiles so we can use it for assets
+    // We use the first occurrence's endTime as an estimate since this represents
+    // the full source file duration in most cases
+    const fileIdToDuration = new Map<string, number>();
+    (projectState.mediaFiles || []).forEach((m: any) => {
+        if (m.fileId && m.endTime !== undefined) {
+            // Only set if not already present (use first occurrence)
+            if (!fileIdToDuration.has(m.fileId)) {
+                fileIdToDuration.set(m.fileId, m.endTime);
+            }
+        }
+    });
+
+    const assets: Asset[] = (projectState.libraryFiles || []).map((f: any) => {
+        // Prefer libraryFile.duration if explicitly set, otherwise fallback to mediaFile estimate
+        const duration = f.duration || fileIdToDuration.get(f.fileId) || 0;
+        return {
+            id: f.id,
+            name: f.fileName,
+            path: f.serverPath || f.src || '',
+            type: f.type,
+            duration
+        };
+    });
 
     // Create lookup for fileId -> assetId
     // libraryFile.fileId is the content ID shared with mediaFile.fileId
