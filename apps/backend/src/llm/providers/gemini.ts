@@ -14,6 +14,11 @@ export class GeminiProvider implements LLMProviderInterface {
 
   async getModels(): Promise<string[]> {
       try {
+          // Check if the models API is available
+          if (!this.client.models) {
+            console.warn('Gemini models API not available (missing or invalid API key)');
+            return [this.model];
+          }
           const list = await this.client.models.list();
           const models: string[] = [];
           // @ts-ignore - Pager is async iterable

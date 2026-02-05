@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import { LLMConfig, Message } from '@ai-video-editor/shared-types';
 import { LLMProviderInterface, MCPTool, StreamChunk, ToolCall, ToolExecutor, LLMProviderOptions } from '../types';
 
@@ -6,6 +7,7 @@ export class CopilotProvider implements LLMProviderInterface {
     private client: any;
     private model: string;
     private initPromise: Promise<void>;
+    private initError: Error | null = null;
 
     constructor(config: LLMConfig, client?: any) {
         this.model = config.model || 'gpt-4';
@@ -25,12 +27,25 @@ export class CopilotProvider implements LLMProviderInterface {
 
             let cliPath = process.env.COPILOT_CLI_PATH;
 
-            if (!cliPath) {
-                cliPath = path.resolve(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'copilot.cmd' : 'copilot');
-            }
+            if (!cliPath || cliPath.trim() === '') {
+                // Auto-detect the CLI path from node_modules
+                const possiblePaths = [
+                    path.resolve(process.cwd(), 'node_modules', '.bin', process.platform === 'win32' ? 'copilot.cmd' : 'copilot'),
+                    path.resolve(process.cwd(), 'node_modules', '@github', 'copilot', 'bin', 'copilot'),
+                    path.resolve(process.cwd(), '..', '..', 'node_modules', '.bin', process.platform === 'win32' ? 'copilot.cmd' : 'copilot'),
+                ];
 
-            // On Windows, if pointing to the cmd shim, SDK might need help or we point to js
-            // But the SDK docs say cliPath: Path to CLI executable
+                for (const p of possiblePaths) {
+                    if (fs.existsSync(p)) {
+                        cliPath = p;
+                        break;
+                    }
+                }
+
+                if (!cliPath) {
+                    cliPath = possiblePaths[0]; // Fallback to default path
+                }
+            }
 
             console.log('Initializing CopilotClient with cliPath:', cliPath);
 
@@ -43,12 +58,16 @@ export class CopilotProvider implements LLMProviderInterface {
 
         } catch (e) {
             console.error('Failed to initialize CopilotClient:', e);
-            throw e;
+            this.initError = e instanceof Error ? e : new Error(String(e));
+            // Don't throw - store the error and handle gracefully in getClient
         }
     }
 
     private async getClient(): Promise<any> {
         await this.initPromise;
+        if (this.initError) {
+            throw new Error(`CopilotClient initialization failed: ${this.initError.message}. Please ensure you are authenticated with GitHub Copilot CLI.`);
+        }
         if (!this.client) {
             throw new Error('CopilotClient not initialized');
         }
