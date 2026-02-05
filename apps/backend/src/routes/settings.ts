@@ -66,8 +66,15 @@ export function createSettingsRouter(server: Server): Router {
       // Reload components
       // We run these in parallel or sequence? Sequence is safer.
       await server.reloadLLM();
+      
       // Reloading MCP might take time and disconnect existing sessions.
-      await server.reloadMCP();
+      // We wrap this in try/catch so settings save succeeds even if MCP reload fails
+      try {
+        await server.reloadMCP();
+      } catch (mcpError: any) {
+        console.warn('MCP reload failed (non-critical):', mcpError.message);
+        // Don't throw - settings were saved successfully
+      }
 
       res.json({ success: true });
     } catch (error: any) {

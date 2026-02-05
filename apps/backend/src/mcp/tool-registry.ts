@@ -19,6 +19,9 @@ export class ToolRegistry {
   private async refreshTools(): Promise<Tool[]> {
     const clients = this.clientManager.getAllClients();
 
+    // Clear old mappings before refreshing
+    this.toolToServer.clear();
+
     const results = await Promise.all(
       Array.from(clients.entries()).map(async ([serverName, client]) => {
         try {
