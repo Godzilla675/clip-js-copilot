@@ -17,7 +17,7 @@ export class GeminiProvider implements LLMProviderInterface {
           // Check if the models API is available
           if (!this.client.models) {
             console.warn('Gemini models API not available (missing or invalid API key)');
-            return [this.model];
+            return [];
           }
           const list = await this.client.models.list();
           const models: string[] = [];

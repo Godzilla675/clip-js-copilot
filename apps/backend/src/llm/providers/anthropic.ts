@@ -18,11 +18,13 @@ export class AnthropicProvider implements LLMProviderInterface {
   async getModels(): Promise<string[]> {
     try {
       // Check if the models API is available (requires valid API key)
-      if (!(this.client as any).models) {
+      // Note: Using 'as any' because the Anthropic SDK types don't expose the models property
+      const clientWithModels = this.client as any;
+      if (!clientWithModels.models) {
         console.warn('Anthropic models API not available (missing or invalid API key)');
         return [];
       }
-      const list = await (this.client as any).models.list();
+      const list = await clientWithModels.models.list();
       return list.data.map((m: any) => m.id);
     } catch (error) {
       console.error('Failed to fetch Anthropic models:', error);
