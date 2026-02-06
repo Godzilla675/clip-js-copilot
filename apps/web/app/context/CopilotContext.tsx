@@ -224,7 +224,7 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
                 const assistantMessage: Message = {
                     id: uuidv4(),
                     role: 'assistant',
-                    content: response.content || 'No response received.'
+                    content: response?.content || ''
                 };
                 setMessages(prev => [...prev, assistantMessage]);
                 setIsLoading(false);
