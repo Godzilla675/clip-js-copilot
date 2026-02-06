@@ -16,6 +16,7 @@ if (ffprobeStatic?.path) {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TEST_DIR = path.join(__dirname, '..', 'tmp-test-artifacts');
+const TEST_VIDEO_DURATION = 10;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 let passed = 0;
@@ -57,8 +58,8 @@ async function generateTestVideo(): Promise<string> {
   // Use ffmpeg binary directly since lavfi is a device, not a format
   const ffmpegBin = ffmpegPath as unknown as string;
   execFileSync(ffmpegBin, [
-    '-f', 'lavfi', '-i', 'testsrc=duration=10:size=640x480:rate=30',
-    '-f', 'lavfi', '-i', 'sine=frequency=440:duration=10',
+    '-f', 'lavfi', '-i', `testsrc=duration=${TEST_VIDEO_DURATION}:size=640x480:rate=30`,
+    '-f', 'lavfi', '-i', `sine=frequency=440:duration=${TEST_VIDEO_DURATION}`,
     '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-shortest',
     '-y', outputPath,
   ], { stdio: 'pipe' });
@@ -77,7 +78,7 @@ async function testGetVideoInfo(inputPath: string) {
   const audioStream = metadata.streams.find((s) => s.codec_type === 'audio');
 
   assert(metadata.format.duration !== undefined, 'Duration is present');
-  assert(Math.abs(metadata.format.duration! - 10) < 1, `Duration is ~10s (got ${metadata.format.duration}s)`);
+  assert(Math.abs(metadata.format.duration! - TEST_VIDEO_DURATION) < 1, `Duration is ~${TEST_VIDEO_DURATION}s (got ${metadata.format.duration}s)`);
   assert(videoStream !== undefined, 'Video stream exists');
   assert(videoStream?.width === 640, `Video width is 640 (got ${videoStream?.width})`);
   assert(videoStream?.height === 480, `Video height is 480 (got ${videoStream?.height})`);
@@ -119,7 +120,7 @@ async function testApplyFilter(inputPath: string) {
 
   const metadata = await probeFile(outputPath);
   assert(metadata.format.duration !== undefined, 'Grayscale video has valid duration');
-  assert(Math.abs(metadata.format.duration! - 10) < 1, `Grayscale duration matches input (~10s, got ${metadata.format.duration?.toFixed(2)}s)`);
+  assert(Math.abs(metadata.format.duration! - TEST_VIDEO_DURATION) < 1, `Grayscale duration matches input (~${TEST_VIDEO_DURATION}s, got ${metadata.format.duration?.toFixed(2)}s)`);
 }
 
 // ─── Test: apply_filter (brightness) ──────────────────────────────────────────
@@ -136,7 +137,7 @@ async function testApplyBrightnessFilter(inputPath: string) {
   assert(fs.existsSync(outputPath), 'Brightness-adjusted video file exists');
 
   const metadata = await probeFile(outputPath);
-  assert(Math.abs(metadata.format.duration! - 10) < 1, `Brightness duration matches input (~10s, got ${metadata.format.duration?.toFixed(2)}s)`);
+  assert(Math.abs(metadata.format.duration! - TEST_VIDEO_DURATION) < 1, `Brightness duration matches input (~${TEST_VIDEO_DURATION}s, got ${metadata.format.duration?.toFixed(2)}s)`);
 }
 
 // ─── Test: add_text_overlay ───────────────────────────────────────────────────
@@ -163,7 +164,7 @@ async function testTextOverlay(inputPath: string) {
     assert(fs.existsSync(outputPath), 'Text overlay video file exists');
 
     const metadata = await probeFile(outputPath);
-    assert(Math.abs(metadata.format.duration! - 10) < 1, `Text overlay duration matches input (~10s, got ${metadata.format.duration?.toFixed(2)}s)`);
+    assert(Math.abs(metadata.format.duration! - TEST_VIDEO_DURATION) < 1, `Text overlay duration matches input (~${TEST_VIDEO_DURATION}s, got ${metadata.format.duration?.toFixed(2)}s)`);
   } catch {
     // drawtext filter requires libfreetype which may not be in static builds
     console.log('  ⚠ SKIP: drawtext filter not available (requires libfreetype)');
@@ -192,7 +193,7 @@ async function testChangeSpeed(inputPath: string) {
   const metadata = await probeFile(outputPath);
   const duration = metadata.format.duration!;
   // At 2x speed, a 10s video should be ~5s
-  assert(duration >= 4 && duration <= 6, `2x speed duration is ~5s (got ${duration.toFixed(2)}s)`);
+  assert(duration >= 4 && duration <= 6, `2x speed duration is ~${TEST_VIDEO_DURATION / 2}s (got ${duration.toFixed(2)}s)`);
 }
 
 // ─── Test: extract_frames (frame extraction) ──────────────────────────────────
@@ -304,7 +305,7 @@ async function testAudioExtract(inputPath: string) {
   const metadata = await probeFile(outputPath);
   const audioStream = metadata.streams.find((s) => s.codec_type === 'audio');
   assert(audioStream !== undefined, 'Audio stream present in extracted file');
-  assert(Math.abs(metadata.format.duration! - 10) < 1, `Audio duration matches input (~10s, got ${metadata.format.duration?.toFixed(2)}s)`);
+  assert(Math.abs(metadata.format.duration! - TEST_VIDEO_DURATION) < 1, `Audio duration matches input (~${TEST_VIDEO_DURATION}s, got ${metadata.format.duration?.toFixed(2)}s)`);
 }
 
 // ─── Main runner ──────────────────────────────────────────────────────────────
