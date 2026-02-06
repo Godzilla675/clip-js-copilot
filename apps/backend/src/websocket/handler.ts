@@ -327,9 +327,6 @@ export class WebSocketHandler {
             payload: { content: '', done: true }
         }));
 
-        // Start recursive loop for subsequent turns
-        await this.runAgentLoop(ws, fullMessages, allTools, wsWithHistory, systemPrompt, 0, executeToolWithNotifications, model);
-
     } catch (error: any) {
         console.error('Copilot handling error:', error);
         ws.send(JSON.stringify({

@@ -220,7 +220,14 @@ export const CopilotProvider = ({ children }: { children: ReactNode }) => {
                 send('copilot.message', { content, model: selectedModel, projectId: projectState.id, projectData: projectState });
             } else {
                 // Fallback to REST API if not connected
-                await api.copilot.sendMessage(content, selectedModel, projectState.id);
+                const response = await api.copilot.sendMessage(content, selectedModel, projectState.id);
+                const assistantMessage: Message = {
+                    id: uuidv4(),
+                    role: 'assistant',
+                    content: response.content || 'No response received.'
+                };
+                setMessages(prev => [...prev, assistantMessage]);
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error sending message:', error);
