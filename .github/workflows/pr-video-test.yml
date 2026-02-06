@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: ['*']
 
+permissions:
+  contents: read
+
 jobs:
   video-edit-tests:
     name: Video Editing E2E Tests
