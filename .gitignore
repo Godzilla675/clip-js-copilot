@@ -8,6 +8,7 @@ bun.lockb
 
 # testing
 coverage
+tmp-test-artifacts
 
 # next.js
 .next/
