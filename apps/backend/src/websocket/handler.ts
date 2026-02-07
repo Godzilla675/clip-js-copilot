@@ -219,7 +219,7 @@ export class WebSocketHandler {
             ...wsWithHistory.chatHistory
         ];
 
-        // Define a wrapper for tool execution that sends notifications
+        // Define a wrapper for tool execution that sends notifications (used by agentic providers)
         const executeToolWithNotifications: ToolExecutor = async (toolName: string, args: any) => {
             ws.send(JSON.stringify({
                 type: 'copilot.tool_call',
@@ -242,90 +242,9 @@ export class WebSocketHandler {
             }
         };
 
-        const stream = this.orchestrator.streamChat(fullMessages, allTools as any, executeToolWithNotifications, { model });
-        let assistantContent = '';
-
-        for await (const chunk of stream) {
-            if (chunk.content) {
-                assistantContent += chunk.content;
-                ws.send(JSON.stringify({
-                    type: 'copilot.response',
-                    payload: { content: chunk.content, done: false }
-                }));
-            }
-
-            if (chunk.toolCall && chunk.toolCall.toolName && chunk.toolCall.args) {
-                const toolName = chunk.toolCall.toolName;
-                const args = chunk.toolCall.args;
-
-                // For providers returning toolCalls (Orchestrated), we still notify manually here
-                // Note: If using Agentic provider (Copilot), this block is skipped, but executeToolWithNotifications handles it.
-                // If using Orchestrated provider (Anthropic), this block runs.
-
-                ws.send(JSON.stringify({
-                    type: 'copilot.tool_call',
-                    payload: { tool: toolName, args }
-                }));
-
-                try {
-                    const result = await this.executeTool(toolName, args);
-
-                    ws.send(JSON.stringify({
-                        type: 'copilot.tool_result',
-                        payload: { tool: toolName, result }
-                    }));
-
-                    if (assistantContent) {
-                        wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
-                        assistantContent = '';
-                    }
-
-                    wsWithHistory.chatHistory.push({
-                        role: 'assistant',
-                        content: `Requesting tool: ${toolName}`
-                    });
-
-                    wsWithHistory.chatHistory.push({
-                            role: 'user',
-                            content: `Tool '${toolName}' result: ${JSON.stringify(result)}`
-                    });
-
-                    // Trigger next turn
-                    const nextMessages: Message[] = [
-                        { role: 'system', content: systemPrompt },
-                        ...wsWithHistory.chatHistory
-                    ];
-
-                    // Recursive call for next chunk in this turn (for Orchestrated providers)
-                    // We also pass executeToolWithNotifications just in case
-                    const nextStream = this.orchestrator.streamChat(nextMessages, allTools as any, executeToolWithNotifications, { model });
-                        for await (const nextChunk of nextStream) {
-                            if (nextChunk.content) {
-                                assistantContent += nextChunk.content;
-                                ws.send(JSON.stringify({
-                                    type: 'copilot.response',
-                                    payload: { content: nextChunk.content, done: false }
-                                }));
-                            }
-                        }
-
-                } catch (err: any) {
-                    ws.send(JSON.stringify({
-                        type: 'copilot.response',
-                        payload: { content: `\nError executing tool: ${err.message}`, done: false }
-                    }));
-                }
-            }
-        }
-
-        if (assistantContent) {
-            wsWithHistory.chatHistory.push({ role: 'assistant', content: assistantContent });
-        }
-
-        ws.send(JSON.stringify({
-            type: 'copilot.response',
-            payload: { content: '', done: true }
-        }));
+        // Use the agent loop which properly handles multi-turn tool recursion,
+        // structured messages, and parallel tool calls
+        await this.runAgentLoop(ws, fullMessages, allTools as any, wsWithHistory, systemPrompt, 0, executeToolWithNotifications, model);
 
     } catch (error: any) {
         console.error('Copilot handling error:', error);

@@ -65,7 +65,10 @@ export function createCopilotRouter(
           toolCalls: currentResult.toolCalls
         });
 
-        // Execute tools
+        // Execute all tools and collect results into a single message
+        // (required for Anthropic parallel tool use)
+        const toolResults: { toolCallId: string; toolName: string; result: any; isError?: boolean }[] = [];
+
         for (const call of currentResult.toolCalls) {
            const toolName = call.toolName;
            const toolCallId = call.toolCallId;
@@ -75,45 +78,26 @@ export function createCopilotRouter(
              if (serverName) {
                console.log(`Executing tool ${toolName} on server ${serverName} with args:`, call.args);
                const toolResult = await mcpClientManager.callTool(serverName, toolName, call.args);
-
-               messages.push({
-                 role: 'user',
-                 content: `Tool '${toolName}' result: ${JSON.stringify(toolResult)}`,
-                 toolResults: [{
-                    toolCallId,
-                    toolName,
-                    result: toolResult
-                 }]
-               });
+               toolResults.push({ toolCallId, toolName, result: toolResult });
              } else {
-               messages.push({
-                 role: 'user',
-                 content: `Tool '${toolName}' not found.`,
-                 toolResults: [{
-                    toolCallId,
-                    toolName,
-                    result: { error: `Tool '${toolName}' not found.` },
-                    isError: true
-                 }]
-               });
+               toolResults.push({ toolCallId, toolName, result: { error: `Tool '${toolName}' not found.` }, isError: true });
              }
            } catch (error: any) {
              console.error(`Tool execution failed: ${toolName}`, error);
-             messages.push({
-                 role: 'user',
-                 content: `Tool '${toolName}' failed: ${error.message}`,
-                 toolResults: [{
-                    toolCallId,
-                    toolName,
-                    result: { error: error.message },
-                    isError: true
-                 }]
-             });
+             toolResults.push({ toolCallId, toolName, result: { error: error.message }, isError: true });
            }
         }
 
+        // Add all tool results as a single user message (content is empty
+        // because providers use the structured toolResults, not the text field)
+        messages.push({
+          role: 'user',
+          content: '',
+          toolResults
+        });
+
         // Call LLM again
-        currentResult = await orchestrator.chat(messages, tools as any, undefined, { model });
+        currentResult = await orchestrator.chat(messages, tools as any, executeTool, { model });
       }
 
       res.json({ content: currentResult.content });
