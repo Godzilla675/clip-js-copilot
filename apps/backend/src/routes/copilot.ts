@@ -88,7 +88,8 @@ export function createCopilotRouter(
            }
         }
 
-        // Add all tool results as a single user message
+        // Add all tool results as a single user message (content is empty
+        // because providers use the structured toolResults, not the text field)
         messages.push({
           role: 'user',
           content: '',
