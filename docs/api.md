@@ -131,3 +131,93 @@ Broadcasts project updates to all connected clients.
   }
 }
 ```
+
+## Data Structures
+
+### Project JSON Example
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "My Epic Video",
+  "created": "2024-01-26T12:00:00.000Z",
+  "modified": "2024-01-26T12:30:00.000Z",
+  "settings": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "timeline": {
+    "duration": 15,
+    "tracks": [
+      {
+        "id": "t1",
+        "type": "video",
+        "name": "Background",
+        "clips": [
+          {
+            "id": "c1",
+            "assetId": "a1",
+            "trackId": "t1",
+            "startTime": 0,
+            "duration": 10,
+            "sourceStart": 0,
+            "sourceEnd": 10,
+            "transform": { "x": 0, "y": 0, "scale": 1, "rotation": 0 }
+          }
+        ],
+        "muted": false,
+        "visible": true
+      }
+    ],
+    "markers": []
+  },
+  "assets": [
+    {
+      "id": "a1",
+      "name": "sunset.mp4",
+      "path": "/path/to/assets/sunset.mp4",
+      "type": "video",
+      "duration": 60
+    }
+  ]
+}
+```
+
+### WebSocket Message Payloads
+
+#### Sending a Message (`copilot.message`)
+```json
+{
+  "type": "copilot.message",
+  "payload": {
+    "content": "Add a 5 second clip of the sunset to the start of the video",
+    "projectId": "550e8400-e29b-41d4-a716-446655440000"
+  }
+}
+```
+
+#### Receiving a Tool Call (`copilot.tool_call`)
+```json
+{
+  "type": "copilot.tool_call",
+  "payload": {
+    "tool": "add_asset_to_project",
+    "args": {
+      "projectId": "550e8400-e29b-41d4-a716-446655440000",
+      "filePath": "/assets/sunset.mp4",
+      "type": "video"
+    }
+  }
+}
+```
+
+#### Project Update Broadcast (`project.updated`)
+```json
+{
+  "type": "project.updated",
+  "payload": {
+    "project": { ... } // Full project object
+  }
+}
+```

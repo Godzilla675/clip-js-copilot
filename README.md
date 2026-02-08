@@ -72,6 +72,10 @@ https://github.com/user-attachments/assets/f2d5a46b-36f4-4433-a7dc-18d0f2070d78
 - `pnpm dev:backend`: Start only backend
 - `pnpm build`: Build all packages
 
+## Troubleshooting
+
+Facing issues? Check our [Troubleshooting Guide](./docs/troubleshooting.md) for common solutions.
+
 ## Documentation
 
 For detailed documentation, please visit the [docs/](./docs/) directory:
