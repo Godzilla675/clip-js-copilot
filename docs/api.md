@@ -163,7 +163,8 @@ Broadcasts project updates to all connected clients.
             "duration": 10,
             "sourceStart": 0,
             "sourceEnd": 10,
-            "transform": { "x": 0, "y": 0, "scale": 1, "rotation": 0 }
+            "transform": { "x": 0, "y": 0, "scale": 1, "rotation": 0 },
+            "effects": []
           }
         ],
         "muted": false,
@@ -187,12 +188,14 @@ Broadcasts project updates to all connected clients.
 ### WebSocket Message Payloads
 
 #### Sending a Message (`copilot.message`)
-```json
+```jsonc
 {
   "type": "copilot.message",
   "payload": {
     "content": "Add a 5 second clip of the sunset to the start of the video",
-    "projectId": "550e8400-e29b-41d4-a716-446655440000"
+    "projectId": "550e8400-e29b-41d4-a716-446655440000",
+    "model": "gpt-4o-mini", // optional: model to use for this request
+    "projectData": { ... }   // optional: serialized project snapshot for context
   }
 }
 ```
@@ -213,7 +216,7 @@ Broadcasts project updates to all connected clients.
 ```
 
 #### Project Update Broadcast (`project.updated`)
-```json
+```jsonc
 {
   "type": "project.updated",
   "payload": {
