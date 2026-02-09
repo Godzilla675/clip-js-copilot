@@ -27,11 +27,11 @@ This guide covers common issues you might encounter while setting up or running 
 - Ensure the `node` command is available in your environment.
 
 ### Tool execution timeout
-**Symptoms**: LLM reports a timeout or the backend logs show "Tool execution timed out".
+**Symptoms**: The LLM or MCP client reports that a tool call took too long or failed due to a timeout.
 **Solution**:
-- Complex operations like `transcribe_audio` or `render_video` can take time.
-- Check system resources (CPU/RAM).
-- Increase the timeout in `apps/backend/src/mcp/client-manager.ts` if necessary.
+- Complex operations like `transcribe_audio` or the FFmpeg server's `export_project` can take a long time, especially on large or high‑resolution videos.
+- Check system resources (CPU/RAM/disk I/O) and ensure the MCP servers (e.g., FFmpeg, Whisper) are running and responsive.
+- Review your LLM/client or deployment configuration for any tool/HTTP/WebSocket timeout settings and increase them if long‑running operations are expected.
 
 ## 3. LLM & API Key Issues
 

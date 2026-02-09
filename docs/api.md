@@ -163,7 +163,8 @@ Broadcasts project updates to all connected clients.
             "duration": 10,
             "sourceStart": 0,
             "sourceEnd": 10,
-            "transform": { "x": 0, "y": 0, "scale": 1, "rotation": 0 }
+            "transform": { "x": 0, "y": 0, "scale": 1, "rotation": 0 },
+            "effects": []
           }
         ],
         "muted": false,
@@ -192,7 +193,9 @@ Broadcasts project updates to all connected clients.
   "type": "copilot.message",
   "payload": {
     "content": "Add a 5 second clip of the sunset to the start of the video",
-    "projectId": "550e8400-e29b-41d4-a716-446655440000"
+    "projectId": "550e8400-e29b-41d4-a716-446655440000",
+    "model": "gpt-4o",
+    "projectData": { ... }
   }
 }
 ```
@@ -217,7 +220,7 @@ Broadcasts project updates to all connected clients.
 {
   "type": "project.updated",
   "payload": {
-    "project": { ... } // Full project object
+    "project": { ... }
   }
 }
 ```
