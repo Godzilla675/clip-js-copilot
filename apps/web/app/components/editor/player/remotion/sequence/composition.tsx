@@ -19,6 +19,7 @@ const Composition = () => {
         if (Math.abs(currentTimeInSeconds - previousTime.current) > THRESHOLD) {
             if (currentTimeInSeconds !== undefined) {
                 dispatch(setCurrentTime(currentTimeInSeconds));
+                previousTime.current = currentTimeInSeconds;
             }
         }
 
