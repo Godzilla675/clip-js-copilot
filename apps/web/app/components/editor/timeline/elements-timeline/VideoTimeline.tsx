@@ -1,16 +1,17 @@
-import React, { useRef, useCallback, useMemo } from "react";
-import Moveable, { OnScale, OnDrag, OnResize, OnRotate } from "react-moveable";
+import React, { useRef, useMemo, memo, useEffect } from "react";
+import Moveable, { OnDrag, OnResize } from "react-moveable";
 import { useAppSelector, useAppDispatch } from "@/app/store";
 import { setActiveElement, setActiveElementIndex, updateMediaFile } from "@/app/store/slices/projectSlice";
-import { memo, useEffect, useState } from "react";
 import Image from "next/image";
-import Header from "../Header";
 import { MediaFile } from "@/app/types";
-import { debounce, throttle } from "lodash";
+import { throttle } from "lodash";
 
-export default function VideoTimeline() {
+const VideoTimeline = () => {
     const targetRefs = useRef<Record<string, HTMLDivElement | null>>({});
-    const { mediaFiles, activeElement, activeElementIndex, timelineZoom } = useAppSelector((state) => state.projectState);
+    const mediaFiles = useAppSelector((state) => state.projectState.mediaFiles);
+    const activeElement = useAppSelector((state) => state.projectState.activeElement);
+    const activeElementIndex = useAppSelector((state) => state.projectState.activeElementIndex);
+    const timelineZoom = useAppSelector((state) => state.projectState.timelineZoom);
     const dispatch = useAppDispatch();
     const moveableRef = useRef<Record<string, Moveable | null>>({});
 
@@ -29,6 +30,8 @@ export default function VideoTimeline() {
         });
         return indices;
     }, [mediaFiles]);
+
+    const videoClips = useMemo(() => mediaFiles.filter((clip) => clip.type === 'video'), [mediaFiles]);
 
     const onUpdateMedia = useMemo(() =>
         throttle((id: string, updates: Partial<MediaFile>) => {
@@ -104,9 +107,7 @@ export default function VideoTimeline() {
 
     return (
         <div >
-            {mediaFiles
-                .filter((clip) => clip.type === 'video')
-                .map((clip) => (
+            {videoClips.map((clip) => (
                     <div key={clip.id}>
                         <div
                             key={clip.id}
@@ -116,7 +117,7 @@ export default function VideoTimeline() {
                                 }
                             }}
                             onClick={() => handleClick('media', clip.id)}
-                            className={`absolute border border-gray-500 border-opacity-50 rounded-md top-2 h-12 rounded bg-[#27272A] text-white text-sm flex items-center justify-center cursor-pointer ${activeElement === 'media' && mediaFiles[activeElementIndex].id === clip.id ? 'bg-[#3F3F46] border-blue-500' : ''}`}
+                            className={`absolute border border-gray-500 border-opacity-50 rounded-md top-2 h-12 rounded bg-[#27272A] text-white text-sm flex items-center justify-center cursor-pointer ${activeElement === 'media' && mediaFiles[activeElementIndex]?.id === clip.id ? 'bg-[#3F3F46] border-blue-500' : ''}`}
                             style={{
                                 left: `${clip.positionStart * timelineZoom}px`,
                                 width: `${(clip.positionEnd / clip.playbackSpeed - clip.positionStart / clip.playbackSpeed) * timelineZoom}px`,
@@ -142,7 +143,7 @@ export default function VideoTimeline() {
                             }}
                             target={targetRefs.current[clip.id] || null}
                             container={null}
-                            renderDirections={activeElement === 'media' && mediaFiles[activeElementIndex].id === clip.id ? ['w', 'e'] : []}
+                            renderDirections={activeElement === 'media' && mediaFiles[activeElementIndex]?.id === clip.id ? ['w', 'e'] : []}
                             draggable={true}
                             throttleDrag={0}
                             rotatable={false}
@@ -190,3 +191,5 @@ export default function VideoTimeline() {
         </div>
     );
 }
+
+export default memo(VideoTimeline);
