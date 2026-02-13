@@ -42,7 +42,7 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
 
     const render = async () => {
         if (mediaFiles.length === 0 && textElements.length === 0) {
-            console.log('No media files to render');
+            toast.error('No media files to render');
             return;
         }
         setShowModal(true);
@@ -56,8 +56,6 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
             if (format === 'mov') mimeType = 'video/quicktime';
             if (format === 'gif') mimeType = 'image/gif';
 
-            const wroteFiles = new Map<string, string>();
-
             try {
                 const filters = [];
                 const overlays = [];
@@ -68,16 +66,6 @@ export default function FfmpegRender({ loadFunction, loadFfmpeg, ffmpeg, logMess
                 filters.push(`color=c=black:size=1920x1080:d=${totalDuration.toFixed(3)}[base]`);
                 // Sort videos by zIndex ascending (lowest drawn first)
                 const sortedMediaFiles = [...mediaFiles].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
-
-                // Load all files in parallel
-                const loadedFiles = await Promise.all(sortedMediaFiles.map(async (file, i) => {
-                    const fileData = await getFile(file.fileId);
-                    const buffer = await fileData.arrayBuffer();
-                    const ext = mimeToExt[fileData.type as keyof typeof mimeToExt] || fileData.type.split('/')[1];
-                    const fileName = `input${i}.${ext}`;
-                    await ffmpeg.writeFile(fileName, new Uint8Array(buffer));
-                    return { ext, fileName };
-                }));
 
                 const wroteFiles = new Map<string, string>();
 
