@@ -4,6 +4,16 @@ import path from 'path';
 import fs from 'fs';
 import { config } from '../config.js';
 
+// Allowed MIME types for uploads
+const ALLOWED_MIME_TYPES = new Set([
+    // Video
+    'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska',
+    // Audio
+    'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/webm', 'audio/aac', 'audio/flac',
+    // Image
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+]);
+
 // Configure multer for file uploads
 const uploadDir = path.join(config.projectDir, 'uploads');
 
@@ -26,8 +36,29 @@ const upload = multer({
     storage,
     limits: {
         fileSize: 500 * 1024 * 1024, // 500MB limit
+    },
+    fileFilter: (_req, file, cb) => {
+        if (ALLOWED_MIME_TYPES.has(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error(`File type '${file.mimetype}' is not allowed. Only video, audio, and image files are accepted.`));
+        }
     }
 });
+
+/**
+ * Validate that a fileId does not contain path traversal sequences.
+ * Returns true if safe, false otherwise.
+ */
+function isSafeFileId(fileId: string): boolean {
+    // Reject any path separators or traversal patterns
+    if (fileId.includes('/') || fileId.includes('\\') || fileId.includes('..') || fileId.includes('\0')) {
+        return false;
+    }
+    // Ensure the resolved path stays within uploadDir
+    const resolved = path.resolve(uploadDir, fileId);
+    return resolved.startsWith(path.resolve(uploadDir));
+}
 
 export function createUploadRouter(): Router {
     const router = Router();
@@ -72,6 +103,9 @@ export function createUploadRouter(): Router {
 
     // Get file info
     router.get('/:fileId', (req, res) => {
+        if (!isSafeFileId(req.params.fileId)) {
+            return res.status(400).json({ error: 'Invalid file ID' });
+        }
         const filePath = path.join(uploadDir, req.params.fileId);
 
         if (!fs.existsSync(filePath)) {
@@ -89,6 +123,9 @@ export function createUploadRouter(): Router {
 
     // Serve file
     router.get('/:fileId/download', (req, res) => {
+        if (!isSafeFileId(req.params.fileId)) {
+            return res.status(400).json({ error: 'Invalid file ID' });
+        }
         const filePath = path.join(uploadDir, req.params.fileId);
 
         if (!fs.existsSync(filePath)) {
@@ -96,6 +133,20 @@ export function createUploadRouter(): Router {
         }
 
         res.sendFile(filePath);
+    });
+
+    // Handle multer errors (file type rejection, size limit, etc.)
+    router.use((err: any, _req: any, res: any, next: any) => {
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(413).json({ error: 'File too large. Maximum size is 500MB.' });
+            }
+            return res.status(400).json({ error: err.message });
+        }
+        if (err && err.message) {
+            return res.status(400).json({ error: err.message });
+        }
+        next(err);
     });
 
     return router;
