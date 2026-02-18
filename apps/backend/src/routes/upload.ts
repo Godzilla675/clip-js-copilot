@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -51,12 +51,16 @@ const upload = multer({
  * Returns true if safe, false otherwise.
  */
 function isSafeFileId(fileId: string): boolean {
-    // Reject any path separators or traversal patterns
-    if (fileId.includes('/') || fileId.includes('\\') || fileId.includes('..') || fileId.includes('\0')) {
+    // Reject any path separators, traversal patterns, null bytes, or hidden files
+    if (fileId.includes('/') || fileId.includes('\\') || fileId.includes('\0') || fileId.startsWith('.')) {
         return false;
     }
-    // Ensure the resolved path stays within uploadDir
-    const resolved = path.resolve(uploadDir, fileId);
+    // Normalize to collapse any remaining traversal and ensure it stays within uploadDir
+    const normalized = path.normalize(fileId);
+    if (normalized !== fileId || normalized.includes('..')) {
+        return false;
+    }
+    const resolved = path.resolve(uploadDir, normalized);
     return resolved.startsWith(path.resolve(uploadDir));
 }
 
@@ -136,7 +140,7 @@ export function createUploadRouter(): Router {
     });
 
     // Handle multer errors (file type rejection, size limit, etc.)
-    router.use((err: any, _req: any, res: any, next: any) => {
+    router.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
         if (err instanceof multer.MulterError) {
             if (err.code === 'LIMIT_FILE_SIZE') {
                 return res.status(413).json({ error: 'File too large. Maximum size is 500MB.' });
