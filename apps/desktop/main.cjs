@@ -3,6 +3,9 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
+// Set WEB_APP_URL to point to the running web app.
+// In development: defaults to the Next.js dev server at localhost:3000.
+// In production: set this env var to the URL where the web app is served.
 const WEB_APP_URL = process.env.WEB_APP_URL || 'http://localhost:3000';
 
 function createWindow() {
