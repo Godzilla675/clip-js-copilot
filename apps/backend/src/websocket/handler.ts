@@ -190,6 +190,14 @@ export class WebSocketHandler {
   private async handleCopilotMessage(ws: WebSocket, payload: any) {
     const { content, projectId, model, projectData } = payload;
 
+    if (!content || typeof content !== 'string') {
+      ws.send(JSON.stringify({
+        type: 'error',
+        payload: { message: 'content is required and must be a string' }
+      }));
+      return;
+    }
+
     try {
          let project = projectId ? this.projectManager.getProject(projectId) : undefined;
 

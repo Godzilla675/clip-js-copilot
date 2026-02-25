@@ -14,8 +14,10 @@ async function verifyTools() {
         apiKey: '',
     };
 
-    // simplified path - hardcoded to what we know exists on the file system from previous `find_by_name`
-    process.env.COPILOT_CLI_PATH = 'c:\\Users\\Ahmed\\Desktop\\clip-js\\apps\\backend\\node_modules\\@github\\copilot\\index.js';
+    // Use COPILOT_CLI_PATH from environment or auto-detect from node_modules
+    if (!process.env.COPILOT_CLI_PATH) {
+        process.env.COPILOT_CLI_PATH = path.resolve(process.cwd(), 'node_modules', '@github', 'copilot', 'index.js');
+    }
     console.log('Using COPILOT_CLI_PATH:', process.env.COPILOT_CLI_PATH);
 
     const provider = new CopilotProvider(config);

@@ -25,6 +25,10 @@ export function createCopilotRouter(
     try {
       const { content, projectId, model } = req.body;
 
+      if (!content || typeof content !== 'string') {
+        return res.status(400).json({ error: 'content is required and must be a string' });
+      }
+
       const project = projectId ? projectManager.getProject(projectId) : undefined;
 
       // Get tools (MCP Tool definitions)
