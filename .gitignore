@@ -40,6 +40,9 @@ next-env.d.ts
 # turbo
 .turbo/
 
+# electron-builder output
+apps/desktop/dist/
+
 # logs
 web_output.log
 
