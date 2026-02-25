@@ -1,9 +1,9 @@
-import { storeProject, useAppDispatch, useAppSelector } from "@/app/store";
+import { useAppDispatch, useAppSelector } from "@/app/store";
 import { SequenceItem } from "./sequence-item";
 import { MediaFile, TextElement } from "@/app/types";
-import { useCurrentFrame, useVideoConfig } from 'remotion';
-import { use, useCallback, useEffect, useRef, useState } from "react";
-import { setCurrentTime, setMediaFiles } from "@/app/store/slices/projectSlice";
+import { useCurrentFrame } from 'remotion';
+import { useEffect, useRef } from "react";
+import { setCurrentTime } from "@/app/store/slices/projectSlice";
 
 const Composition = () => {
     const projectState = useAppSelector((state) => state.projectState);
@@ -11,6 +11,7 @@ const Composition = () => {
     const frame = useCurrentFrame();
     const dispatch = useAppDispatch();
 
+    const fps = 30;
     const THRESHOLD = 0.1; // Minimum change to trigger dispatch (in seconds)
     const previousTime = useRef(0); // Store previous time to track changes
 
@@ -19,12 +20,11 @@ const Composition = () => {
         if (Math.abs(currentTimeInSeconds - previousTime.current) > THRESHOLD) {
             if (currentTimeInSeconds !== undefined) {
                 dispatch(setCurrentTime(currentTimeInSeconds));
+                previousTime.current = currentTimeInSeconds;
             }
         }
 
     }, [frame, dispatch]);
-
-    const fps = 30;
     return (
         <>
             {mediaFiles

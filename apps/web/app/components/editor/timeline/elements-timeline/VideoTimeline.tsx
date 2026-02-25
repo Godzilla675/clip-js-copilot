@@ -10,7 +10,10 @@ import { debounce, throttle } from "lodash";
 
 export default function VideoTimeline() {
     const targetRefs = useRef<Record<string, HTMLDivElement | null>>({});
-    const { mediaFiles, activeElement, activeElementIndex, timelineZoom } = useAppSelector((state) => state.projectState);
+    const mediaFiles = useAppSelector((state) => state.projectState.mediaFiles);
+    const activeElement = useAppSelector((state) => state.projectState.activeElement);
+    const activeElementIndex = useAppSelector((state) => state.projectState.activeElementIndex);
+    const timelineZoom = useAppSelector((state) => state.projectState.timelineZoom);
     const dispatch = useAppDispatch();
     const moveableRef = useRef<Record<string, Moveable | null>>({});
 
