@@ -4,6 +4,7 @@ import { Inter, Roboto_Mono } from "next/font/google";
 import { Providers } from './providers'
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
+import ConsoleEasterEgg from "./components/ConsoleEasterEgg";
 import { Toaster } from 'react-hot-toast';
 import { Analytics } from "@vercel/analytics/next"
 
@@ -48,6 +49,7 @@ export default function RootLayout({
             <Analytics />
           </main>
           <Footer />
+          <ConsoleEasterEgg />
         </Providers>
       </body>
     </html>
