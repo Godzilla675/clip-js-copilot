@@ -24,6 +24,20 @@ export default function CopilotPanel() {
 
         const content = inputValue;
         setInputValue('');
+
+        // Easter egg: secret phrase
+        if (/^clipjs is awesome$/i.test(content.trim())) {
+            const easterMessages = [
+                "🦖 Rawr! You've unlocked the secret dinosaur mode!",
+                "🎬 Fun fact: The first movie ever made was 2 seconds long.",
+                "🚀 You're officially a ClipJS power user. Here's a virtual trophy: 🏆",
+                "🍿 Plot twist: the real easter egg was the friends we made along the way.",
+            ];
+            const msg = easterMessages[Math.floor(Math.random() * easterMessages.length)];
+            await sendMessage(`${content}\n\n_${msg}_`);
+            return;
+        }
+
         await sendMessage(content);
     };
 
