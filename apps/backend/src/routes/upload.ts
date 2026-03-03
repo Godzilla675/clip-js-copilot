@@ -106,37 +106,46 @@ export function createUploadRouter(): Router {
     });
 
     // Get file info
-    router.get('/:fileId', (req, res) => {
+    router.get('/:fileId', async (req, res, next) => {
         if (!isSafeFileId(req.params.fileId)) {
             return res.status(400).json({ error: 'Invalid file ID' });
         }
         const filePath = path.join(uploadDir, req.params.fileId);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ error: 'File not found' });
+        try {
+            const stats = await fs.promises.stat(filePath);
+            res.json({
+                fileId: req.params.fileId,
+                filePath,
+                size: stats.size,
+                created: stats.birthtime
+            });
+        } catch (err: any) {
+            if (err.code === 'ENOENT') {
+                return res.status(404).json({ error: 'File not found' });
+            }
+            next(err);
         }
-
-        const stats = fs.statSync(filePath);
-        res.json({
-            fileId: req.params.fileId,
-            filePath,
-            size: stats.size,
-            created: stats.birthtime
-        });
     });
 
     // Serve file
-    router.get('/:fileId/download', (req, res) => {
+    router.get('/:fileId/download', async (req, res, next) => {
         if (!isSafeFileId(req.params.fileId)) {
             return res.status(400).json({ error: 'Invalid file ID' });
         }
         const filePath = path.join(uploadDir, req.params.fileId);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).json({ error: 'File not found' });
+        try {
+            await fs.promises.access(filePath, fs.constants.F_OK);
+            res.sendFile(filePath, (err) => {
+                if (err) next(err);
+            });
+        } catch (err: any) {
+            if (err.code === 'ENOENT') {
+                return res.status(404).json({ error: 'File not found' });
+            }
+            next(err);
         }
-
-        res.sendFile(filePath);
     });
 
     // Handle multer errors (file type rejection, size limit, etc.)
