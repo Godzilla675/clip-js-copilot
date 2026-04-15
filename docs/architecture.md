@@ -6,13 +6,13 @@ The AI Video Editor is a monorepo built with Turbo, consisting of three main lay
 
 ```mermaid
 graph TD
-    Client[Browser / Frontend] <-->|WebSocket & REST| Backend[Node.js Backend]
-    Backend <-->|API| LLM[LLM Provider (Claude/OpenAI)]
-    Backend <-->|Stdio| FFMPEG[FFmpeg Server]
-    Backend <-->|Stdio| VISION[Vision Server]
-    Backend <-->|Stdio| WHISPER[Whisper Server]
-    Backend <-->|Stdio| ASSET[Asset Server]
-    Backend <-->|Stdio| CODE[Code Runner Server]
+    Client["Browser / Frontend"] <-->|WebSocket & REST| Backend["Node.js Backend"]
+    Backend <-->|API| LLM["LLM Provider (Claude/OpenAI)"]
+    Backend <-->|Stdio| FFMPEG["FFmpeg Server"]
+    Backend <-->|Stdio| VISION["Vision Server"]
+    Backend <-->|Stdio| WHISPER["Whisper Server"]
+    Backend <-->|Stdio| ASSET["Asset Server"]
+    Backend <-->|Stdio| CODE["Code Runner Server"]
 ```
 
 ## Components
