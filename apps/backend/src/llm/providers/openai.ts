@@ -30,13 +30,55 @@ export class OpenAIProvider implements LLMProviderInterface {
       }
   }
 
+  private formatMessages(messages: Message[]): any[] {
+    const result: any[] = [];
+
+    for (const m of messages) {
+      if (m.role === 'system') {
+        result.push({ role: 'system', content: m.content });
+      } else if (m.role === 'user') {
+        if (m.toolResults && m.toolResults.length > 0) {
+          // Each tool result becomes a separate 'tool' role message
+          for (const tr of m.toolResults) {
+            result.push({
+              role: 'tool',
+              tool_call_id: tr.toolCallId,
+              content: typeof tr.result === 'string'
+                ? tr.result
+                : JSON.stringify(tr.result),
+            });
+          }
+        } else {
+          result.push({ role: 'user', content: m.content });
+        }
+      } else if (m.role === 'assistant') {
+        const assistantMsg: any = {
+          role: 'assistant',
+          content: m.content || null,
+        };
+        if (m.toolCalls && m.toolCalls.length > 0) {
+          assistantMsg.tool_calls = m.toolCalls.map(tc => ({
+            id: tc.toolCallId,
+            type: 'function',
+            function: {
+              name: tc.toolName,
+              arguments: typeof tc.args === 'string'
+                ? tc.args
+                : JSON.stringify(tc.args),
+            },
+          }));
+        }
+        result.push(assistantMsg);
+      }
+    }
+
+    return result;
+  }
+
   async chat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): Promise<{ content: string; toolCalls?: ToolCall[] }> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
-    const chatMessages = messages.map(m => ({
-      role: m.role as 'user' | 'assistant' | 'system',
-      content: m.content
-    }));
+    const chatMessages = this.formatMessages(messages);
 
     const response = await this.client.chat.completions.create({
       model: options?.model || this.model,
@@ -60,10 +102,7 @@ export class OpenAIProvider implements LLMProviderInterface {
   async *streamChat(messages: Message[], tools?: MCPTool[], executeTool?: ToolExecutor, options?: LLMProviderOptions): AsyncIterable<StreamChunk> {
     const openaiTools = tools?.map(mcpToolToOpenAIFunction);
 
-    const chatMessages = messages.map(m => ({
-      role: m.role as 'user' | 'assistant' | 'system',
-      content: m.content
-    }));
+    const chatMessages = this.formatMessages(messages);
 
     const stream = await this.client.chat.completions.create({
       model: options?.model || this.model,
