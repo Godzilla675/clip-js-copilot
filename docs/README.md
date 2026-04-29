@@ -18,8 +18,8 @@ The editor leverages the power of GitHub Copilot and other AI models to provide 
 - [MCP Tools & Servers](./mcp-tools.md) - A complete list of available AI tools and servers.
 - [Development Guide](./development.md) - How to set up, build, and contribute to the project.
 - [Security](./security.md) - Security considerations and sandboxing.
+- [Troubleshooting](./troubleshooting.md) - Common issues and solutions.
 
 ## Quick Links
 
 - [Root README](../README.md)
-- [Master Plan](../MASTERPLAN.MD)

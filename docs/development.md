@@ -70,3 +70,31 @@
 3. Extend `BaseMCPServer` from `@ai-video-editor/mcp-utils`.
 4. Register your tools.
 5. Add the server to the backend configuration in `apps/backend/src/mcp/server-configs.ts`.
+
+## Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+### Branching Policy
+- Create a new branch for each feature or bug fix: `git checkout -b feature/your-feature-name`.
+- Use descriptive branch names.
+
+### Development Workflow
+1. **Fork the repository** (if you don't have push access).
+2. **Create a branch** for your changes.
+3. **Make your changes**. Ensure you follow the coding style and include tests where applicable.
+4. **Run linting**: `pnpm lint`.
+5. **Verify your changes**: Start the dev environment (`pnpm dev`) and test the functionality.
+6. **Submit a Pull Request**. Provide a clear description of your changes and why they are needed.
+
+### Monorepo Management
+This project uses **pnpm workspaces** and **Turbo**.
+- To add a dependency to a specific package: `pnpm add <package> --filter <package-name>`.
+- To run a command in all packages: `pnpm -r <command>`.
+- Common filters: `web`, `backend`, `ffmpeg-server`, `whisper-server`, etc.
+
+### Coding Standards
+- Use TypeScript for all new code.
+- Follow the existing indentation and formatting (Prettier/ESLint rules).
+- Document new functions and classes with JSDoc comments.
+- Ensure all public-facing API changes are reflected in `docs/api.md`.
