@@ -1,0 +1,28 @@
+<<<<<<< SEARCH
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ error: 'File not found' });
+        }
+
+        const stats = fs.statSync(filePath);
+        res.json({
+            fileId: req.params.fileId,
+            filePath,
+            size: stats.size,
+            created: stats.birthtime
+        });
+=======
+        try {
+            const stats = await fs.promises.stat(filePath);
+            res.json({
+                fileId: req.params.fileId,
+                filePath,
+                size: stats.size,
+                created: stats.birthtime
+            });
+        } catch (err: any) {
+            if (err.code === 'ENOENT') {
+                return res.status(404).json({ error: 'File not found' });
+            }
+            next(err);
+        }
+>>>>>>> REPLACE
